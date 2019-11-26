@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include erpnextturkish *.css
+recursive-include erpnextturkish *.csv
+recursive-include erpnextturkish *.html
+recursive-include erpnextturkish *.ico
+recursive-include erpnextturkish *.js
+recursive-include erpnextturkish *.json
+recursive-include erpnextturkish *.md
+recursive-include erpnextturkish *.png
+recursive-include erpnextturkish *.py
+recursive-include erpnextturkish *.svg
+recursive-include erpnextturkish *.txt
+recursive-exclude erpnextturkish *.pyc
