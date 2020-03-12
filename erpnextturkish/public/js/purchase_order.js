@@ -1,6 +1,6 @@
 //Purchase Order Customizations
 frappe.ui.form.on("Purchase Order", {
-	refresh: (frm) => {
+	onload_post_render: (frm) => {
         //Forma dosya guncelle butonunu ekleyelim
         frm.add_custom_button(
             __('Dosya Eklerini Güncelle'),
@@ -12,8 +12,8 @@ frappe.ui.form.on("Purchase Order", {
 						frm.reload_doc();
 					}
 				});
-            }, 
-            __("Tools")
+            }//, 
+            //__("Tools")
         );
     }
 });
