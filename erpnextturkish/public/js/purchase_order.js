@@ -5,7 +5,7 @@ frappe.ui.form.on("Purchase Order", {
         frm.add_custom_button(
             __('Dosya Eklerini Güncelle'),
 			function() {
-                print("Dosya Eklerini Güncelle started");
+                console.log("Dosya Eklerini Güncelle started");
 				frappe.call({
 					method:"erpnextturkish.td_utils.td_attach_all_docs_from_item",
 					args:{ document:frm.doc, strURL:location.origin, },
@@ -13,9 +13,9 @@ frappe.ui.form.on("Purchase Order", {
 						frm.reload_doc();
                     }
                 });
-                print("Dosya Eklerini Güncelle finished");
-            }//, 
-            //__("Tools")
+                console.log("Dosya Eklerini Güncelle finished");
+            }, 
+            __("Tools")
         );
     }
 });
