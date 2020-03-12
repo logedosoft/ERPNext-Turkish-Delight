@@ -249,7 +249,7 @@ def test_whoami(strSalesInvoiceName):
 
 ### DOSYA GUNCELLEME MODULU
 @frappe.whitelist()
-def attach_all_docs(document, strURL):
+def td_attach_all_docs_from_item(document, strURL):
 	from frappe import _, throw
 	from frappe.utils import flt
 	from frappe.utils.file_manager import save_url, save_file, get_file_name, remove_all, remove_file

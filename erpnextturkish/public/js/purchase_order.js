@@ -5,13 +5,15 @@ frappe.ui.form.on("Purchase Order", {
         frm.add_custom_button(
             __('Dosya Eklerini Güncelle'),
 			function() {
+                print("Dosya Eklerini Güncelle started");
 				frappe.call({
-					method:"erpnextturkish.td_utils.attach_all_docs",
+					method:"erpnextturkish.td_utils.td_attach_all_docs_from_item",
 					args:{ document:frm.doc, strURL:location.origin, },
 					callback: function(r) {
 						frm.reload_doc();
-					}
-				});
+                    }
+                });
+                print("Dosya Eklerini Güncelle finished");
             }//, 
             //__("Tools")
         );
