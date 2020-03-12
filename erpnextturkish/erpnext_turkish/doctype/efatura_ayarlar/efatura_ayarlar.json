@@ -1,0 +1,177 @@
+{
+ "creation": "2019-11-26 23:52:55.869135",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "entegrator",
+  "test_modu",
+  "kullaniciadi",
+  "parola",
+  "td_cb_01_column",
+  "efatura_adresi",
+  "earsiv_adresi",
+  "test_efatura_adresi",
+  "test_earsiv_adresi",
+  "test_section",
+  "td_firma_adi",
+  "td_vergi_no",
+  "td_vergi_dairesi",
+  "td_mersis_no",
+  "td_ticaret_sicil_no",
+  "td_cb_02_column",
+  "td_adres_sokak",
+  "td_adres_bina_no",
+  "td_adres_kapi_no",
+  "td_adres_ilce",
+  "td_adres_il",
+  "td_adres_ulke",
+  "canli_section"
+ ],
+ "fields": [
+  {
+   "fieldname": "entegrator",
+   "fieldtype": "Select",
+   "label": "Entegrat\u00f6r",
+   "options": "Uyumsoft"
+  },
+  {
+   "default": "0",
+   "fieldname": "test_modu",
+   "fieldtype": "Check",
+   "label": "Test Modu"
+  },
+  {
+   "fieldname": "test_section",
+   "fieldtype": "Section Break",
+   "label": "F\u0130RMA B\u0130LG\u0130LER\u0130"
+  },
+  {
+   "fieldname": "test_efatura_adresi",
+   "fieldtype": "Data",
+   "label": "Test E-Fatura Adresi"
+  },
+  {
+   "fieldname": "test_earsiv_adresi",
+   "fieldtype": "Data",
+   "label": "Test E-Ar\u015fiv Adresi"
+  },
+  {
+   "fieldname": "canli_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "efatura_adresi",
+   "fieldtype": "Data",
+   "label": "E-Fatura Adresi"
+  },
+  {
+   "fieldname": "earsiv_adresi",
+   "fieldtype": "Data",
+   "label": "E-Ar\u015fiv Adresi"
+  },
+  {
+   "fieldname": "kullaniciadi",
+   "fieldtype": "Data",
+   "label": "Kullan\u0131c\u0131 Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parola",
+   "fieldtype": "Password",
+   "label": "Parola",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_cb_01_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "td_vergi_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vergi No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_mersis_no",
+   "fieldtype": "Data",
+   "label": "Mersis No"
+  },
+  {
+   "fieldname": "td_ticaret_sicil_no",
+   "fieldtype": "Data",
+   "label": "Ticaret Sicil No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_firma_adi",
+   "fieldtype": "Data",
+   "label": "Firma Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_vergi_dairesi",
+   "fieldtype": "Data",
+   "label": "Vergi Dairesi",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_cb_02_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "td_adres_sokak",
+   "fieldtype": "Data",
+   "label": "Sokak"
+  },
+  {
+   "fieldname": "td_adres_bina_no",
+   "fieldtype": "Data",
+   "label": "Bina No"
+  },
+  {
+   "fieldname": "td_adres_kapi_no",
+   "fieldtype": "Data",
+   "label": "Kap\u0131 No"
+  },
+  {
+   "fieldname": "td_adres_ilce",
+   "fieldtype": "Data",
+   "label": "\u0130l\u00e7e"
+  },
+  {
+   "fieldname": "td_adres_il",
+   "fieldtype": "Data",
+   "label": "\u0130l"
+  },
+  {
+   "fieldname": "td_adres_ulke",
+   "fieldtype": "Data",
+   "label": "\u00dclke"
+  }
+ ],
+ "issingle": 1,
+ "modified": "2020-02-25 13:37:23.764765",
+ "modified_by": "Administrator",
+ "module": "ERPNext Turkish",
+ "name": "EFatura Ayarlar",
+ "name_case": "Title Case",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
