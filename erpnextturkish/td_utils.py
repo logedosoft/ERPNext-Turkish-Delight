@@ -189,7 +189,8 @@ def send_einvoice(strSalesInvoiceName):
 		#print(strDocXML.encode('utf-8'))
 
 		#webservisine gonderelim
-		response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
+		#response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
+		response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
 		# You can inspect the response just like you did before
 		print("RESPONSE")
 		print(response.headers)
@@ -206,22 +207,23 @@ def send_einvoice(strSalesInvoiceName):
 	return strResult
 
 @frappe.whitelist()
-def test_whoami(strSalesInvoiceName):
+def login_test():
+	from bs4 import BeautifulSoup
 
-    strResult = ""
-    blnResult = False
-    try:
-        docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
-        body = """
+	strResult = ""
+
+	try:
+		#PRODUCTION BODY
+		body = """
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-   <soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-FA7A82CCD721E8E848158194562677726"><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">1qVFsJqbeLeeg6cP3CBOwQ==</wsse:Nonce><wsu:Created>2020-02-17T13:20:26.776Z</wsu:Created></wsse:UsernameToken></wsse:Security></soapenv:Header>
+   <soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header>
    <soapenv:Body>
       <tem:WhoAmI/>
    </soapenv:Body>
 </soapenv:Envelope>
                 """
 
-        headers = {
+		headers = {
             'Accept-Encoding': 'gzip,deflate',
             'Accept': 'text/xml',
             'Content-Type': 'text/xml;charset=UTF-8',
@@ -229,23 +231,47 @@ def test_whoami(strSalesInvoiceName):
             'Pragma': 'no-cache',
             'SOAPAction': 'http://tempuri.org/IIntegration/WhoAmI',
             'Connection': 'Keep-Alive'
-        }
+		}
 
-        response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=headers, data=body)
-        # You can inspect the response just like you did before
-        print("RESPONSE")
-        print(response.headers)
-        print(response.text)
-        print(response.content)
-        print(response.status_code)
-        strResult = str(response.headers) + ' SC=' + str(response.status_code)
-        strResult += response.text
-    except Exception as e:
-        print("ERROR " + str(e))
-        #logger.error("ApiHeartland().send_data() error: " + str(e))
-        #return {"result_code": "-99", "result_text": "Payment error", "result": str(e), "result_paid": False}
-    
-    return strResult
+		docEISettings = frappe.get_single("EFatura Ayarlar")		
+		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
+		docEISettings.parola = docEISettings.get_password('parola')
+
+		if docEISettings.test_modu:
+			strServerURL = docEISettings.test_efatura_adresi
+		else:
+			strServerURL = docEISettings.efatura_adresi
+
+		body = frappe.render_template(body, context={"docEISettings": docEISettings}, is_path=False)
+
+		#response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=headers, data=body)
+		#response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=headers, data=body)
+		response = requests.post(strServerURL, headers=headers, data=body)
+		# You can inspect the response just like you did before
+		#print("RESPONSE")
+		#print(response.headers)
+		#print(response.text)
+		#print(response.content)
+		#print(response.status_code)
+
+		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
+		if response.status_code == 500:
+			strErrorMessage = bsMain.find_all("faultstring")[0].text
+			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
+			strResult += strErrorMessage
+		elif response.status_code == 200:
+			strResult = "İşlem Başarılı"
+			#strCustomerName = bsMain.find_all("Username")[0].text #TODO:BU KISIM CALISMADI. DUZELTILMELI
+			#strResult += _("Firma Adı:{0}").format(strCustomerName)
+		else:
+			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+			strResult += response.text
+
+	except Exception as e:
+		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) sunucudan gelen mesaj işlenemedi."))
+
+	return {'result':strResult, 'response':response}
 
 ### DOSYA GUNCELLEME MODULU
 @frappe.whitelist()
