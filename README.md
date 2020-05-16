@@ -1,6 +1,6 @@
 ## ERPNext Turkish Delight
 
-E-Fatura ve diğer kolaylaştırıcı çözümler
+E-Fatura ve diğer kolaylaştırıcı çözümler...
 
 #### License
 
