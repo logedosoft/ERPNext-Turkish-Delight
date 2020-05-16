@@ -8,7 +8,7 @@ frappe.ui.form.on('EFatura Ayarlar', {
 			})
 		.then((objResponse) => {
 			console.log(objResponse);
-			alert(objResponse.message.result);
+			frappe.msgprint(objResponse.message.result);
 		});	
 	}
 });

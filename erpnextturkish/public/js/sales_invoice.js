@@ -4,7 +4,7 @@ function SendEInvoice(frm) {
         method:"erpnextturkish.td_utils.send_einvoice",
         async: true,
         args: { strSalesInvoiceName: frm.docname }
-        })
+    })
     .then((objResponse) => {
         console.log(objResponse);
         alert(objResponse.message);

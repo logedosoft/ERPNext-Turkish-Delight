@@ -8,6 +8,7 @@
   "test_modu",
   "kullaniciadi",
   "parola",
+  "btn_login_test",
   "td_cb_01_column",
   "efatura_adresi",
   "earsiv_adresi",
@@ -149,10 +150,15 @@
    "fieldname": "td_adres_ulke",
    "fieldtype": "Data",
    "label": "\u00dclke"
+  },
+  {
+   "fieldname": "btn_login_test",
+   "fieldtype": "Button",
+   "label": "Login Test"
   }
  ],
  "issingle": 1,
- "modified": "2020-02-25 13:37:23.764765",
+ "modified": "2020-05-16 17:08:43.336852",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
