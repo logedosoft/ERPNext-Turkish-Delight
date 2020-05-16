@@ -2,7 +2,13 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('EFatura Ayarlar', {
-	// refresh: function(frm) {
-
-	// }
+	btn_login_test: function(frm) {
+		frappe.call({
+			method:"erpnextturkish.td_utils.login_test"
+			})
+		.then((objResponse) => {
+			console.log(objResponse);
+			alert(objResponse.message.result);
+		});	
+	}
 });
