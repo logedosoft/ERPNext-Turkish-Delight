@@ -7,7 +7,7 @@ function SendEInvoice(frm) {
     })
     .then((objResponse) => {
         console.log(objResponse);
-        alert(objResponse.message);
+        frappe.msgprint(objResponse.message);
     });
 }
 

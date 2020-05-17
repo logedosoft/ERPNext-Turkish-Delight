@@ -11,17 +11,18 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 import requests
 import base64
 
+from bs4 import BeautifulSoup
+
 @frappe.whitelist()
 def send_einvoice(strSalesInvoiceName):
 
 	strResult = ""
-	blnResult = False
 
 	try:
 
 		strBody = """
-        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-        <s:Header><wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-FA7A82CCD721E8E848158197600064651"><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">zOBB+xvgK+JpkdzfssWwKg==</wsse:Nonce><wsu:Created>2020-02-17T21:46:40.646Z</wsu:Created></wsse:UsernameToken></wsse:Security></s:Header>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+	<s:Header><wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">zOBB+xvgK+JpkdzfssWwKg==</wsse:Nonce><wsu:Created>2020-02-17T21:46:40.646Z</wsu:Created></wsse:UsernameToken></wsse:Security></s:Header>
 	<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 		<SaveAsDraft xmlns="http://tempuri.org/">
 			<invoices>
@@ -184,32 +185,54 @@ def send_einvoice(strSalesInvoiceName):
 			str_line_xml = frappe.render_template(strLine, context={"docCurrentLine": item, "docItem":docItem, "docLineWarehouse":docLineWarehouse, "docUnit": docUnit}, is_path=False)
 			docSI.contentLines = docSI.contentLines + str_line_xml
 
+		#Ayarlari alalim
+		docEISettings = frappe.get_single("EFatura Ayarlar")		
+		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
+		docEISettings.parola = docEISettings.get_password('parola')
+
+		if docEISettings.test_modu:
+			strServerURL = docEISettings.test_efatura_adresi
+		else:
+			strServerURL = docEISettings.efatura_adresi
+
 		#Ana dokuman dosyamizi olusturalim
 		strDocXML = frappe.render_template(strBody, context={"docSI": docSI, "docSettings": docSettings, "docCustomer": docCustomer}, is_path=False)
 		#print(strDocXML.encode('utf-8'))
 
 		#webservisine gonderelim
 		#response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
-		response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
+		#response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
+		response = requests.post(strServerURL, headers=strHeaders, data=strDocXML.encode('utf-8'))
 		# You can inspect the response just like you did before
 		print("RESPONSE")
-		print(response.headers)
+		#print(response.headers)
 		print(response.text)
-		print(response.content)
+		#print(response.content)
 		print(response.status_code)
-		strResult = str(response.headers) + ' SC=' + str(response.status_code)
-		strResult += response.text
+
+		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
+		if response.status_code == 500:
+			strErrorMessage = bsMain.find_all("faultstring")[0].text
+			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
+			strResult += strErrorMessage
+		elif response.status_code == 200:
+			objSaveResult = bsMain.find_all("saveasdraftresult")[0]#['issucceded']#.get_attribute_list('is_succeddede')
+			if objSaveResult['issucceded'] == "false":
+				strResult = "Fatura gönderilemedi! Detay:" + objSaveResult['message']
+			else:
+				strResult = "İşlem Başarılı"
+		else:
+			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+			strResult += response.text
+
 	except Exception as e:
-		print("ERROR " + str(e))
-		#logger.error("ApiHeartland().send_data() error: " + str(e))
-		#return {"result_code": "-99", "result_text": "Payment error", "result": str(e), "result_paid": False}
+		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (send_einvoice) sunucudan gelen mesaj işlenemedi."))
     
 	return strResult
 
 @frappe.whitelist()
 def login_test():
-	from bs4 import BeautifulSoup
-
 	strResult = ""
 
 	try:
@@ -233,6 +256,7 @@ def login_test():
             'Connection': 'Keep-Alive'
 		}
 
+		#Ayarlari alalim
 		docEISettings = frappe.get_single("EFatura Ayarlar")		
 		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
 		docEISettings.parola = docEISettings.get_password('parola')
@@ -260,9 +284,9 @@ def login_test():
 			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
 			strResult += strErrorMessage
 		elif response.status_code == 200:
-			strResult = "İşlem Başarılı"
-			#strCustomerName = bsMain.find_all("Username")[0].text #TODO:BU KISIM CALISMADI. DUZELTILMELI
-			#strResult += _("Firma Adı:{0}").format(strCustomerName)
+			strResult = "İşlem Başarılı."
+			strCustomerName = bsMain.find_all("name")[1].text
+			strResult += _("Firma Adı:{0}").format(strCustomerName)
 		else:
 			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
 			strResult += response.text
@@ -271,7 +295,7 @@ def login_test():
 		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
 		frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) sunucudan gelen mesaj işlenemedi."))
 
-	return {'result':strResult, 'response':response}
+	return {'result':strResult, 'response':response.text}
 
 ### DOSYA GUNCELLEME MODULU
 @frappe.whitelist()
