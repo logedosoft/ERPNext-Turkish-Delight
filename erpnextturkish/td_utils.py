@@ -80,6 +80,7 @@ def send_einvoice(strSalesInvoiceName):
 								</PartyTaxScheme>
 							</Party>
 						</AccountingSupplierParty>
+
 						<AccountingCustomerParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 							<Party>
 								<PartyIdentification>
@@ -89,19 +90,19 @@ def send_einvoice(strSalesInvoiceName):
 								<PartyName>
 									<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.customer_name}}</Name>
 								</PartyName>
-
-
 							</Party>
 						</AccountingCustomerParty>
 
 						<LegalMonetaryTotal xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
-							<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.total}}</LineExtensionAmount>
-							<TaxExclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.net_total}}</TaxExclusiveAmount>
-							<TaxInclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.rounded_total}}</TaxInclusiveAmount>
-							<AllowanceTotalAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.discount_amount}}</AllowanceTotalAmount>
-							<PayableAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.rounded_total}}</PayableAmount>
+							<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.LineExtensionAmount}}</LineExtensionAmount>
+							<TaxExclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxExclusiveAmount}}</TaxExclusiveAmount>
+							<TaxInclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxInclusiveAmount}}</TaxInclusiveAmount>
+							<AllowanceTotalAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.AllowanceTotalAmount}}</AllowanceTotalAmount>
+							<PayableAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.PayableAmount}}</PayableAmount>
 						</LegalMonetaryTotal>
+
 						{{docSI.contentLines}}
+
 					</Invoice>
 					<TargetCustomer VknTckn="{{docCustomer.tax_id}}" Alias="defaultpk" Title="{{docCustomer.customer_name}}"/>
 					<EArchiveInvoiceInfo DeliveryType="Electronic"/>
@@ -137,7 +138,7 @@ def send_einvoice(strSalesInvoiceName):
 			</TaxSubtotal>
 		</TaxTotal>
 		<Item>
-			<Description xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Description>
+			<Description xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">DescriptionDescription</Description>
 			<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docItem.item_code}} {{docItem.item_name}}</Name>
 			<BrandName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></BrandName>
 			<ModelName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></ModelName>
@@ -157,6 +158,84 @@ def send_einvoice(strSalesInvoiceName):
 		</InvoiceLine>
 		"""
 
+		strLine2 = """
+		<InvoiceLine xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+							<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</ID>
+							<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Satır Notu</Note>
+							<InvoicedQuantity unitCode="NIU" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">10</InvoicedQuantity>
+							<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">990.00</LineExtensionAmount>
+							<Delivery>
+								<DeliveryAddress>
+									<StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Oberlandstraße 40-41</StreetName>
+									<BuildingName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">C1</BuildingName>
+									<BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">155</BuildingNumber>
+									<CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Oberland</CitySubdivisionName>
+									<CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Berlin</CityName>
+									<Country>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">GERMANY</Name>
+									</Country>
+								</DeliveryAddress>
+								<DeliveryTerms>
+									<ID schemeID="INCOTERMS" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">CIF</ID>
+								</DeliveryTerms>
+								<Shipment>
+									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</ID>
+									<GoodsItem>
+										<RequiredCustomsID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">123556.AA</RequiredCustomsID>
+									</GoodsItem>
+									<ShipmentStage>
+										<TransportModeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</TransportModeCode>
+									</ShipmentStage>
+									<TransportHandlingUnit>
+										<ActualPackage>
+											<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KapNo12345</ID>
+											<Quantity unitCode="CK" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">3</Quantity>
+											<PackagingTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">CK</PackagingTypeCode>
+											<ContainedPackage/>
+										</ActualPackage>
+									</TransportHandlingUnit>
+								</Shipment>
+							</Delivery>
+							<AllowanceCharge>
+								<ChargeIndicator xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">false</ChargeIndicator>
+								<Amount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">100</Amount>
+								<PerUnitAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">100</PerUnitAmount>
+							</AllowanceCharge>
+							<TaxTotal>
+								<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0.00</TaxAmount>
+								<TaxSubtotal>
+									<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0.00</TaxAmount>
+									<Percent xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0</Percent>
+									<TaxCategory>
+										<TaxExemptionReason xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">12345 sayılı kanuna istinaden</TaxExemptionReason>
+										<TaxScheme>
+											<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KDV</Name>
+											<TaxTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0015</TaxTypeCode>
+										</TaxScheme>
+									</TaxCategory>
+								</TaxSubtotal>
+							</TaxTotal>
+							<Item>
+								<Description xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Açıklama 1</Description>
+								<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Ürün Adı 1</Name>
+								<BrandName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Marka 1</BrandName>
+								<ModelName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Model Adi 1</ModelName>
+								<BuyersItemIdentification>
+									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Alıcı Kodu 1</ID>
+								</BuyersItemIdentification>
+								<SellersItemIdentification>
+									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Satıcı Kodu 1</ID>
+								</SellersItemIdentification>
+								<ManufacturersItemIdentification>
+									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Üretici Kodu 1</ID>
+								</ManufacturersItemIdentification>
+							</Item>
+							<Price>
+								<PriceAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">110</PriceAmount>
+							</Price>
+						</InvoiceLine>
+		"""
+
 		strHeaders = {
 			'Accept-Encoding': 'gzip,deflate',
 			'Accept': 'text/xml',
@@ -169,8 +248,7 @@ def send_einvoice(strSalesInvoiceName):
 
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
-		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
-		docSI.posting_time_formatted = "03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
+		
 		docSettings = {
 			'vergi_no': 9000068418,
 			'vergi_dairesi': 'asd',
@@ -187,12 +265,26 @@ def send_einvoice(strSalesInvoiceName):
 
 		#Satirlari olusturalim
 		docSI.contentLines = ""
+		flTotalLineDiscountAmount = 0 #Satirlardan gelen toplam iskonto tutari
 		for item in docSI.items:
 			docItem = frappe.get_doc("Item", item.item_code)
 			docLineWarehouse = frappe.get_doc("Warehouse", item.warehouse)
 			docUnit = frappe.get_doc("UOM", item.uom)
 			str_line_xml = frappe.render_template(strLine, context={"docCurrentLine": item, "docItem":docItem, "docLineWarehouse":docLineWarehouse, "docUnit": docUnit}, is_path=False)
 			docSI.contentLines = docSI.contentLines + str_line_xml
+
+			flTotalLineDiscountAmount += item.discount_amount * item.qty
+
+		#Ozel alanlari hesaplayalim
+		docSI.LineExtensionAmount = docSI.net_total + flTotalLineDiscountAmount #Miktar*BirimFiyat (Iskonto dusulmeden onceki hali, vergi haric)
+		docSI.TaxExclusiveAmount = docSI.net_total #VergiMatrahi (Vergiler Haric, Iskonto Dahil, Vergiye tabi kisim)
+		docSI.TaxInclusiveAmount = docSI.grand_total #Vergiler, iskonto dahil
+		docSI.AllowanceTotalAmount = flTotalLineDiscountAmount #Iskonto tutari
+		docSI.ChargeTotal = 0 #Artirim tutari.
+		docSI.PayableAmount = docSI.grand_total #Toplam odenecek tutar
+
+		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
+		docSI.posting_time_formatted = docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
 
 		#Ayarlari alalim
 		docEISettings = frappe.get_single("EFatura Ayarlar")		
