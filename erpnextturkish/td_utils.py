@@ -111,6 +111,20 @@ def send_einvoice(strSalesInvoiceName):
 							</Party>
 						</AccountingCustomerParty>
 
+						<TaxTotal xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+							<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxAmount}}</TaxAmount>
+							<TaxSubtotal>
+								<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxAmount}}</TaxAmount>
+								<Percent xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxPercent}}</Percent>
+								<TaxCategory>
+									<TaxScheme>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KDV</Name>
+										<TaxTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0015</TaxTypeCode>
+									</TaxScheme>
+								</TaxCategory>
+							</TaxSubtotal>
+						</TaxTotal>
+
 						<LegalMonetaryTotal xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 							<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.LineExtensionAmount}}</LineExtensionAmount>
 							<TaxExclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxExclusiveAmount}}</TaxExclusiveAmount>
@@ -315,6 +329,9 @@ def send_einvoice(strSalesInvoiceName):
 		docSI.AllowanceTotalAmount = flTotalLineDiscountAmount #Iskonto tutari
 		docSI.ChargeTotal = 0 #Artirim tutari.
 		docSI.PayableAmount = docSI.grand_total #Toplam odenecek tutar
+
+		docSI.TaxAmount = docSI.total_taxes_and_charges
+		docSI.TaxPercent = docSI.taxes[0].rate#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 
 		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
 		docSI.posting_time_formatted = docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
