@@ -47,33 +47,34 @@ def get_service_xml(strType):
 						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
 						<DocumentCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</DocumentCurrencyCode>
 						<PricingCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</PricingCurrencyCode>
+						
 						<AccountingSupplierParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 							<Party>
 								<PartyIdentification>
-									<ID schemeID="VKN" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.vergi_no}}</ID>
+									<ID schemeID="VKN" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_vergi_no}}</ID>
 								</PartyIdentification>
 								<PartyIdentification>
-									<ID schemeID="MERSISNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.mersis_no}}</ID>
+									<ID schemeID="MERSISNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_mersis_no}}</ID>
 								</PartyIdentification>
 								<PartyIdentification>
-									<ID schemeID="TICARETSICILNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.ticaret_sicil_no}}</ID>
+									<ID schemeID="TICARETSICILNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_ticaret_sicil_no}}</ID>
 								</PartyIdentification>
 								<PartyName>
-									<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.firma_adi}}</Name>
+									<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_firma_adi}}</Name>
 								</PartyName>
 								<PostalAddress>
-									<Room xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_kapi_no}}</Room>
-									<StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_sokak}}</StreetName>
-									<BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_bina_no}}</BuildingNumber>
-									<CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_ilce}}</CitySubdivisionName>
-									<CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_il}}</CityName>
+									<Room xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_kapi_no}}</Room>
+									<StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_sokak}}</StreetName>
+									<BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_bina_no}}</BuildingNumber>
+									<CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_ilce}}</CitySubdivisionName>
+									<CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_il}}</CityName>
 									<Country>
-										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.adres_ulke}}</Name>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_ulke}}</Name>
 									</Country>
 								</PostalAddress>
 								<PartyTaxScheme>
 									<TaxScheme>
-										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSettings.vergi_dairesi}}</Name>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_vergi_dairesi}}</Name>
 									</TaxScheme>
 								</PartyTaxScheme>
 							</Party>
@@ -281,20 +282,6 @@ def send_einvoice(strSalesInvoiceName):
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
 		docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
-		
-		docSettings = {
-			'vergi_no': 9000068418,
-			'vergi_dairesi': 'asd',
-			'mersis_no': '12345669-111',
-			'ticaret_sicil_no': '12345669-111',
-			'firma_adi' :'Uyumsoft Bilgi Sistemleri ve Teknolojileri A.Ş.',
-			'adres_kapi_no' : '1',
-			'adres_sokak' : 'TEST',
-			'adres_bina_no' : 'ASD',
-			'adres_ilce' : 'aaa',
-			'adres_il' : 'asd',
-			'adres_ulke' : 'asq'
-		}
 
 		#Satirlari olusturalim
 		docSI.contentLines = ""
@@ -339,12 +326,11 @@ def send_einvoice(strSalesInvoiceName):
 		docSI.posting_time_formatted = docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
 
 		#Ayarlari alalim
-		docEISettings = frappe.get_single("EFatura Ayarlar")		
-		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
+		docEISettings = frappe.get_single("EFatura Ayarlar")
 		docEISettings.parola = docEISettings.get_password('parola')
 
 		#Ana dokuman dosyamizi olusturalim
-		strDocXML = frappe.render_template(strBody, context={"docSI": docSI, "docSettings": docSettings, "docCustomer": docCustomer, "docEISettings": docEISettings}, is_path=False)
+		strDocXML = frappe.render_template(strBody, context={"docSI": docSI, "docEISettings": docEISettings, "docCustomer": docCustomer, "docEISettings": docEISettings}, is_path=False)
 
 		if docEISettings.test_modu:
 			strServerURL = docEISettings.test_efatura_adresi
