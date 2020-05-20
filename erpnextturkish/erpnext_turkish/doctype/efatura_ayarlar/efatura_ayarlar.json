@@ -27,7 +27,8 @@
   "td_adres_ilce",
   "td_adres_il",
   "td_adres_ulke",
-  "canli_section"
+  "canli_section",
+  "td_birim_eslestirme"
  ],
  "fields": [
   {
@@ -155,10 +156,17 @@
    "fieldname": "btn_login_test",
    "fieldtype": "Button",
    "label": "Login Test"
+  },
+  {
+   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim ad\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
+   "fieldname": "td_birim_eslestirme",
+   "fieldtype": "Table",
+   "label": "Birim E\u015fle\u015ftirme",
+   "options": "TD EFatura Birim Eslestirme"
   }
  ],
  "issingle": 1,
- "modified": "2020-05-16 17:08:43.336852",
+ "modified": "2020-05-21 00:32:46.319775",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",

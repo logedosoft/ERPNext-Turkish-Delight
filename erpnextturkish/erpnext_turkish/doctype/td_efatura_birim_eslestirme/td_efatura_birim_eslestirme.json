@@ -1,0 +1,39 @@
+{
+ "creation": "2020-05-21 00:27:48.740497",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "td_birim",
+  "td_efatura_birimi"
+ ],
+ "fields": [
+  {
+   "fieldname": "td_birim",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Birim Ad\u0131",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim ad\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
+   "fieldname": "td_efatura_birimi",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "E-Fatura Birimi",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-05-21 00:32:17.674814",
+ "modified_by": "Administrator",
+ "module": "ERPNext Turkish",
+ "name": "TD EFatura Birim Eslestirme",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -149,7 +149,7 @@ def get_service_xml(strType):
 		<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.idx}}</ID>
 		<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
 		
-		<InvoicedQuantity unitCode="{{docUnit.td_efatura_birimi}}" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.qty}}</InvoicedQuantity>
+		<InvoicedQuantity unitCode="{{docCurrentLine.efatura_birimi}}" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.qty}}</InvoicedQuantity>
 		<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.amount}}</LineExtensionAmount>
 		
 		<AllowanceCharge>
@@ -299,21 +299,29 @@ def send_einvoice(strSalesInvoiceName):
 		#Satirlari olusturalim
 		docSI.contentLines = ""
 		flTotalLineDiscountAmount = 0 #Satirlardan gelen toplam iskonto tutari
-		for item in docSI.items:
-			docItem = frappe.get_doc("Item", item.item_code)
-			docLineWarehouse = frappe.get_doc("Warehouse", item.warehouse)
-			docUnit = frappe.get_doc("UOM", item.uom)
+		for docSILine in docSI.items:
+			docItem = frappe.get_doc("Item", docSILine.item_code)
 
 			#Satir KDV orani, KDV Tutari, KDV Matrahi, Iskonto uygulanan rakami bulalim.
-			item.TaxPercent = docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
-			item.TaxableAmount = item.amount
-			item.TaxAmount = round((item.TaxPercent/100) * item.amount, 2)
-			item.AllowanceBaseAmount = item.price_list_rate * item.qty#Iskonto uygulanan rakam
+			docSILine.TaxPercent = docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
+			docSILine.TaxableAmount = docSILine.amount
+			docSILine.TaxAmount = round((docSILine.TaxPercent/100) * docSILine.amount, 2)
+			docSILine.AllowanceBaseAmount = docSILine.price_list_rate * docSILine.qty#Iskonto uygulanan rakam
 
-			flTotalLineDiscountAmount += item.discount_amount * item.qty
+			flTotalLineDiscountAmount += docSILine.discount_amount * docSILine.qty
+
+			#E-Fatura birimini ayarlardan bulalim
+			lstUnitLine = frappe.get_all('TD EFatura Birim Eslestirme',
+				fields=['td_efatura_birimi'],
+				filters=[['parent', '=', 'EFatura Ayarlar'], ['td_birim', '=', docSILine.uom]])
+			
+			if not lstUnitLine:
+				raise ValueError('{UOM} birimi için E-Fatura Birimi tanımlanmamış. EFatura Ayarlar sayfasından Birim Eşleştirmesi giriniz.'.format(UOM=docSILine.uom))
+			else:
+				docSILine.efatura_birimi = lstUnitLine[0]['td_efatura_birimi']
 
 			#XML olusturalim
-			str_line_xml = frappe.render_template(strLine, context={"docCurrentLine": item, "docItem":docItem, "docLineWarehouse":docLineWarehouse, "docUnit": docUnit}, is_path=False)
+			str_line_xml = frappe.render_template(strLine, context={"docCurrentLine": docSILine, "docItem":docItem}, is_path=False)
 			docSI.contentLines = docSI.contentLines + str_line_xml
 
 		#Ozel alanlari hesaplayalim
@@ -382,10 +390,10 @@ def send_einvoice(strSalesInvoiceName):
 			strResult += response.text
 
 	except Exception as e:
-		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+		strResult = _("Hata oluştu! Detay:{0}").format(e)
 		frappe.log_error(frappe.get_traceback(), _("E-Fatura (send_einvoice) sunucudan gelen mesaj işlenemedi."))
     
-	return {'result':strResult, 'response':response.text}
+	return {'result':strResult, 'response':response.text if 'response' in locals() else ''}
 
 @frappe.whitelist()
 def get_invoice_status(docSI = None, strSaleInvoiceName = None):
