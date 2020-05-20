@@ -313,7 +313,7 @@ def send_einvoice(strSalesInvoiceName):
 			#Satir KDV orani, KDV Tutari, KDV Matrahi, Iskonto uygulanan rakami bulalim.
 			item.TaxPercent = docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 			item.TaxableAmount = item.amount
-			item.TaxAmount = (item.TaxPercent/100) * item.amount
+			item.TaxAmount = round((item.TaxPercent/100) * item.amount, 2)
 			item.AllowanceBaseAmount = item.price_list_rate * item.qty#Iskonto uygulanan rakam
 
 			flTotalLineDiscountAmount += item.discount_amount * item.qty
@@ -356,11 +356,11 @@ def send_einvoice(strSalesInvoiceName):
 		#response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
 		response = requests.post(strServerURL, headers=strHeaders, data=strDocXML.encode('utf-8'))
 		# You can inspect the response just like you did before
-		print("RESPONSE")
+		#print("RESPONSE")
 		#print(response.headers)
-		print(response.text)
+		#print(response.text)
 		#print(response.content)
-		print(response.status_code)
+		#print(response.status_code)
 
 		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
 		if response.status_code == 500:
