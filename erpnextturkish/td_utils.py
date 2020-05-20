@@ -355,12 +355,7 @@ def send_einvoice(strSalesInvoiceName):
 		#response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
 		#response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
 		response = requests.post(strServerURL, headers=strHeaders, data=strDocXML.encode('utf-8'))
-		# You can inspect the response just like you did before
-		#print("RESPONSE")
-		#print(response.headers)
-		#print(response.text)
-		#print(response.content)
-		#print(response.status_code)
+		# You can inspect the response just like you did before. response.headers, response.text, response.content, response.status_code
 
 		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
 		if response.status_code == 500:
@@ -372,7 +367,18 @@ def send_einvoice(strSalesInvoiceName):
 			if objSaveResult['issucceded'] == "false":
 				strResult = "Fatura gönderilemedi! Detay:" + objSaveResult['message']
 			else:
-				strResult = "İşlem Başarılı"
+				strResult = "İşlem Başarılı."
+				#Referanslari faturaya geri yazalim
+				objSaveResultInfo = bsMain.find_all("value")[0]#['issucceded']#.get_attribute_list('is_succeddede')
+
+				#docSI.td_efatura_senaryosu = objSaveResultInfo['invoicescenario']
+				docSI.db_set('td_efatura_senaryosu', objSaveResultInfo['invoicescenario'], notify=True)
+				docSI.db_set('td_efatura_uuid', objSaveResultInfo['id'], notify=True)
+				docSI.db_set('td_efatura_ettn', objSaveResultInfo['number'], notify=True)
+
+				docSI.add_comment('Comment', text='E-Fatura: Belge gönderildi.')
+
+				docSI.notify_update()
 		else:
 			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
 			strResult += response.text

@@ -7,6 +7,7 @@ function SendEInvoice(frm) {
     })
     .then((objResponse) => {
         console.log(objResponse);
+        frm.reload_doc();
         frappe.msgprint(objResponse.message.result);
     });
 }
