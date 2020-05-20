@@ -13,14 +13,12 @@ import base64
 
 from bs4 import BeautifulSoup
 
-@frappe.whitelist()
-def send_einvoice(strSalesInvoiceName):
+def get_service_xml(strType):
+	strResult = ''
 
-	strResult = ""
-
-	try:
-#<s:Header><wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">zOBB+xvgK+JpkdzfssWwKg==</wsse:Nonce><wsu:Created>2020-02-17T21:46:40.646Z</wsu:Created></wsse:UsernameToken></wsse:Security></s:Header>
-		strBody = """
+	if strType == 'einvoice-body':
+		#<s:Header><wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">zOBB+xvgK+JpkdzfssWwKg==</wsse:Nonce><wsu:Created>2020-02-17T21:46:40.646Z</wsu:Created></wsse:UsernameToken></wsse:Security></s:Header>
+		strResult = """
 <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
 
 	<s:Header>
@@ -145,7 +143,8 @@ def send_einvoice(strSalesInvoiceName):
 	</s:Body>
 </s:Envelope>
 """
-		strLine = """
+	elif strType == "einvoice-line":
+			strResult = """
 	<InvoiceLine xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 		<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.idx}}</ID>
 		<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
@@ -196,85 +195,8 @@ def send_einvoice(strSalesInvoiceName):
 	</InvoiceLine>
 		"""
 
-		strLine2 = """
-		<InvoiceLine xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
-							<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</ID>
-							<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Satır Notu</Note>
-							<InvoicedQuantity unitCode="NIU" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">10</InvoicedQuantity>
-							<LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">990.00</LineExtensionAmount>
-							<Delivery>
-								<DeliveryAddress>
-									<StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Oberlandstraße 40-41</StreetName>
-									<BuildingName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">C1</BuildingName>
-									<BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">155</BuildingNumber>
-									<CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Oberland</CitySubdivisionName>
-									<CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Berlin</CityName>
-									<Country>
-										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">GERMANY</Name>
-									</Country>
-								</DeliveryAddress>
-								<DeliveryTerms>
-									<ID schemeID="INCOTERMS" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">CIF</ID>
-								</DeliveryTerms>
-								<Shipment>
-									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</ID>
-									<GoodsItem>
-										<RequiredCustomsID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">123556.AA</RequiredCustomsID>
-									</GoodsItem>
-									<ShipmentStage>
-										<TransportModeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">1</TransportModeCode>
-									</ShipmentStage>
-									<TransportHandlingUnit>
-										<ActualPackage>
-											<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KapNo12345</ID>
-											<Quantity unitCode="CK" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">3</Quantity>
-											<PackagingTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">CK</PackagingTypeCode>
-											<ContainedPackage/>
-										</ActualPackage>
-									</TransportHandlingUnit>
-								</Shipment>
-							</Delivery>
-							<AllowanceCharge>
-								<ChargeIndicator xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">false</ChargeIndicator>
-								<Amount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">100</Amount>
-								<PerUnitAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">100</PerUnitAmount>
-							</AllowanceCharge>
-							<TaxTotal>
-								<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0.00</TaxAmount>
-								<TaxSubtotal>
-									<TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0.00</TaxAmount>
-									<Percent xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0</Percent>
-									<TaxCategory>
-										<TaxExemptionReason xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">12345 sayılı kanuna istinaden</TaxExemptionReason>
-										<TaxScheme>
-											<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KDV</Name>
-											<TaxTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0015</TaxTypeCode>
-										</TaxScheme>
-									</TaxCategory>
-								</TaxSubtotal>
-							</TaxTotal>
-							<Item>
-								<Description xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Açıklama 1</Description>
-								<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Ürün Adı 1</Name>
-								<BrandName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Marka 1</BrandName>
-								<ModelName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Model Adi 1</ModelName>
-								<BuyersItemIdentification>
-									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Alıcı Kodu 1</ID>
-								</BuyersItemIdentification>
-								<SellersItemIdentification>
-									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Satıcı Kodu 1</ID>
-								</SellersItemIdentification>
-								<ManufacturersItemIdentification>
-									<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Üretici Kodu 1</ID>
-								</ManufacturersItemIdentification>
-							</Item>
-							<Price>
-								<PriceAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">110</PriceAmount>
-							</Price>
-						</InvoiceLine>
-		"""
-
-		strHeaders = {
+	elif strType == "einvoice-headers":
+		strResult = {
 			'Accept-Encoding': 'gzip,deflate',
 			'Accept': 'text/xml',
 			'Content-Type': 'text/xml;charset=UTF-8',
@@ -283,6 +205,78 @@ def send_einvoice(strSalesInvoiceName):
 			'SOAPAction': 'http://tempuri.org/IIntegration/SaveAsDraft',
 			'Connection': 'Keep-Alive'
 		}
+	
+	elif strType == "login-test-headers":
+		strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/WhoAmI',
+            'Connection': 'Keep-Alive'
+		}
+	elif strType == "login-test-body":
+		strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	     <wsse:UsernameToken>
+		    <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+	        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+	     </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <tem:WhoAmI/>
+   </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+	elif strType == "query-invoice-status-headers":
+		strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/QueryOutboxInvoiceStatus',
+            'Connection': 'Keep-Alive'
+		}
+	
+	elif strType == "query-invoice-status-body":
+		strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	     <wsse:UsernameToken>
+		    <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+	        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+	     </wsse:UsernameToken>
+      </wsse:Security>
+	</soapenv:Header>
+   <soapenv:Body>
+      <tem:QueryOutboxInvoiceStatus>
+         <tem:invoiceIds>
+            <tem:string>{{docSI.td_efatura_uuid}}</tem:string>
+         </tem:invoiceIds>
+      </tem:QueryOutboxInvoiceStatus>
+   </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+	return strResult
+
+@frappe.whitelist()
+def send_einvoice(strSalesInvoiceName):
+
+	strResult = ""
+
+	try:
+		
+		strHeaders = get_service_xml('einvoice-headers')
+		strBody = get_service_xml('einvoice-body')
+		strLine = get_service_xml('einvoice-line')
 
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
@@ -366,6 +360,7 @@ def send_einvoice(strSalesInvoiceName):
 			objSaveResult = bsMain.find_all("saveasdraftresult")[0]#['issucceded']#.get_attribute_list('is_succeddede')
 			if objSaveResult['issucceded'] == "false":
 				strResult = "Fatura gönderilemedi! Detay:" + objSaveResult['message']
+				docSI.add_comment('Comment', text="E-Fatura: Belge gönderilemedi! Detay:" + objSaveResult['message'])
 			else:
 				strResult = "İşlem Başarılı."
 				#Referanslari faturaya geri yazalim
@@ -378,6 +373,11 @@ def send_einvoice(strSalesInvoiceName):
 
 				docSI.add_comment('Comment', text='E-Fatura: Belge gönderildi.')
 
+				#Fatura durumunu alalim
+				print("EFT DURUM")
+				print(get_invoice_status(docSI)['result'])
+				docSI.db_set('td_efatura_durumu', get_invoice_status(docSI)['result'], notify=True)
+
 				docSI.notify_update()
 		else:
 			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
@@ -389,30 +389,53 @@ def send_einvoice(strSalesInvoiceName):
     
 	return {'result':strResult, 'response':response.text}
 
+def get_invoice_status(docSI):
+	strResult = ""
+
+	try:
+		body = get_service_xml('query-invoice-status-body')
+
+		headers = get_service_xml('query-invoice-status-headers')
+
+		#Ayarlari alalim
+		docEISettings = frappe.get_single("EFatura Ayarlar")		
+		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
+		docEISettings.parola = docEISettings.get_password('parola')
+
+		if docEISettings.test_modu:
+			strServerURL = docEISettings.test_efatura_adresi
+		else:
+			strServerURL = docEISettings.efatura_adresi
+
+		body = frappe.render_template(body, context={"docEISettings": docEISettings, "docSI": docSI}, is_path=False)
+
+		response = requests.post(strServerURL, headers=headers, data=body)
+
+		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
+		if response.status_code == 500:
+			strErrorMessage = bsMain.find_all("faultstring")[0].text
+			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
+			strResult += strErrorMessage
+		elif response.status_code == 200:
+			strResult = bsMain.find_all("value")[0]['status']
+		else:
+			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+			strResult += response.text
+
+	except Exception as e:
+		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) sunucudan gelen mesaj işlenemedi."))
+
+	return {'result':strResult, 'response':response.text}
+
 @frappe.whitelist()
 def login_test():
 	strResult = ""
 
 	try:
-		#PRODUCTION BODY
-		body = """
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-   <soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header>
-   <soapenv:Body>
-      <tem:WhoAmI/>
-   </soapenv:Body>
-</soapenv:Envelope>
-                """
+		body = get_service_xml('login-test-body')
 
-		headers = {
-            'Accept-Encoding': 'gzip,deflate',
-            'Accept': 'text/xml',
-            'Content-Type': 'text/xml;charset=UTF-8',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
-            'SOAPAction': 'http://tempuri.org/IIntegration/WhoAmI',
-            'Connection': 'Keep-Alive'
-		}
+		headers = get_service_xml('login-test-headers')
 
 		#Ayarlari alalim
 		docEISettings = frappe.get_single("EFatura Ayarlar")		
@@ -429,12 +452,6 @@ def login_test():
 		#response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=headers, data=body)
 		#response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=headers, data=body)
 		response = requests.post(strServerURL, headers=headers, data=body)
-		# You can inspect the response just like you did before
-		#print("RESPONSE")
-		#print(response.headers)
-		#print(response.text)
-		#print(response.content)
-		#print(response.status_code)
 
 		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
 		if response.status_code == 500:
