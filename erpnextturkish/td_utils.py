@@ -374,8 +374,6 @@ def send_einvoice(strSalesInvoiceName):
 				docSI.add_comment('Comment', text='E-Fatura: Belge gönderildi.')
 
 				#Fatura durumunu alalim
-				print("EFT DURUM")
-				print(get_invoice_status(docSI)['result'])
 				docSI.db_set('td_efatura_durumu', get_invoice_status(docSI)['result'], notify=True)
 
 				docSI.notify_update()
@@ -389,8 +387,12 @@ def send_einvoice(strSalesInvoiceName):
     
 	return {'result':strResult, 'response':response.text}
 
-def get_invoice_status(docSI):
+@frappe.whitelist()
+def get_invoice_status(docSI = None, strSaleInvoiceName = None):
 	strResult = ""
+
+	if docSI is None:
+		docSI = frappe.get_doc("Sales Invoice", strSaleInvoiceName)
 
 	try:
 		body = get_service_xml('query-invoice-status-body')
