@@ -281,7 +281,13 @@ def send_einvoice(strSalesInvoiceName):
 
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
-		docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
+
+		if hasattr(docCustomer, 'tax_office'):
+			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
+		elif hasattr(docCustomer, 'taxoffice'):
+			docCustomer.tax_office = docCustomer.taxoffice if docCustomer.taxoffice is not None else ''
+		else:
+			raise ValueError('Müşteri kartlarında için vergi dairesi alanı (tax_office) bulunamadı. (Customize Form ile Customer için tax_office alanı eklenmeli).')
 
 		#Satirlari olusturalim
 		docSI.contentLines = ""
