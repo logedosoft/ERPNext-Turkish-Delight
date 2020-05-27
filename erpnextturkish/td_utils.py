@@ -283,14 +283,6 @@ def send_einvoice(strSalesInvoiceName):
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
 		docCustomerAddress = frappe.get_doc("Address", docSI.customer_address)
 		docCustomer.id_scheme = "VKN" if docCustomer.customer_type == "Company" else "TCKN"
-		'''docCustomerAddress.address_line1 = docCustomerAddress.address_line1 if docCustomerAddress.address_line1 is not None else ''
-		docCustomerAddress.address_line2 = docCustomerAddress.address_line2 if docCustomerAddress.address_line2 is not None else ''
-		docCustomerAddress.address_line1 = docCustomerAddress.address_line1.replace("&", "&#38;")
-		docCustomerAddress.address_line2 = docCustomerAddress.address_line2.replace("&", "&#38;")
-		docCustomerAddress.county = docCustomerAddress.county if docCustomerAddress.county is not None else ''
-		docCustomerAddress.city = docCustomerAddress.city if docCustomerAddress.city is not None else ''
-		docCustomerAddress.pincode = docCustomerAddress.pincode if docCustomerAddress.pincode is not None else ''
-		docCustomerAddress.country = docCustomerAddress.country if docCustomerAddress.country is not None else '' '''
 
 		if hasattr(docCustomer, 'tax_office'):
 			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
@@ -306,7 +298,7 @@ def send_einvoice(strSalesInvoiceName):
 			docItem = frappe.get_doc("Item", docSILine.item_code)
 
 			#Satir KDV orani, KDV Tutari, KDV Matrahi, Iskonto uygulanan rakami bulalim.
-			docSILine.TaxPercent = docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
+			docSILine.TaxPercent = frappe.get_doc("Account", docSI.taxes[0].account_head).tax_rate #docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 			docSILine.TaxableAmount = docSILine.amount
 			docSILine.TaxAmount = round((docSILine.TaxPercent/100) * docSILine.amount, 2)
 			docSILine.AllowanceBaseAmount = docSILine.price_list_rate * docSILine.qty#Iskonto uygulanan rakam
@@ -336,7 +328,7 @@ def send_einvoice(strSalesInvoiceName):
 		docSI.PayableAmount = docSI.grand_total #Toplam odenecek tutar
 
 		docSI.TaxAmount = docSI.total_taxes_and_charges
-		docSI.TaxPercent = docSI.taxes[0].rate#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
+		docSI.TaxPercent = frappe.get_doc("Account", docSI.taxes[0].account_head).tax_rate #docSI.taxes[0].rate#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 
 		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
 		docSI.posting_time_formatted = docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
