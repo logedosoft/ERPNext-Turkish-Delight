@@ -83,7 +83,7 @@ def get_service_xml(strType):
 						<AccountingCustomerParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 							<Party>
 								<PartyIdentification>
-									<ID schemeID="VKN" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_id}}</ID>
+									<ID schemeID="{{docCustomer.id_scheme}}" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_id}}</ID>
 								</PartyIdentification>
 
 								<PartyName>
@@ -91,19 +91,19 @@ def get_service_xml(strType):
 								</PartyName>
 
 								<PostalAddress>
-									<StreetName></StreetName>
-									<BuildingNumber></BuildingNumber>
-									<CitySubdivisionName></CitySubdivisionName>
-									<CityName></CityName>
-									<PostalZone></PostalZone>
+									<StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.address_line1}}</StreetName>
+									<BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.address_line2}}</BuildingNumber>
+									<CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.county}}</CitySubdivisionName>
+									<CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.city}}</CityName>
+									<PostalZone xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.pincode}}</PostalZone>
 									<Country>
-										<Name></Name>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.country}}</Name>
 									</Country>
 								</PostalAddress>
 
 								<PartyTaxScheme>
 									<TaxScheme>
-										<Name>{{docCustomer.tax_office}}</Name>
+										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_office}}</Name>
 									</TaxScheme>
 								</PartyTaxScheme>
 
@@ -281,6 +281,16 @@ def send_einvoice(strSalesInvoiceName):
 
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
+		docCustomerAddress = frappe.get_doc("Address", docSI.customer_address)
+		docCustomer.id_scheme = "VKN" if docCustomer.customer_type == "Company" else "TCKN"
+		docCustomerAddress.address_line1 = docCustomerAddress.address_line1 if docCustomerAddress.address_line1 is not None else ''
+		docCustomerAddress.address_line2 = docCustomerAddress.address_line2 if docCustomerAddress.address_line2 is not None else ''
+		docCustomerAddress.address_line1 = docCustomerAddress.address_line1.replace("&", "&#38;")
+		docCustomerAddress.address_line2 = docCustomerAddress.address_line2.replace("&", "&#38;")
+		docCustomerAddress.county = docCustomerAddress.county if docCustomerAddress.county is not None else ''
+		docCustomerAddress.city = docCustomerAddress.city if docCustomerAddress.city is not None else ''
+		docCustomerAddress.pincode = docCustomerAddress.pincode if docCustomerAddress.pincode is not None else ''
+		docCustomerAddress.country = docCustomerAddress.country if docCustomerAddress.country is not None else ''
 
 		if hasattr(docCustomer, 'tax_office'):
 			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
@@ -336,7 +346,13 @@ def send_einvoice(strSalesInvoiceName):
 		docEISettings.parola = docEISettings.get_password('parola')
 
 		#Ana dokuman dosyamizi olusturalim
-		strDocXML = frappe.render_template(strBody, context={"docSI": docSI, "docEISettings": docEISettings, "docCustomer": docCustomer, "docEISettings": docEISettings}, is_path=False)
+		strDocXML = frappe.render_template(strBody, context=
+		{
+			"docSI": docSI, 
+			"docCustomer": docCustomer, 
+			"docEISettings": docEISettings,
+			"docCustomerAddress": docCustomerAddress
+		}, is_path=False)
 
 		if docEISettings.test_modu:
 			strServerURL = docEISettings.test_efatura_adresi
@@ -356,6 +372,7 @@ def send_einvoice(strSalesInvoiceName):
 			strErrorMessage = bsMain.find_all("faultstring")[0].text
 			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
 			strResult += strErrorMessage
+			docSI.add_comment('Comment', text="E-Fatura: Belge gönderilemedi! Detay:" + strResult)
 		elif response.status_code == 200:
 			objSaveResult = bsMain.find_all("saveasdraftresult")[0]#['issucceded']#.get_attribute_list('is_succeddede')
 			if objSaveResult['issucceded'] == "false":
@@ -371,7 +388,7 @@ def send_einvoice(strSalesInvoiceName):
 				docSI.db_set('td_efatura_uuid', objSaveResultInfo['id'], notify=True)
 				docSI.db_set('td_efatura_ettn', objSaveResultInfo['number'], notify=True)
 
-				docSI.add_comment('Comment', text='E-Fatura: Belge gönderildi.')
+				docSI.add_comment('Comment', text=_('E-Fatura: Belge gönderildi. (Ek Bilgiler:{0}, {1})'.format(objSaveResultInfo['number'], objSaveResultInfo['id'])))
 
 				#Fatura durumunu alalim
 				docSI.db_set('td_efatura_durumu', get_invoice_status(docSI)['result'], notify=True)
