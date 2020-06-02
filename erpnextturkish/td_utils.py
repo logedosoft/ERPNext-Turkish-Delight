@@ -136,7 +136,7 @@ def get_service_xml(strType):
 						{{docSI.contentLines}}
 
 					</Invoice>
-					<TargetCustomer VknTckn="{{docCustomer.tax_id}}" Alias="defaultpk" Title="{{docCustomer.customer_name}}"/>
+					<TargetCustomer VknTckn="{{docCustomer.tax_id}}" Alias="{{docCustomer.td_alici_alias}}" Title="{{docCustomer.customer_name}}"/>
 					<EArchiveInvoiceInfo DeliveryType="Electronic"/>
 					<Scenario>Automated</Scenario>
 				</InvoiceInfo>
@@ -313,6 +313,9 @@ def send_einvoice(strSalesInvoiceName):
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
 		docCustomerAddress = frappe.get_doc("Address", docSI.customer_address)
 		docCustomer.id_scheme = "VKN" if docCustomer.customer_type == "Company" else "TCKN"
+		#Eger alias tanimli degil ise bulalim
+		if not docCustomer.td_alici_alias:
+			docCustomer.td_alici_alias = get_user_aliasses(docCustomer=docCustomer)['alias']
 
 		if hasattr(docCustomer, 'tax_office'):
 			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
@@ -427,12 +430,14 @@ def send_einvoice(strSalesInvoiceName):
 	return {'result':strResult, 'response':response.text if 'response' in locals() else ''}
 
 @frappe.whitelist()
-def get_user_aliasses(strCustomerName):
+def get_user_aliasses(strCustomerName = None, docCustomer = None):
 	#Firma alias bilgilerini alir. strCustomerName = Musteri Kart ID
 	strResult = ""
+	strResultAlias = ""
 
 	try:
-		docCustomer = frappe.get_doc("Customer", strCustomerName)
+		if docCustomer is None:
+			docCustomer = frappe.get_doc("Customer", strCustomerName)
 
 		body = get_service_xml('query-get-user-aliasses-body')
 		headers = get_service_xml('query-get-user-aliasses-headers')
@@ -466,16 +471,20 @@ def get_user_aliasses(strCustomerName):
 				docCustomer.add_comment('Comment', text="E-Fatura: Adres alınamadı! Detay:" + objSaveResult['message'])
 			else:
 				if len(bsMain.find_all("receiverboxaliases")) == 0:
-					strResult = "Adres alınamadı! Detay:Karşı tarafta bu vergi numarasına ait kayıt bulunamadı."
-					docCustomer.add_comment('Comment', text="E-Fatura: Adres alınamadı! Detay:Karşı tarafta bu vergi numarasına ait kayıt bulunamadı.")
+					#EArsiv kullanicisi olmali
+					strResult = "E-Arşiv kullanıcısı."
+					docCustomer.db_set('td_alici_alias', 'defaultpk', notify=True)
+					docCustomer.add_comment('Comment', text="E-Fatura: E-Arşiv kullanıcısı (defaultpk).")
+					docCustomer.notify_update()
 				else:
 					objReceiverboxAliases = bsMain.find_all("receiverboxaliases")[0]
+					strCompanyTitle = bsMain.find_all("definition")[0]['title']
 					#print(objReceiverboxAliases['alias'])
-					strResult = _("Adres {0} olarak güncellendi.").format(objReceiverboxAliases['alias'])
+					strResultAlias = objReceiverboxAliases['alias']
+					strResult = _("Adres {0} olarak güncellendi.Firma Adı:{1}").format(objReceiverboxAliases['alias'], strCompanyTitle)
 					docCustomer.db_set('td_alici_alias', objReceiverboxAliases['alias'], notify=True)
-					docCustomer.add_comment('Comment', text=_("E-Fatura: Adres {0} olarak güncellendi.").format(objReceiverboxAliases['alias']))
+					docCustomer.add_comment('Comment', text=_("E-Fatura: Adres {0} olarak güncellendi.Firma Adı:{1}").format(objReceiverboxAliases['alias'], strCompanyTitle))
 					docCustomer.notify_update()
-
 		else:
 			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
 			strResult += response.text
@@ -484,7 +493,7 @@ def get_user_aliasses(strCustomerName):
 		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
 		frappe.log_error(frappe.get_traceback(), _("E-Fatura (GetUserAliasses) sunucudan gelen mesaj işlenemedi."))
 
-	return {'result':strResult, 'response':response.text}
+	return {'result':strResult, 'response':response.text, 'alias': strResultAlias}
 
 @frappe.whitelist()
 def get_invoice_status(docSI = None, strSaleInvoiceName = None):
@@ -525,7 +534,7 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
 
 	except Exception as e:
 		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
-		frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) sunucudan gelen mesaj işlenemedi."))
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (GetInvoiceStatus) sunucudan gelen mesaj işlenemedi."))
 
 	return {'result':strResult, 'response':response.text}
 
