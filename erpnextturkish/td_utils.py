@@ -6,10 +6,11 @@ import frappe, json
 from frappe import msgprint, _
 
 from frappe.model.document import Document
-from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil, today, formatdate, encode
+from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil, today, formatdate, format_time, encode, get_time
 
 import requests
 import base64
+import dateutil
 
 from bs4 import BeautifulSoup
 
@@ -331,7 +332,7 @@ def send_einvoice(strSalesInvoiceName):
 		docSI.TaxPercent = frappe.get_doc("Account", docSI.taxes[0].account_head).tax_rate #docSI.taxes[0].rate#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 
 		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
-		docSI.posting_time_formatted = docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
+		docSI.posting_time_formatted = get_time(docSI.posting_time).strftime("%H:%M:%S")#format_time(time_string=docSI.posting_time, format_string='HH:mm:ss')#str(dateutil.parser.parse(docSI.posting_time)).strftime("%H-%M-%S")#docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
 
 		#Ayarlari alalim
 		docEISettings = frappe.get_single("EFatura Ayarlar")
