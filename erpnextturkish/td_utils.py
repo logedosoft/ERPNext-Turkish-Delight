@@ -266,6 +266,35 @@ def get_service_xml(strType):
    </soapenv:Body>
 </soapenv:Envelope>
 """
+	elif strType == "query-get-user-aliasses-headers":
+		strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/GetUserAliasses',
+            'Connection': 'Keep-Alive'
+		}
+
+	elif strType == "query-get-user-aliasses-body":
+		strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	     <wsse:UsernameToken>
+		    <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+	        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+	     </wsse:UsernameToken>
+      </wsse:Security>
+	</soapenv:Header>
+   <soapenv:Body>
+      <tem:GetUserAliasses>
+         <tem:vknTckn>{{docCustomer.tax_id}}</tem:vknTckn>
+      </tem:GetUserAliasses>
+   </soapenv:Body>
+</soapenv:Envelope>
+		"""
 
 	return strResult
 
@@ -396,6 +425,66 @@ def send_einvoice(strSalesInvoiceName):
 		frappe.log_error(frappe.get_traceback(), _("E-Fatura (send_einvoice) sunucudan gelen mesaj işlenemedi."))
     
 	return {'result':strResult, 'response':response.text if 'response' in locals() else ''}
+
+@frappe.whitelist()
+def get_user_aliasses(strCustomerName):
+	#Firma alias bilgilerini alir. strCustomerName = Musteri Kart ID
+	strResult = ""
+
+	try:
+		docCustomer = frappe.get_doc("Customer", strCustomerName)
+
+		body = get_service_xml('query-get-user-aliasses-body')
+		headers = get_service_xml('query-get-user-aliasses-headers')
+
+		#Ayarlari alalim
+		docEISettings = frappe.get_single("EFatura Ayarlar")		
+		docEISettings.kullaniciadi = docEISettings.kullaniciadi 
+		docEISettings.parola = docEISettings.get_password('parola')
+
+		body = frappe.render_template(body, context={"docEISettings": docEISettings, "docCustomer": docCustomer}, is_path=False)
+		
+		if docEISettings.test_modu:
+			strServerURL = docEISettings.test_efatura_adresi
+			#Test modunda gonderdigimiz xml i  de saklayalim
+			frappe.log_error(body, _("E-Fatura (get_user_aliasses) gönderilen paket"))
+		else:
+			strServerURL = docEISettings.efatura_adresi
+
+		response = requests.post(strServerURL, headers=headers, data=body)
+
+		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
+
+		if response.status_code == 500:
+			strErrorMessage = bsMain.find_all("faultstring")[0].text
+			strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
+			strResult += strErrorMessage
+		elif response.status_code == 200:
+			objSaveResult = bsMain.find_all("getuseraliassesresult")[0]#['issucceded']#.get_attribute_list('is_succeddede')
+			if objSaveResult['issucceded'] == "false":
+				strResult = "Adres alınamadı! Detay:" + objSaveResult['message']
+				docCustomer.add_comment('Comment', text="E-Fatura: Adres alınamadı! Detay:" + objSaveResult['message'])
+			else:
+				if len(bsMain.find_all("receiverboxaliases")) == 0:
+					strResult = "Adres alınamadı! Detay:Karşı tarafta bu vergi numarasına ait kayıt bulunamadı."
+					docCustomer.add_comment('Comment', text="E-Fatura: Adres alınamadı! Detay:Karşı tarafta bu vergi numarasına ait kayıt bulunamadı.")
+				else:
+					objReceiverboxAliases = bsMain.find_all("receiverboxaliases")[0]
+					#print(objReceiverboxAliases['alias'])
+					strResult = _("Adres {0} olarak güncellendi.").format(objReceiverboxAliases['alias'])
+					docCustomer.db_set('td_alici_alias', objReceiverboxAliases['alias'], notify=True)
+					docCustomer.add_comment('Comment', text=_("E-Fatura: Adres {0} olarak güncellendi.").format(objReceiverboxAliases['alias']))
+					docCustomer.notify_update()
+
+		else:
+			strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+			strResult += response.text
+
+	except Exception as e:
+		strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (GetUserAliasses) sunucudan gelen mesaj işlenemedi."))
+
+	return {'result':strResult, 'response':response.text}
 
 @frappe.whitelist()
 def get_invoice_status(docSI = None, strSaleInvoiceName = None):
