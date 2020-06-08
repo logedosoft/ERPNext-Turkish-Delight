@@ -42,10 +42,10 @@ def get_service_xml(strType):
 						<IssueDate xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.posting_date_formatted}}</IssueDate>
 						<IssueTime xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.posting_time_formatted}}</IssueTime>
 						<InvoiceTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">SATIS</InvoiceTypeCode>
-						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">Yalnız #{{docSI.in_words}}#</Note>
-						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
-						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
-						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
+						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not1_formul}}</Note>
+						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not2_formul}}</Note>
+						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not3_formul}}</Note>
+						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not4_formul}}</Note>
 						<DocumentCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</DocumentCurrencyCode>
 						<PricingCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</PricingCurrencyCode>
 						<LineCountNumeric xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.line_count}}</LineCountNumeric>
@@ -373,8 +373,15 @@ def send_einvoice(strSalesInvoiceName):
 		docEISettings = frappe.get_single("EFatura Ayarlar")
 		docEISettings.parola = docEISettings.get_password('parola')
 
-		#Ana dokuman dosyamizi olusturalim
+		#Ana dokuman dosyamizi olusturalim. Once not parametreleri dolsun sonra asil dokuman.
 		strDocXML = frappe.render_template(strBody, context=
+		{
+			"docSI": docSI, 
+			"docCustomer": docCustomer, 
+			"docEISettings": docEISettings,
+			"docCustomerAddress": docCustomerAddress
+		}, is_path=False)
+		strDocXML = frappe.render_template(strDocXML, context=
 		{
 			"docSI": docSI, 
 			"docCustomer": docCustomer, 
