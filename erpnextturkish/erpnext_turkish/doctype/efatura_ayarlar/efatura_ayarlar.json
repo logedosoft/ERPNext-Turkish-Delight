@@ -170,7 +170,7 @@
    "options": "TD EFatura Birim Eslestirme"
   },
   {
-   "description": "Sat\u0131\u015f Faturas\u0131 Not Parametreleri",
+   "description": "Sat\u0131\u015f Faturas\u0131 Not Parametreleri (Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress)",
    "fieldname": "td_sb_notlar",
    "fieldtype": "Section Break"
   },
@@ -196,7 +196,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2020-06-08 13:22:11.454491",
+ "modified": "2020-06-08 15:12:05.787401",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
