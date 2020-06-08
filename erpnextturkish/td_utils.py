@@ -48,6 +48,7 @@ def get_service_xml(strType):
 						<Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
 						<DocumentCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</DocumentCurrencyCode>
 						<PricingCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</PricingCurrencyCode>
+						<LineCountNumeric xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.line_count}}</LineCountNumeric>
 						
 						<AccountingSupplierParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
 							<Party>
@@ -317,10 +318,11 @@ def send_einvoice(strSalesInvoiceName):
 		if not docCustomer.td_alici_alias:
 			docCustomer.td_alici_alias = get_user_aliasses(docCustomer=docCustomer)['alias']
 
-		if hasattr(docCustomer, 'tax_office'):
-			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
-		elif hasattr(docCustomer, 'taxoffice'):
+		#Bazi yerlerde tax_office bazen taxoffice diye alan acmisiz. Toparlayalim.
+		if hasattr(docCustomer, 'taxoffice'):
 			docCustomer.tax_office = docCustomer.taxoffice if docCustomer.taxoffice is not None else ''
+		elif hasattr(docCustomer, 'tax_office'):
+			docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
 		else:
 			raise ValueError('Müşteri kartlarında için vergi dairesi alanı (tax_office) bulunamadı. (Customize Form ile Customer için tax_office alanı eklenmeli).')
 
@@ -365,6 +367,7 @@ def send_einvoice(strSalesInvoiceName):
 
 		docSI.posting_date_formatted = formatdate(docSI.posting_date, "yyyy-MM-dd")
 		docSI.posting_time_formatted = get_time(docSI.posting_time).strftime("%H:%M:%S")#format_time(time_string=docSI.posting_time, format_string='HH:mm:ss')#str(dateutil.parser.parse(docSI.posting_time)).strftime("%H-%M-%S")#docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
+		docSI.line_count = len(docSI.items)
 
 		#Ayarlari alalim
 		docEISettings = frappe.get_single("EFatura Ayarlar")
