@@ -1,0 +1,9 @@
+{
+    'Accept-Encoding': 'gzip,deflate',
+    'Accept': 'text/xml',
+    'Content-Type': 'text/xml;charset=UTF-8',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'SOAPAction': 'http://tempuri.org/IIntegration/SaveAsDraft',
+    'Connection': 'Keep-Alive'
+}

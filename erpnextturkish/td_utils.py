@@ -34,7 +34,7 @@ def get_service_xml(strType):
 	<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 		<SaveAsDraft xmlns="http://tempuri.org/">
 			<invoices>
-				<InvoiceInfo LocalDocumentId="">
+				<InvoiceInfo LocalDocumentId="{{docSI.name}}">
 					<Invoice>
 						<ProfileID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TICARIFATURA</ProfileID>
 						<ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"/>
@@ -193,7 +193,7 @@ def get_service_xml(strType):
 			</ManufacturersItemIdentification>
 		</Item>
 		<Price>
-			<PriceAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.price_list_rate}}</PriceAmount>
+			<PriceAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.rate}}</PriceAmount>
 		</Price>
 	</InvoiceLine>
 		"""
@@ -305,13 +305,16 @@ def send_einvoice(strSalesInvoiceName):
 	strResult = ""
 
 	try:
-		
-		strHeaders = get_service_xml('einvoice-headers')
-		strBody = get_service_xml('einvoice-body')
-		strLine = get_service_xml('einvoice-line')
-
 		docSI = frappe.get_doc("Sales Invoice", strSalesInvoiceName)
 		docCustomer = frappe.get_doc("Customer", docSI.customer)
+		#Ayarlari alalim
+		docEISettings = frappe.get_single("EFatura Ayarlar")
+		docEISettings.parola = docEISettings.get_password('parola')
+
+		strHeaders = frappe.safe_eval(docEISettings.td_efatura_header) #get_service_xml('einvoice-headers')
+		strBody = docEISettings.td_efatura_xml_genel #get_service_xml('einvoice-body')
+		strLine = docEISettings.td_efatura_xml_satir #get_service_xml('einvoice-line')
+
 		docCustomerAddress = frappe.get_doc("Address", docSI.customer_address)
 		docCustomer.id_scheme = "VKN" if docCustomer.customer_type == "Company" else "TCKN"
 		#Eger alias tanimli degil ise bulalim
@@ -369,10 +372,6 @@ def send_einvoice(strSalesInvoiceName):
 		docSI.posting_time_formatted = get_time(docSI.posting_time).strftime("%H:%M:%S")#format_time(time_string=docSI.posting_time, format_string='HH:mm:ss')#str(dateutil.parser.parse(docSI.posting_time)).strftime("%H-%M-%S")#docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
 		docSI.line_count = len(docSI.items)
 
-		#Ayarlari alalim
-		docEISettings = frappe.get_single("EFatura Ayarlar")
-		docEISettings.parola = docEISettings.get_password('parola')
-
 		#Ana dokuman dosyamizi olusturalim. Once not parametreleri dolsun sonra asil dokuman.
 		strDocXML = frappe.render_template(strBody, context=
 		{
@@ -422,6 +421,10 @@ def send_einvoice(strSalesInvoiceName):
 				docSI.db_set('td_efatura_senaryosu', objSaveResultInfo['invoicescenario'], notify=True)
 				docSI.db_set('td_efatura_uuid', objSaveResultInfo['id'], notify=True)
 				docSI.db_set('td_efatura_ettn', objSaveResultInfo['number'], notify=True)
+
+				#Ayarlarda fatura belge numarasi ayarlanmis ise ilgili alani guncelleyelim. https://app.asana.com/0/1129228181996987/1179462249309721/f
+				if docEISettings.td_guncellenecek_alan:
+					docSI.db_set(docEISettings.td_guncellenecek_alan, objSaveResultInfo['number'], notify=True)
 
 				docSI.add_comment('Comment', text=_('E-Fatura: Belge gönderildi. (Ek Bilgiler:{0}, {1})'.format(objSaveResultInfo['number'], objSaveResultInfo['id'])))
 

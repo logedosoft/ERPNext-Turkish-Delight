@@ -33,7 +33,15 @@
   "td_not1_formul",
   "td_not2_formul",
   "td_not3_formul",
-  "td_not4_formul"
+  "td_not4_formul",
+  "td_cb_satisft_column",
+  "td_guncellenecek_alan",
+  "td_sb_xml_section",
+  "td_efatura_xml_genel",
+  "td_efatura_xml_satir",
+  "td_efatura_header",
+  "td_sb_aciklamalar_section",
+  "td_kullanim_notlari"
  ],
  "fields": [
   {
@@ -193,10 +201,53 @@
    "fieldname": "td_not4_formul",
    "fieldtype": "Data",
    "label": "Not4 Formul"
+  },
+  {
+   "description": "Sat\u0131\u015f FT, kay\u0131t sonras\u0131 yap\u0131lacaklar",
+   "fieldname": "td_cb_satisft_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Ba\u015far\u0131l\u0131 kay\u0131t sonras\u0131 olu\u015fan E-Fatura Numaras\u0131'n\u0131n, Sat\u0131\u015f Faturas\u0131 dok\u00fcman\u0131nda hangi alana yaz\u0131laca\u011f\u0131n\u0131 belirler. (\u00d6rn:belge_no)",
+   "fieldname": "td_guncellenecek_alan",
+   "fieldtype": "Data",
+   "label": "G\u00fcncellenecek E-Fatura Belge No Alan\u0131"
+  },
+  {
+   "description": "E-Fatura G\u00f6nderimi XML \u015eablonlar\u0131",
+   "fieldname": "td_sb_xml_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "E-Fatura (body) xml \u015fablonu",
+   "fieldname": "td_efatura_xml_genel",
+   "fieldtype": "Code",
+   "label": "E-Fatura Genel"
+  },
+  {
+   "description": "Malzeme/Hizmet sat\u0131rlar\u0131 xml \u015fablonu",
+   "fieldname": "td_efatura_xml_satir",
+   "fieldtype": "Code",
+   "label": "Malzeme/Hizmet Sat\u0131rlar\u0131"
+  },
+  {
+   "description": "\u00dcst bilgi i\u00e7eri\u011fi",
+   "fieldname": "td_efatura_header",
+   "fieldtype": "Code",
+   "label": "\u00dcst Bilgi (Header)"
+  },
+  {
+   "fieldname": "td_sb_aciklamalar_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "td_kullanim_notlari",
+   "fieldtype": "HTML",
+   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5></h5>\n<h6></h6>"
   }
  ],
  "issingle": 1,
- "modified": "2020-06-08 15:12:05.787401",
+ "modified": "2020-06-09 18:56:39.833911",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
