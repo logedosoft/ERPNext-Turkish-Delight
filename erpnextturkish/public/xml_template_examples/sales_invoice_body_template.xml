@@ -86,6 +86,14 @@
 										<Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_office or ''}}</Name>
 									</TaxScheme>
 								</PartyTaxScheme>
+									
+								{% if docCustomer.customer_type == 'Individual' %} 
+								{% set lstName = docCustomer.customer_name.split(' ') %}
+								<Person>
+								    <FirstName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{ lstName[0] }}</FirstName>
+								    <FamilyName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{ lstName[1] }}</FamilyName>
+								</Person>
+								{% endif -%}
 
 							</Party>
 						</AccountingCustomerParty>
