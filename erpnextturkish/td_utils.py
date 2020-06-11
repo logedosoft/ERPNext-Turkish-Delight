@@ -339,7 +339,7 @@ def send_einvoice(strSalesInvoiceName):
 			docSILine.TaxPercent = frappe.get_doc("Account", docSI.taxes[0].account_head).tax_rate #docSI.taxes[0].rate #Satir KDV Orani.#TODO:satira bagli item-tax-template altinda ki oranlardan almali.Suan fatura genelinde ki ilk satirdan aliyoruz
 			docSILine.TaxableAmount = docSILine.amount
 			docSILine.TaxAmount = round((docSILine.TaxPercent/100) * docSILine.amount, 2)
-			docSILine.AllowanceBaseAmount = docSILine.price_list_rate * docSILine.qty#Iskonto uygulanan rakam
+			docSILine.AllowanceBaseAmount = docSILine.rate * docSILine.qty#Iskonto uygulanan rakam #docSILine.AllowanceBaseAmount = docSILine.price_list_rate * docSILine.qty#Iskonto uygulanan rakam			
 
 			flTotalLineDiscountAmount += docSILine.discount_amount * docSILine.qty
 

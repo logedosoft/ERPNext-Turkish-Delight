@@ -171,7 +171,7 @@
    "label": "Login Test"
   },
   {
-   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim ad\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
+   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim adlar\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
    "fieldname": "td_birim_eslestirme",
    "fieldtype": "Table",
    "label": "Birim E\u015fle\u015ftirme",
@@ -183,11 +183,13 @@
    "fieldtype": "Section Break"
   },
   {
+   "description": "\u00d6rnek: Yaln\u0131z #{{docSI.in_words}}",
    "fieldname": "td_not1_formul",
    "fieldtype": "Data",
    "label": "Not1 Formul"
   },
   {
+   "description": "\u00d6rnek:{{docSI.aciklama}} . Vade: {{docSI.payment_schedule[0].payment_term}}",
    "fieldname": "td_not2_formul",
    "fieldtype": "Data",
    "label": "Not2 Formul"
@@ -225,7 +227,7 @@
    "label": "E-Fatura Genel"
   },
   {
-   "description": "Malzeme/Hizmet sat\u0131rlar\u0131 xml \u015fablonu",
+   "description": "Malzeme/Hizmet sat\u0131rlar\u0131 xml \u015fablonu. E-Fatura Genel \u015fablonunda \"{{docSI.contentLines}}\" yazan k\u0131sma enjekte edilir.",
    "fieldname": "td_efatura_xml_satir",
    "fieldtype": "Code",
    "label": "Malzeme/Hizmet Sat\u0131rlar\u0131"
@@ -243,11 +245,11 @@
   {
    "fieldname": "td_kullanim_notlari",
    "fieldtype": "HTML",
-   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5></h5>\n<h6></h6>"
+   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5>- Not ve xml i\u00e7inde kullan\u0131labilecek dok\u00fcmanlar</h5>\n<h6>Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress</h6>\n<h5>- \u015eablon ve \u00dcst Bilgi \u00d6rnekleri</h5>\n<a href=\"https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples\" target=\"_blank\">https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples</a>"
   }
  ],
  "issingle": 1,
- "modified": "2020-06-09 18:56:39.833911",
+ "modified": "2020-06-10 08:28:11.433131",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
