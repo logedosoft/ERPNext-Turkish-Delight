@@ -245,11 +245,11 @@
   {
    "fieldname": "td_kullanim_notlari",
    "fieldtype": "HTML",
-   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5>- Not ve xml i\u00e7inde kullan\u0131labilecek dok\u00fcmanlar</h5>\n<h6>Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress</h6>\n<h5>- \u015eablon ve \u00dcst Bilgi \u00d6rnekleri</h5>\n<a href=\"https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples\" target=\"_blank\">https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples</a>"
+   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5>- Not ve xml i\u00e7inde kullan\u0131labilecek dok\u00fcmanlar</h5>\n<h6>Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress</h6>\n<h6>Fatura Sat\u0131r\u0131: docCurrentLine, Malzeme Kart\u0131: docItem</h6>\n<h5>- \u015eablon ve \u00dcst Bilgi \u00d6rnekleri</h5>\n<a href=\"https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples\" target=\"_blank\">https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples</a>"
   }
  ],
  "issingle": 1,
- "modified": "2020-06-10 08:28:11.433131",
+ "modified": "2020-06-12 09:06:00.943179",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
