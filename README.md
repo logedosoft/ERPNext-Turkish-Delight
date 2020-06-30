@@ -2,6 +2,9 @@
 
 E-Fatura ve diğer kolaylaştırıcı çözümler...
 
+### E-Fatura Gönderimi
+![E-Fatura Gönderimi](https://github.com/logedosoft/ERPNext-Turkish-Delight/raw/master/erpnextturkish/public/EFaturaGonderim.gif?raw=true)
+
 ### E-Fatura Ayarları
 
 #### Web Servis Ayarları
