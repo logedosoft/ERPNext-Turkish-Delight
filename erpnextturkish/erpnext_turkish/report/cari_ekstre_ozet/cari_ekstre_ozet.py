@@ -18,6 +18,8 @@ def execute(filters=None):
 
 		columns = get_columns(filters)
 
+		frappe.db.sql("""SET group_concat_max_len=2048;""")
+
 		data = frappe.db.sql(
 			"""
 			SELECT 
