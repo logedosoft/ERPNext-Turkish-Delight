@@ -21,7 +21,7 @@ def execute(filters=None):
 		data = frappe.db.sql(
 			"""
 			SELECT 
-				BELGE_TARIHI, BELGE_SAATI COLLATE utf8mb4_unicode_ci AS BELGE_SAATI, TIP COLLATE utf8mb4_unicode_ci AS TIP, ACIKLAMA COLLATE utf8mb4_unicode_ci AS ACIKLAMA, BORC, ALACAK
+				BELGE_TARIHI, BELGE_SAATI, TIP, ACIKLAMA, BORC, ALACAK
 			FROM 
 				LD_CARI_EKSTRE_GENEL
 			WHERE 
@@ -32,9 +32,9 @@ def execute(filters=None):
 
 			SELECT
 				'' AS BELGE_TARIHI,
-				'' COLLATE utf8mb4_unicode_ci AS BELGE_SAATI,
-				'' COLLATE utf8mb4_unicode_ci AS TIP,
-				'' COLLATE utf8mb4_unicode_ci AS ACIKLAMA,
+				'' AS BELGE_SAATI,
+				'' AS TIP,
+				'' AS ACIKLAMA,
 				SUM(BORC) AS BORC, SUM(ALACAK) AS ALACAK
 			FROM 
 				LD_CARI_EKSTRE_OZET
