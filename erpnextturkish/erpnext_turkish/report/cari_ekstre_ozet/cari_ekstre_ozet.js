@@ -20,6 +20,7 @@ frappe.query_reports["Cari Ekstre Ozet"] = {
 			"default": "Customer",
 			on_change: function() {
 				frappe.query_report.set_filter_value('party', "");
+				frappe.query_report.set_filter_value('tax_id', "");
 			}
 		},
 		{
