@@ -23,7 +23,7 @@ def execute(filters=None):
 			SELECT 
 				BELGE_TARIHI, BELGE_SAATI, TIP, ACIKLAMA, BORC, ALACAK
 			FROM 
-				LD_CARI_EKSTRE_GENEL
+				LD_CARI_EKSTRE_OZET
 			WHERE 
 				SIRKET = %(company)s
 				AND CARI_KODU = %(party)s
