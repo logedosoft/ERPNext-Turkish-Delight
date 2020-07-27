@@ -1,0 +1,82 @@
+<style>
+    .print-format table, .print-format tr,
+    .print-format td, .print-format div, .print-format p {
+        font-family: Monospace;
+        line-height: 100%;
+        vertical-align: middle;
+    }
+    @media screen {
+        .print-format {
+            width: 33.1in;
+            padding: 0.25in;
+            min-height: 46.8<style>
+    .print-format table, .print-format tr,
+    .print-format td, .print-format div, .print-format p {
+        font-family: Monospace;
+        line-height: 200%;
+        vertical-align: middle;
+    }
+    @media screen {
+        .print-format {
+            width: 33.8in;
+            padding: 0.25in;
+            min-height: 46.8in;
+        }
+    }
+</style>
+
+ <div style="margin-bottom: 7px;" class="text-center">
+    {%= frappe.boot.letter_heads[filters.letter_head || frappe.get_doc(":Company", filters.company).default_letter_head || frappe.defaults.get_default("letter_head")] %}
+</div>
+
+<h2 class="text-center">{%= __("Cari Hesap Ekstresi") %}</h2>
+<hr>
+    <h6>Cari Unvan: {%= filters.party %}</h6>
+    <h6>Vergi No: {%= filters.tax_id %}</h6>
+    <h6>Tarih: {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</h6>
+    <h6>Son Bakiye: {%= format_currency(data[data.length - 1]["BORC"] - data[data.length - 1]["ALACAK"], filters.presentation_currency) %}</h6>
+
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th style="text-align: center;">Tarih</th>
+					<th style="text-align: center;">Saat</th>
+					<th style="text-align: center;">İşlem Türü</th>
+					<th style="text-align: center;">Açıklama</th>
+					<th style="text-align: center;">Borç</th>
+					<th style="text-align: center;">Alacak</th>
+				</tr>
+			</thead>
+			<tbody>
+                {% for(var i=0, l=data.length; i<l; i++) { %}
+                
+                <tr style="height: 30px">
+					<td>
+						<span style="padding-left: 0em">{%= frappe.datetime.str_to_user(data[i]["BELGE_TARIHI"]) %}</span>
+					</td>
+					<td>
+						<span>{%= data[i]["BELGE_SAATI"] %}</span>
+					</td>
+					<td>
+						<span>{%= data[i]["TIP"] %}</span>
+					</td>
+					<td>
+						<span>{%= data[i]["ACIKLAMA"] %}</span>
+					</td>
+					<td>
+						<span>
+							<div style="text-align: right">{%= format_currency(data[i]["BORC"], filters.presentation_currency) %}</div>
+						</span>
+					</td>
+					<td>
+						<span>
+							<div style="text-align: right">{%= format_currency(data[i]["ALACAK"], filters.presentation_currency) %}</div>
+						</span>
+					</td>
+                </tr>
+                
+				{% } %}
+			</tbody>
+        </table>       
+        
+        <p class="text-right text-muted">{%= filters.company %}</p>
