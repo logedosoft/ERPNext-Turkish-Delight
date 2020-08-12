@@ -3,7 +3,7 @@ CREATE OR REPLACE VIEW LD_CARI_EKSTRE_OZET AS
 	LOGEDOSOFT 2020
 	Amac: Stok detayli cari ekstre ozet raporu
 	Ver:
-	12.08.2020: Kaybolan version tekrar olusturuldu.
+	12.08.2020: Kaybolan versiyon tekrar olusturuldu.
 */
 SELECT 
 	`TMP_GL_ENTRY`.`BELGE_TARIHI` AS `BELGE_TARIHI`,
