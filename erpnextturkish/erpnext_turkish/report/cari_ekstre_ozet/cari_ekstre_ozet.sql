@@ -1,3 +1,10 @@
+CREATE OR REPLACE VIEW LD_CARI_EKSTRE_OZET AS
+/* 
+	LOGEDOSOFT 2020
+	Amac: Stok detayli cari ekstre ozet raporu
+	Ver:
+	12.08.2020: Kaybolan version tekrar olusturuldu.
+*/
 SELECT 
 	`TMP_GL_ENTRY`.`BELGE_TARIHI` AS `BELGE_TARIHI`,
     `TMP_GL_ENTRY`.`BELGE_SAATI` AS `BELGE_SAATI`,
@@ -10,7 +17,7 @@ SELECT
     `TMP_GL_ENTRY`.`COMPANY` AS `SIRKET`
 FROM 
 (
-	SELECT 
+	SELECT #Muhasebe Fisleri
 		coalesce(`CUSTOMER`.`name`, `SUPPLIER`.`name`) AS `CARI_KODU`,
 		coalesce(`CUSTOMER`.`customer_name`, `SUPPLIER`.`supplier_name`) AS `CARI_ADI`,
 		'Muhasebe Fişi' AS `TIP`,
@@ -43,42 +50,38 @@ FROM
 		 
 	UNION ALL
 
-	SELECT 
+	SELECT #Satis Faturalari
 		`CUSTOMER`.`name` AS `CARI_KODU`,
 		`CUSTOMER`.`customer_name` AS `CARI_ADI`,
 		'Satış Faturası' AS `TIP`,
 		`SALES_INVOICE`.`posting_date` AS `BELGE_TARIHI`,
 		date_format(`SALES_INVOICE`.`posting_time`, '%H:%i:%s') AS `BELGE_SAATI`,
-		`GL_ENTRY`.`debit` AS `debit`,
-		`GL_ENTRY`.`credit` AS `credit`,
+		`SALES_INVOICE`.`grand_total` AS `debit`,
+		0.0 AS `credit`,
 		group_concat(
 			DISTINCT `SALES_INVOICE_ITEM`.`item_name` 
 			ORDER BY `SALES_INVOICE_ITEM`.`idx` ASC 
 			SEPARATOR ','
 		) AS `LD_REMARK`,
-		`GL_ENTRY`.`company` AS `COMPANY`
+		`SALES_INVOICE`.`company` AS `COMPANY`
 	FROM 
 	(
-		(
-			(
-				`tabGL Entry` `GL_ENTRY`
+		( 
+			`tabSales Invoice` `SALES_INVOICE`
 				JOIN `tabCustomer` `CUSTOMER`
-					ON (`GL_ENTRY`.`party` = `CUSTOMER`.`name`)
-			)
-			JOIN `tabSales Invoice` `SALES_INVOICE`
-				ON (`GL_ENTRY`.`voucher_no` = `SALES_INVOICE`.`name`)
+				ON (`CUSTOMER`.`name` = `SALES_INVOICE`.`customer`)
 		)
 		JOIN `tabSales Invoice Item` `SALES_INVOICE_ITEM`
 			ON (`SALES_INVOICE_ITEM`.`parent` = `SALES_INVOICE`.`name`)
 	)
-	WHERE     
-		`GL_ENTRY`.`voucher_type` = 'Sales Invoice'
-			AND `SALES_INVOICE`.`docstatus` = 1
-			AND `GL_ENTRY`.`docstatus` = 1
+	WHERE
+		`SALES_INVOICE`.`docstatus` = 1
+	GROUP BY
+		`SALES_INVOICE`.name
 		 
 	UNION ALL
 		 
-	SELECT 
+	SELECT #Alis Faturalari
 		`SUPPLIER`.`name` AS `CARI_KODU`,
 		`SUPPLIER`.`supplier_name` AS `CARI_ADI`,
 		'Alım Faturası' AS `TIP`,
@@ -106,7 +109,7 @@ FROM
 		 
 	UNION ALL
 
-	SELECT 
+	SELECT #Odeme/Tahsilat Bilgileri
 		coalesce(`CUSTOMER`.`name`, `SUPPLIER`.`name`) AS `CARI_KODU`,
 		coalesce(`CUSTOMER`.`customer_name`, `SUPPLIER`.`supplier_name`) AS `CARI_ADI`,
 		concat(
