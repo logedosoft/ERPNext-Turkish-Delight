@@ -1,0 +1,282 @@
+{
+ "creation": "2020-11-09 11:01:46.794230",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "entegrator",
+  "company",
+  "test_modu",
+  "kullaniciadi",
+  "parola",
+  "btn_login_test",
+  "td_cb_01_column",
+  "eirsaliye_adresi",
+  "earsiv_adresi",
+  "test_efatura_adresi",
+  "test_earsiv_adresi",
+  "test_section",
+  "td_firma_adi",
+  "td_vergi_no",
+  "td_vergi_dairesi",
+  "td_mersis_no",
+  "td_ticaret_sicil_no",
+  "td_cb_02_column",
+  "td_adres_sokak",
+  "td_adres_bina_no",
+  "td_adres_kapi_no",
+  "td_adres_ilce",
+  "td_adres_il",
+  "td_adres_ulke",
+  "canli_section",
+  "td_birim_eslestirme",
+  "td_sb_notlar",
+  "td_not1_formul",
+  "td_not2_formul",
+  "td_not3_formul",
+  "td_not4_formul",
+  "td_cb_satisft_column",
+  "td_guncellenecek_alan",
+  "td_sb_xml_section",
+  "td_efatura_xml_genel",
+  "td_efatura_xml_satir",
+  "td_efatura_header",
+  "td_sb_aciklamalar_section",
+  "td_kullanim_notlari"
+ ],
+ "fields": [
+  {
+   "fieldname": "entegrator",
+   "fieldtype": "Select",
+   "label": "Entegrat\u00f6r",
+   "options": "QNB"
+  },
+  {
+   "default": "0",
+   "fieldname": "test_modu",
+   "fieldtype": "Check",
+   "label": "Test Modu"
+  },
+  {
+   "fieldname": "kullaniciadi",
+   "fieldtype": "Data",
+   "label": "Kullan\u0131c\u0131 Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parola",
+   "fieldtype": "Password",
+   "label": "Parola",
+   "reqd": 1
+  },
+  {
+   "fieldname": "btn_login_test",
+   "fieldtype": "Button",
+   "label": "Login Test"
+  },
+  {
+   "fieldname": "td_cb_01_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "earsiv_adresi",
+   "fieldtype": "Data",
+   "label": "E-Ar\u015fiv Adresi"
+  },
+  {
+   "fieldname": "test_efatura_adresi",
+   "fieldtype": "Data",
+   "label": "Test E-Fatura Adresi"
+  },
+  {
+   "fieldname": "test_earsiv_adresi",
+   "fieldtype": "Data",
+   "label": "Test E-Ar\u015fiv Adresi"
+  },
+  {
+   "fieldname": "test_section",
+   "fieldtype": "Section Break",
+   "label": "F\u0130RMA B\u0130LG\u0130LER\u0130"
+  },
+  {
+   "fieldname": "td_firma_adi",
+   "fieldtype": "Data",
+   "label": "Firma Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_vergi_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vergi No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_vergi_dairesi",
+   "fieldtype": "Data",
+   "label": "Vergi Dairesi",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_mersis_no",
+   "fieldtype": "Data",
+   "label": "Mersis No"
+  },
+  {
+   "fieldname": "td_ticaret_sicil_no",
+   "fieldtype": "Data",
+   "label": "Ticaret Sicil No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_cb_02_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "td_adres_sokak",
+   "fieldtype": "Data",
+   "label": "Sokak"
+  },
+  {
+   "fieldname": "td_adres_bina_no",
+   "fieldtype": "Data",
+   "label": "Bina No"
+  },
+  {
+   "fieldname": "td_adres_kapi_no",
+   "fieldtype": "Data",
+   "label": "Kap\u0131 No"
+  },
+  {
+   "fieldname": "td_adres_ilce",
+   "fieldtype": "Data",
+   "label": "\u0130l\u00e7e"
+  },
+  {
+   "fieldname": "td_adres_il",
+   "fieldtype": "Data",
+   "label": "\u0130l"
+  },
+  {
+   "fieldname": "td_adres_ulke",
+   "fieldtype": "Data",
+   "label": "\u00dclke"
+  },
+  {
+   "fieldname": "canli_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim adlar\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
+   "fieldname": "td_birim_eslestirme",
+   "fieldtype": "Table",
+   "label": "Birim E\u015fle\u015ftirme",
+   "options": "TD EFatura Birim Eslestirme"
+  },
+  {
+   "description": "Sat\u0131\u015f Faturas\u0131 Not Parametreleri (Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress)",
+   "fieldname": "td_sb_notlar",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "\u00d6rnek: Yaln\u0131z #{{docSI.in_words}}",
+   "fieldname": "td_not1_formul",
+   "fieldtype": "Data",
+   "label": "Not1 Formul"
+  },
+  {
+   "description": "\u00d6rnek:{{docSI.aciklama}} . Vade: {{docSI.payment_schedule[0].payment_term}}",
+   "fieldname": "td_not2_formul",
+   "fieldtype": "Data",
+   "label": "Not2 Formul"
+  },
+  {
+   "fieldname": "td_not3_formul",
+   "fieldtype": "Data",
+   "label": "Not3 Formul"
+  },
+  {
+   "fieldname": "td_not4_formul",
+   "fieldtype": "Data",
+   "label": "Not4 Formul"
+  },
+  {
+   "description": "Sat\u0131\u015f FT, kay\u0131t sonras\u0131 yap\u0131lacaklar",
+   "fieldname": "td_cb_satisft_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Ba\u015far\u0131l\u0131 kay\u0131t sonras\u0131 olu\u015fan E-Fatura Numaras\u0131'n\u0131n, Sat\u0131\u015f Faturas\u0131 dok\u00fcman\u0131nda hangi alana yaz\u0131laca\u011f\u0131n\u0131 belirler. (\u00d6rn:belge_no)",
+   "fieldname": "td_guncellenecek_alan",
+   "fieldtype": "Data",
+   "label": "G\u00fcncellenecek E-Fatura Belge No Alan\u0131"
+  },
+  {
+   "description": "E-Fatura G\u00f6nderimi XML \u015eablonlar\u0131",
+   "fieldname": "td_sb_xml_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "E-Fatura (body) xml \u015fablonu",
+   "fieldname": "td_efatura_xml_genel",
+   "fieldtype": "Code",
+   "label": "E-Fatura Genel"
+  },
+  {
+   "description": "Malzeme/Hizmet sat\u0131rlar\u0131 xml \u015fablonu. E-Fatura Genel \u015fablonunda \"{{docSI.contentLines}}\" yazan k\u0131sma enjekte edilir.",
+   "fieldname": "td_efatura_xml_satir",
+   "fieldtype": "Code",
+   "label": "Malzeme/Hizmet Sat\u0131rlar\u0131"
+  },
+  {
+   "description": "\u00dcst bilgi i\u00e7eri\u011fi",
+   "fieldname": "td_efatura_header",
+   "fieldtype": "Code",
+   "label": "\u00dcst Bilgi (Header)"
+  },
+  {
+   "fieldname": "td_sb_aciklamalar_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "td_kullanim_notlari",
+   "fieldtype": "HTML",
+   "options": "<h3>Kullan\u0131m Notlar\u0131</h3>\n<h5>- Not ve xml i\u00e7inde kullan\u0131labilecek dok\u00fcmanlar</h5>\n<h6>Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress</h6>\n<h6>Fatura Sat\u0131r\u0131: docCurrentLine, Malzeme Kart\u0131: docItem</h6>\n<h5>- \u015eablon ve \u00dcst Bilgi \u00d6rnekleri</h5>\n<a href=\"https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples\" target=\"_blank\">https://github.com/logedosoft/ERPNext-Turkish-Delight/tree/master/erpnextturkish/public/xml_template_examples</a>"
+  },
+  {
+   "fieldname": "eirsaliye_adresi",
+   "fieldtype": "Data",
+   "label": "E-Irsaliye Adresi"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  }
+ ],
+ "issingle": 1,
+ "modified": "2020-11-09 11:19:34.137820",
+ "modified_by": "Administrator",
+ "module": "EIrsaliye",
+ "name": "EIrsaliye Ayarlar",
+ "name_case": "Title Case",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
