@@ -17,39 +17,18 @@ def send_eirsaliye(doc=None, method=None):
     outputText = render_template(TEMPLATE_FILE, hello)  # this is where to put args to the template renderer
     veri = to_base64(outputText)
     belgeHash = get_hash_md5(outputText)
-    print(belgeHash)
+    
     endpoint = "https://erpefaturatest.cs.com.tr:8043/efatura/ws/connectorService"
     user = "3340526030"
     password = "irsAliye@2020"
 
-    body="""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.connector.uut.cs.com.tr/">
-        <soapenv:Header> 
-        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"> 
-        <wsse:UsernameToken>
-        <wsse:Username>{user}</wsse:Username>
-        <wsse:Password>{password}</wsse:Password>
-        </wsse:UsernameToken>
-        </wsse:Security>
-        </soapenv:Header>
-        <soapenv:Body>
-            <ser:belgeGonderExt>
-                <parametreler>
-                    <belgeHash>{belgeHash}</belgeHash>
-                    <belgeNo>del-1243</belgeNo>
-                    <belgeTuru>IRSALIYE_UBL</belgeTuru>
-                    <belgeVersiyon>1.0</belgeVersiyon>
-                    <erpKodu>LDS30822</erpKodu>
-                    <mimeType>application/xml</mimeType>
-                    <vergiTcKimlikNo>3340526030</vergiTcKimlikNo>
-                    <veri>{veri}</veri>
-                </parametreler>
-            </ser:belgeGonderExt>
-        </soapenv:Body>
-        </soapenv:Envelope>"""
-
-    
-    
-    body = body.format(user=user, password=password, veri=veri, belgeHash=belgeHash)
+    context = {
+        "veri": veri,
+        "belgeHash": belgeHash,
+        "user": user,
+        "password": password
+    }
+    body = render_template("eirsaliye_body.xml", context)
     body = body.encode('utf-8')
     session = requests.session()
     session.headers = {"Content-Type": "text/xml; charset=utf-8"}
@@ -58,18 +37,22 @@ def send_eirsaliye(doc=None, method=None):
 
     x=response.content
     x=str(x,"UTF-8")
-
     print("-------------------------")
     #print (x)
 
-    # from bs4 import BeautifulSoup
+    from bs4 import BeautifulSoup
     xml = response.content
-    print(xml)
-    # soup = BeautifulSoup(xml, 'xml')
-    # if soup.find_all('Result', text='0'):
-    #     print("door opened")
-    # else:
-    #     print("door not opened")
+    # print(xml)
+    soup = BeautifulSoup(xml, 'xml')
+    error = soup.find_all('Fault')
+    belgeOid = soup.find_all('belgeOid')
+    if error:
+        faultcode = soup.find('faultcode').getText()
+        faultstring = soup.find('faultstring').getText()
+        print(faultcode, faultstring)
+    if belgeOid:
+        msg = soup.find('belgeOid').getText()
+        print(msg)
 
 
 

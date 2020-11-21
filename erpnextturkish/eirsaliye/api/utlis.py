@@ -22,10 +22,10 @@ def get_hash_md5(value):
     return hashlib.md5(value.encode()).hexdigest()
 
 
-def render_template(name, values):
+def render_template(name, context):
     path=os.path.join(os.path.dirname(__file__),'./')
     templateLoader = FileSystemLoader(searchpath=path)
     templateEnv = Environment(loader=templateLoader)
     template = templateEnv.get_template(name)
-    outputText = template.render(value=values)
+    outputText = template.render(context=context)
     return outputText
