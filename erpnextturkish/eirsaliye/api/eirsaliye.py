@@ -14,10 +14,13 @@ def send_eirsaliye(delivery_note_name):
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     # company_doc = frappe.get_doc("Company", doc.company)
+    data_context = {
+        "date": doc.posting_date,
+        "time": doc.posting_time,
+        "td_vergi_no": settings_doc.td_vergi_no,
+    }
     TEMPLATE_FILE = "irsaliye_data.xml"
-    hello="hello..... "
-
-    outputText = render_template(TEMPLATE_FILE, hello)  # this is where to put args to the template renderer
+    outputText = render_template(TEMPLATE_FILE, data_context)  # this is where to put args to the template renderer
     veri = to_base64(outputText)
     belgeHash = get_hash_md5(outputText)
     
@@ -44,7 +47,6 @@ def send_eirsaliye(delivery_note_name):
     x=response.content
     x=str(x,"UTF-8")
     print("-------------------------")
-    #print (x)
 
     from bs4 import BeautifulSoup
     xml = response.content
