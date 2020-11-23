@@ -12,7 +12,8 @@ import requests
 def send_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
-    eirsaliye_settings = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
+    settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
+    # company_doc = frappe.get_doc("Company", doc.company)
     TEMPLATE_FILE = "irsaliye_data.xml"
     hello="hello..... "
 
@@ -20,17 +21,20 @@ def send_eirsaliye(delivery_note_name):
     veri = to_base64(outputText)
     belgeHash = get_hash_md5(outputText)
     
-    endpoint = eirsaliye_settings.test_eirsaliye_url if eirsaliye_settings.test_modu else eirsaliye_settings.eirsaliye_url
-    user = eirsaliye_settings.user_name
-    password = eirsaliye_settings.get_password('password')
+    endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
+    user = settings_doc.user_name
+    password = settings_doc.get_password('password')
 
-    context = {
+    body_context = {
+        "delivery_note_name": doc.name,
         "veri": veri,
         "belgeHash": belgeHash,
         "user": user,
-        "password": password
+        "password": password,
+        "erp_kodu": settings_doc.erp_kodu,
+        "td_vergi_no": settings_doc.td_vergi_no,
     }
-    body = render_template("eirsaliye_body.xml", context)
+    body = render_template("eirsaliye_body.xml", body_context)
     body = body.encode('utf-8')
     session = requests.session()
     session.headers = {"Content-Type": "text/xml; charset=utf-8"}

@@ -11,12 +11,12 @@
         <ser:belgeGonderExt>
             <parametreler>
                 <belgeHash>{{context.belgeHash}}</belgeHash>
-                <belgeNo>del-1243</belgeNo>
+                <belgeNo>{{context.delivery_note_name}}</belgeNo>
                 <belgeTuru>IRSALIYE_UBL</belgeTuru>
                 <belgeVersiyon>1.0</belgeVersiyon>
-                <erpKodu>LDS30822</erpKodu>
+                <erpKodu>{{context.erp_kodu}}</erpKodu>
                 <mimeType>application/xml</mimeType>
-                <vergiTcKimlikNo>3340526030</vergiTcKimlikNo>
+                <vergiTcKimlikNo>{{context.td_vergi_no}}</vergiTcKimlikNo>
                 <veri>{{context.veri}}</veri>
             </parametreler>
         </ser:belgeGonderExt>
