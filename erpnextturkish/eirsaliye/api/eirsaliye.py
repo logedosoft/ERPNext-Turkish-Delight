@@ -8,9 +8,11 @@ from erpnextturkish.eirsaliye.api.utlis import to_base64, get_hash_md5, render_t
 import requests
 
 
-
-def send_eirsaliye(doc=None, method=None):
-
+@frappe.whitelist()
+def send_eirsaliye(delivery_note_name):
+    doc = frappe.get_doc("Delivery Note", delivery_note_name)
+    eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
+    eirsaliye_settings = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     TEMPLATE_FILE = "irsaliye_data.xml"
     hello="hello..... "
 
@@ -18,9 +20,9 @@ def send_eirsaliye(doc=None, method=None):
     veri = to_base64(outputText)
     belgeHash = get_hash_md5(outputText)
     
-    endpoint = "https://erpefaturatest.cs.com.tr:8043/efatura/ws/connectorService"
-    user = "3340526030"
-    password = "irsAliye@2020"
+    endpoint = eirsaliye_settings.test_eirsaliye_url if eirsaliye_settings.test_modu else eirsaliye_settings.eirsaliye_url
+    user = eirsaliye_settings.user_name
+    password = eirsaliye_settings.get_password('password')
 
     context = {
         "veri": veri,
@@ -50,9 +52,11 @@ def send_eirsaliye(doc=None, method=None):
         faultcode = soup.find('faultcode').getText()
         faultstring = soup.find('faultstring').getText()
         print(faultcode, faultstring)
+        return str(faultcode) + " " + str(faultstring)
     if belgeOid:
         msg = soup.find('belgeOid').getText()
         print(msg)
+        return str(msg)
 
 
 
