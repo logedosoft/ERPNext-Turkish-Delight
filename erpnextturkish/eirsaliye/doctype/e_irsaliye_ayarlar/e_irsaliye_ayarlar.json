@@ -17,6 +17,7 @@
   "erp_kodu",
   "test_section",
   "td_firma_adi",
+  "vergi_no",
   "td_vergi_no",
   "td_vergi_dairesi",
   "td_mersis_no",
@@ -27,6 +28,7 @@
   "td_adres_kapi_no",
   "td_adres_ilce",
   "td_adres_il",
+  "td_posta_kodu",
   "td_adres_ulke",
   "canli_section",
   "td_birim_eslestirme",
@@ -88,13 +90,14 @@
    "fieldname": "td_vergi_no",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Vergi No",
+   "label": "Vergi No (VKN)",
    "reqd": 1
   },
   {
    "fieldname": "td_vergi_dairesi",
    "fieldtype": "Data",
-   "label": "Vergi Dairesi"
+   "label": "Vergi Dairesi",
+   "reqd": 1
   },
   {
    "fieldname": "td_mersis_no",
@@ -172,9 +175,19 @@
    "fieldtype": "Data",
    "label": "ERP Kodu",
    "reqd": 1
+  },
+  {
+   "fieldname": "vergi_no",
+   "fieldtype": "Data",
+   "label": "VKN TCKN"
+  },
+  {
+   "fieldname": "td_posta_kodu",
+   "fieldtype": "Data",
+   "label": "Posta Kodu"
   }
  ],
- "modified": "2020-11-23 18:54:17.319228",
+ "modified": "2020-11-28 17:37:25.432801",
  "modified_by": "Administrator",
  "module": "EIrsaliye",
  "name": "E Irsaliye Ayarlar",

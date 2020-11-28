@@ -17,21 +17,21 @@
 	<cbc:ID>GIB2020000000001</cbc:ID>
 	<cbc:CopyIndicator>false</cbc:CopyIndicator>
 	<cbc:UUID>F47AC10B-58CC-4372-A567-0E02B2C3D478</cbc:UUID>
-	<cbc:IssueDate>2020-11-14</cbc:IssueDate>
-	<cbc:IssueTime>09:00:00</cbc:IssueTime>
+	<cbc:IssueDate>{{context.date}}</cbc:IssueDate>
+	<cbc:IssueTime>{{context.time}}</cbc:IssueTime>
 	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
 	<cac:OrderReference>
 		<cbc:ID>GIB2016000000033</cbc:ID>
-		<cbc:IssueDate>2016-08-14</cbc:IssueDate>
+		<cbc:IssueDate>{{context.date}}</cbc:IssueDate>
 	</cac:OrderReference>
 	<cac:Signature>
-		<cbc:ID schemeID="VKN_TCKN">3340526030</cbc:ID>
+		<cbc:ID schemeID="VKN_TCKN">{{context.td_vergi_no}}</cbc:ID>
 		<cac:SignatoryParty>
 			<cac:PartyIdentification>
-				<cbc:ID schemeID="VKN">3340526030</cbc:ID>
+				<cbc:ID schemeID="VKN">{{context.td_vergi_no}}</cbc:ID>
 			</cac:PartyIdentification>
 			<cac:PostalAddress>
-				<cbc:StreetName>Papatya Caddesi Yasemin Sokak</cbc:StreetName>
+				<cbc:StreetName>Papatya Caddesi Yasemin Sokak</cbc:StreetName> 
 				<cbc:BuildingNumber>21</cbc:BuildingNumber>
 				<cbc:CitySubdivisionName>Beşiktaş</cbc:CitySubdivisionName>
 				<cbc:CityName>İstanbul</cbc:CityName>
@@ -49,20 +49,20 @@
 	</cac:Signature>
 	<cac:DespatchSupplierParty>
 		<cac:Party>
-			<cbc:WebsiteURI>http://www.aaa.com.tr/</cbc:WebsiteURI>
+			<cbc:WebsiteURI>http://www.aaa.com.tr/</cbc:WebsiteURI> ## ?
 			<cac:PartyIdentification>
-				<cbc:ID schemeID="VKN">3340526030</cbc:ID>
+				<cbc:ID schemeID="VKN">3340526030</cbc:ID> ## same as td_vergi_no
 			</cac:PartyIdentification>
 			<cac:PartyName>
-				<cbc:Name>AAA Anonim Şirketi</cbc:Name>
+				<cbc:Name>AAA Anonim Şirketi</cbc:Name> ## same as company name
 			</cac:PartyName>
 			<cac:PostalAddress>
-				<cbc:ID>1234567890</cbc:ID>
+				<cbc:ID>1234567890</cbc:ID> ## ?
 				<cbc:StreetName>Papatya Caddesi Yasemin Sokak</cbc:StreetName>
 				<cbc:BuildingNumber>21</cbc:BuildingNumber>
 				<cbc:CitySubdivisionName>Beşiktaş</cbc:CitySubdivisionName>
 				<cbc:CityName>İstanbul</cbc:CityName>
-				<cbc:PostalZone>34100</cbc:PostalZone>
+				<cbc:PostalZone>34100</cbc:PostalZone> ## mundatory
 				<cac:Country>
 					<cbc:Name>Türkiye</cbc:Name>
 				</cac:Country>
@@ -121,7 +121,7 @@
 			</cac:PostalAddress>
 			<cac:PartyTaxScheme>
 				<cac:TaxScheme>
-					<cbc:Name>Çankaya</cbc:Name>
+					<cbc:Name>Çankaya</cbc:Name> Vergi diresi
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:Contact>

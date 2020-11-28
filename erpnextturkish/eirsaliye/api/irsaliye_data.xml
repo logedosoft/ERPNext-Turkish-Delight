@@ -16,28 +16,28 @@
 	<cbc:ProfileID>TEMELIRSALIYE</cbc:ProfileID>
 	<cbc:ID>GIB2020000000001</cbc:ID>
 	<cbc:CopyIndicator>false</cbc:CopyIndicator>
-	<cbc:UUID>F47AC10B-58CC-4372-A567-0E02B2C3D478</cbc:UUID>
-	<cbc:IssueDate>{{context.date}}</cbc:IssueDate>
-	<cbc:IssueTime>{{context.time}}</cbc:IssueTime>
+	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}/cbc:UUID>
+	<cbc:IssueDate>{{context.delivery_note_doc.date}}</cbc:IssueDate>
+	<cbc:IssueTime>{{context.delivery_note_doc.time}}</cbc:IssueTime>
 	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
 	<cac:OrderReference>
 		<cbc:ID>GIB2016000000033</cbc:ID>
-		<cbc:IssueDate>{{context.date}}</cbc:IssueDate>
+		<cbc:IssueDate>{{context.delivery_note_doc.date}}</cbc:IssueDate>
 	</cac:OrderReference>
 	<cac:Signature>
-		<cbc:ID schemeID="VKN_TCKN">{{context.td_vergi_no}}</cbc:ID>
+		<cbc:ID schemeID="VKN_TCKN">{{context.settings_doc.vergi_no}}</cbc:ID>
 		<cac:SignatoryParty>
 			<cac:PartyIdentification>
-				<cbc:ID schemeID="VKN">{{context.td_vergi_no}}</cbc:ID>
+				<cbc:ID schemeID="VKN">{{context.settings_doc.td_vergi_no}}</cbc:ID>
 			</cac:PartyIdentification>
 			<cac:PostalAddress>
-				<cbc:StreetName>Papatya Caddesi Yasemin Sokak</cbc:StreetName>
-				<cbc:BuildingNumber>21</cbc:BuildingNumber>
-				<cbc:CitySubdivisionName>Beşiktaş</cbc:CitySubdivisionName>
-				<cbc:CityName>İstanbul</cbc:CityName>
-				<cbc:PostalZone>34100</cbc:PostalZone>
+				<cbc:StreetName>{{context.settings_doc.td_adres_sokak}}</cbc:StreetName>
+				<cbc:BuildingNumber>{{context.settings_doc.td_adres_bina_no}}</cbc:BuildingNumber>
+				<cbc:CitySubdivisionName>{{context.settings_doc.td_adres_ilce}}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{context.settings_doc.td_adres_il}}</cbc:CityName>
+				<cbc:PostalZone>{{context.settings_doc.td_posta_kodu}}</cbc:PostalZone>
 				<cac:Country>
-				<cbc:Name>Türkiye</cbc:Name>
+				<cbc:Name>{{context.settings_doc.td_adres_ulke}}</</cbc:Name>
 				</cac:Country>
 			</cac:PostalAddress>
 		</cac:SignatoryParty>
@@ -49,56 +49,56 @@
 	</cac:Signature>
 	<cac:DespatchSupplierParty>
 		<cac:Party>
-			<cbc:WebsiteURI>http://www.aaa.com.tr/</cbc:WebsiteURI>
+			<!-- <cbc:WebsiteURI>http://www.aaa.com.tr/</cbc:WebsiteURI> -->
 			<cac:PartyIdentification>
-				<cbc:ID schemeID="VKN">3340526030</cbc:ID>
+				<cbc:ID schemeID="VKN">{{context.settings_doc.vergi_no}}</cbc:ID>
 			</cac:PartyIdentification>
 			<cac:PartyName>
-				<cbc:Name>AAA Anonim Şirketi</cbc:Name>
+				<cbc:Name>{{context.settings_doc.td_firma_adi}}</cbc:Name>
 			</cac:PartyName>
 			<cac:PostalAddress>
-				<cbc:ID>1234567890</cbc:ID>
-				<cbc:StreetName>Papatya Caddesi Yasemin Sokak</cbc:StreetName>
-				<cbc:BuildingNumber>21</cbc:BuildingNumber>
-				<cbc:CitySubdivisionName>Beşiktaş</cbc:CitySubdivisionName>
-				<cbc:CityName>İstanbul</cbc:CityName>
-				<cbc:PostalZone>34100</cbc:PostalZone>
+				<!-- <cbc:ID>1234567890</cbc:ID> -->
+				<cbc:StreetName>{{context.settings_doc.td_adres_sokak}}</cbc:StreetName>
+				<cbc:BuildingNumber>{{context.settings_doc.td_adres_bina_no}}</cbc:BuildingNumber>
+				<cbc:CitySubdivisionName>{{context.settings_doc.td_adres_ilce}}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{context.settings_doc.td_adres_il}}</cbc:CityName>
+				<cbc:PostalZone>{{context.settings_doc.td_posta_kodu}}</cbc:PostalZone>
 				<cac:Country>
-					<cbc:Name>Türkiye</cbc:Name>
+					<cbc:Name>{{context.settings_doc.td_adres_ulke}}</cbc:Name>
 				</cac:Country>
 			</cac:PostalAddress>
 			<cac:PhysicalLocation>
-				<cbc:ID>Depo Şube</cbc:ID>
+				<cbc:ID>{{context.delivery_note_doc.set_warehouse}}</cbc:ID>
 				<cac:Address>
-					<cbc:ID>1234567895</cbc:ID>
-					<cbc:StreetName>Ihlamur Mahallesi Selvi Caddesi Sedir Sokak</cbc:StreetName>
-					<cbc:BuildingNumber>79/A</cbc:BuildingNumber>
-					<cbc:CitySubdivisionName>Balgat</cbc:CitySubdivisionName>
-					<cbc:CityName>Ankara</cbc:CityName>
-					<cbc:PostalZone>06800</cbc:PostalZone>
+					<!-- <cbc:ID>1234567895</cbc:ID> -->
+					<cbc:StreetName>{{ context.set_warehouse_address_doc.address_line1 }} {{ context.set_warehouse_address_doc.address_line2 }}</cbc:StreetName>
+					<!-- <cbc:BuildingNumber>79/A</cbc:BuildingNumber> -->
+					<cbc:CitySubdivisionName>{{ context.set_warehouse_address_doc.city | [0:context.set_warehouse_address_doc.city|indexof('/')] }}</cbc:CitySubdivisionName>
+					<cbc:CityName>{{ context.set_warehouse_address_doc.city | [context.set_warehouse_address_doc.city|indexof('/')+1:] }}</cbc:CityName>
+					<cbc:PostalZone>{{ context.set_warehouse_address_doc.pincode }}</cbc:PostalZone>
 					<cac:Country>
-						<cbc:Name>Türkiye</cbc:Name>
+						<cbc:Name>{{ context.set_warehouse_address_doc.country }}</cbc:Name>
 					</cac:Country>
 				</cac:Address>
 			</cac:PhysicalLocation>
 			<cac:PartyTaxScheme>
 				<cac:TaxScheme>
-				<cbc:Name>Büyük Mükellefler</cbc:Name>
+				<cbc:Name>{{context.settings_doc.td_vergi_dairesi}}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:Contact>
-				<cbc:Telephone>(212) 925 51515</cbc:Telephone>
-				<cbc:Telefax>(212) 925505015</cbc:Telefax>
-				<cbc:ElectronicMail>aa@aaa.com.tr</cbc:ElectronicMail>
+				<cbc:Telephone>{{ context.set_warehouse_address_doc.phone }}</cbc:Telephone>
+				<cbc:Telefax>{{ context.set_warehouse_address_doc.fax }}</cbc:Telefax>
+				<cbc:ElectronicMail>{{ context.set_warehouse_address_doc.email_id }}</cbc:ElectronicMail>
 			</cac:Contact>
 		</cac:Party>
 		<cac:DespatchContact>
-			<cbc:Name>Cemal Temiz</cbc:Name>
+			<cbc:Name>{{ context.delivery_note_doc.customer }}</cbc:Name>
 		</cac:DespatchContact>
 	</cac:DespatchSupplierParty>
 	<cac:DeliveryCustomerParty>
 		<cac:Party>
-			<cbc:WebsiteURI>http://www.bbb.com.tr/</cbc:WebsiteURI>
+			<!-- <cbc:WebsiteURI>http://www.bbb.com.tr/</cbc:WebsiteURI> -->
 			<cac:PartyIdentification>
 				<cbc:ID schemeID="VKN">3340526031</cbc:ID>
 			</cac:PartyIdentification>

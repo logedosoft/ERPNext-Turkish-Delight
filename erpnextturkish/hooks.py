@@ -130,3 +130,12 @@ doc_events = {
 # 	"Task": "erpnextturkish.task.get_dashboard_data"
 # }
 
+fixtures = [
+	{"doctype":"Custom Field", "filters": [["name", "in", (
+		"Delivery Note-e_irsaliye_section",
+		"Delivery Note-eirsaliye_uuid",
+	)]]},
+	{"doctype":"Property Setter", "filters": [["name", "in", (
+	
+	)]]},
+]
