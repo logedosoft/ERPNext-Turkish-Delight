@@ -16,7 +16,7 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/erpnextturkish/css/erpnextturkish.css"
-# app_include_js = "/assets/erpnextturkish/js/erpnextturkish.js"
+app_include_js = "/assets/js/to_console.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/erpnextturkish/css/erpnextturkish.css"
@@ -134,6 +134,7 @@ fixtures = [
 	{"doctype":"Custom Field", "filters": [["name", "in", (
 		"Delivery Note-e_irsaliye_section",
 		"Delivery Note-eirsaliye_uuid",
+		"Delivery Note-belgeno"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 	
