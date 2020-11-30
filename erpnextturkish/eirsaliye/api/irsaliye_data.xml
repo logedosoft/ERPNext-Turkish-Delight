@@ -99,7 +99,7 @@
 				<cbc:StreetName>{{ context.customer_address_doc.address_line1 }} {{ context.customer_address_doc.address_line2 }}</cbc:StreetName>
 				<cbc:CitySubdivisionName>{{ context.customer_address_doc.city_subdivision_name }}</cbc:CitySubdivisionName>
 				<cbc:CityName>{{ context.customer_address_doc.city_name }}</cbc:CityName>
-				<cbc:PostalZone>{{context.customer_address_doc.td_posta_kodu}}</cbc:PostalZone>
+				<cbc:PostalZone>{{context.customer_address_doc.pincode}}</cbc:PostalZone>
 				<cac:Country>
 					<cbc:Name>{{ context.customer_address_doc.country }}</cbc:Name>
 				</cac:Country>
@@ -121,7 +121,7 @@
 		<cac:ShipmentStage>
 			<cac:TransportMeans>
 				<cac:RoadTransport>
-					<cbc:LicensePlateID schemeID="PLAKA">{{ context.customer_address_doc.email_id }}</cbc:LicensePlateID>
+					<cbc:LicensePlateID schemeID="PLAKA">{{ context.delivery_note_doc.vehicle_no }}</cbc:LicensePlateID>
 				</cac:RoadTransport>
 			</cac:TransportMeans>
 			<cac:DriverPerson>

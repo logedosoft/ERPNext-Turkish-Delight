@@ -14,6 +14,7 @@ from erpnextturkish import console
 @frappe.whitelist()
 def send_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
+    validate_delivery_note(doc)
 
     if not doc.eirsaliye_uuid:
         doc.eirsaliye_uuid = str(uuid.uuid1())
@@ -23,13 +24,17 @@ def send_eirsaliye(delivery_note_name):
 
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
+    validate_settings_doc(settings_doc)
     
     set_warehouse_address_doc = frappe.get_doc("Address", get_default_address("Warehouse", doc.set_warehouse))
     set_warehouse_address_doc = set_missing_address_values(set_warehouse_address_doc)
+    validate_address(set_warehouse_address_doc)
 
     customer_doc = frappe.get_doc("Customer", doc.customer)
+    validate_customer(customer_doc)
     customer_address_doc = frappe.get_doc("Address", doc.shipping_address_name)
     customer_address_doc = set_missing_address_values(customer_address_doc)
+    validate_address(customer_address_doc)
     
     doc = set_driver_name(doc)
     
@@ -37,13 +42,16 @@ def send_eirsaliye(delivery_note_name):
     user["full_name"] = frappe.get_value("User",frappe.session.user,"full_name")
 
     for item in doc.items:
-        td_eirsaliye_birimi = frappe.get_list("TD EIrsaliye Birim Eslestirme",
+        eirsaliye_birimi_list = frappe.get_list("TD EIrsaliye Birim Eslestirme",
             filters={
                 "parent": settings_doc.name,
                 "td_birim": item.uom,    
             },
             fields = ["td_eirsaliye_birimi"]
-        )[0]["td_eirsaliye_birimi"]
+        )
+        if len(eirsaliye_birimi_list) == 0:
+            frappe.throw(_("There is no equivalent to the unit of measure: {0} in E Irsaliye Ayarlar: {1}").format(item.uom, eirsaliye_settings))
+        td_eirsaliye_birimi = eirsaliye_birimi_list[0]["td_eirsaliye_birimi"]
         item.td_eirsaliye_birimi = td_eirsaliye_birimi
 
 
@@ -102,7 +110,6 @@ def send_eirsaliye(delivery_note_name):
         return str(msg)
 
 
-
 def set_missing_address_values(address_doc):
     city_subdivision_name = ""
     city_name = ""
@@ -141,6 +148,37 @@ def set_driver_name(doc):
     doc.driver_family_name = driver_family_name
 
     return doc
+    
+
+def validate_settings_doc(doc):
+    field_list = ["vergi_no", "td_vergi_no", "td_adres_sokak", "td_adres_bina_no",
+     "td_adres_ilce", "td_adres_il", "td_posta_kodu", "td_adres_ulke", "vergi_no",
+     "td_firma_adi"]
+    for field in field_list:
+        if not doc.get(field):
+            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+
+
+def validate_delivery_note(doc):
+    field_list = ["set_warehouse", "eirsaliye_uuid", "driver_name", "vehicle_no"]
+    for field in field_list:
+        if not doc.get(field):
+            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+
+
+def validate_address(doc):
+    field_list = ["address_line1", "city", "pincode", "country", "phone",
+     "fax", "email_id"]
+    for field in field_list:
+        if not doc.get(field):
+            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+
+
+def validate_customer(doc):
+    field_list = ["tax_id", "ld_tax_office"]
+    for field in field_list:
+        if not doc.get(field):
+            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
 
 
 @frappe.whitelist()
