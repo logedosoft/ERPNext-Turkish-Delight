@@ -134,7 +134,8 @@ fixtures = [
 	{"doctype":"Custom Field", "filters": [["name", "in", (
 		"Delivery Note-e_irsaliye_section",
 		"Delivery Note-eirsaliye_uuid",
-		"Delivery Note-belgeno"
+		"Delivery Note-belgeno",
+		"Customer-ld_tax_office",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 	
