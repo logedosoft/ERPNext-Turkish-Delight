@@ -93,41 +93,41 @@
 			</cac:Contact>
 		</cac:Party>
 		<cac:DespatchContact>
-			<cbc:Name>{{ context.delivery_note_doc.customer }}</cbc:Name>
+			<cbc:Name>{{ context.user.full_name }}</cbc:Name>
 		</cac:DespatchContact>
 	</cac:DespatchSupplierParty>
 	<cac:DeliveryCustomerParty>
 		<cac:Party>
 			<!-- <cbc:WebsiteURI>http://www.bbb.com.tr/</cbc:WebsiteURI> -->
 			<cac:PartyIdentification>
-				<cbc:ID schemeID="VKN">3340526031</cbc:ID>
+				<cbc:ID schemeID="VKN">{{ context.customer_doc.tax_id }}</cbc:ID>
 			</cac:PartyIdentification>
-			<cac:PartyIdentification>
-				<cbc:ID schemeID="MUSTERINO">120010751</cbc:ID>
-			</cac:PartyIdentification>
+			<!-- <cac:PartyIdentification> -->
+				<!-- <cbc:ID schemeID="MUSTERINO">120010751</cbc:ID> -->
+			<!-- </cac:PartyIdentification> -->
 			<cac:PartyName>
-				<cbc:Name>BBB Limited Şirketi</cbc:Name>
+				<cbc:Name>{{ context.customer_doc.customer_name }}</cbc:Name>
 			</cac:PartyName>
 			<cac:PostalAddress>
-				<cbc:ID>1234567890</cbc:ID>
-				<cbc:StreetName>Ihlamur Mahallesi Selvi Caddesi Sedir Sokak</cbc:StreetName>
-				<cbc:BuildingNumber>75/A</cbc:BuildingNumber>
-				<cbc:CitySubdivisionName>Kızılay</cbc:CitySubdivisionName>
-				<cbc:CityName>Ankara</cbc:CityName>
-				<cbc:PostalZone>06100</cbc:PostalZone>
+				<!-- <cbc:ID>1234567890</cbc:ID> -->
+				<cbc:StreetName>{{ context.customer_address_doc.address_line1 }} {{ context.customer_address_doc.address_line2 }}</cbc:StreetName>
+				<!-- <cbc:BuildingNumber>75/A</cbc:BuildingNumber> -->
+				<cbc:CitySubdivisionName>{{ context.customer_address_doc.city | [0:context.customer_address_doc.city|indexof('/')] }}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{ context.customer_address_doc.city | [context.customer_address_doc.city|indexof('/')+1:] }}</cbc:CityName>
+				<cbc:PostalZone>{{context.customer_address_doc.td_posta_kodu}}</cbc:PostalZone>
 				<cac:Country>
-					<cbc:Name>Türkiye</cbc:Name>
+					<cbc:Name>{{ context.customer_address_doc.country }}</cbc:Name>
 				</cac:Country>
 			</cac:PostalAddress>
 			<cac:PartyTaxScheme>
 				<cac:TaxScheme>
-					<cbc:Name>Çankaya</cbc:Name>
+					<cbc:Name>{{ context.customer_doc.ld_tax_office }}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:Contact>
-				<cbc:Telephone>(312) 621 1112</cbc:Telephone>
-				<cbc:Telefax>(312) 621 1011</cbc:Telefax>
-				<cbc:ElectronicMail>bb@bbb.com.tr</cbc:ElectronicMail>
+				<cbc:Telephone>{{ context.customer_address_doc.phone }}</cbc:Telephone>
+				<cbc:Telefax>{{ context.customer_address_doc.fax }}</cbc:Telefax>
+				<cbc:ElectronicMail>{{ context.customer_address_doc.email_id }}</cbc:ElectronicMail>
 			</cac:Contact>
 		</cac:Party>
 	</cac:DeliveryCustomerParty>

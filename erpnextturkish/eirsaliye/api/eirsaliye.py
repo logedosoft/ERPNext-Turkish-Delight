@@ -20,13 +20,23 @@ def send_eirsaliye(delivery_note_name):
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     # company_doc = frappe.get_doc("Company", doc.company)
     set_warehouse_address_doc = frappe.get_doc("Address", get_default_address("Warehouse", doc.set_warehouse))
+    
+    customer_doc = frappe.get_doc("Customer", doc.customer)
     customer_address_doc = frappe.get_doc("Address", get_default_address("Customer", doc.customer))
+    
     doc.eirsaliye_uuid = uuid.uuid1()
+    
+    user = {}
+    user["full_name"] = frappe.get_value("User",frappe.session.user,"full_name")
+
+
     data_context = {
         "delivery_note_doc" : doc,
         "settings_doc": settings_doc,
         "set_warehouse_address_doc" : set_warehouse_address_doc,
+        "customer_doc": customer_doc,
         "customer_address_doc": customer_address_doc,
+        "user": user,
     }
     TEMPLATE_FILE = "irsaliye_data.xml"
     outputText = render_template(TEMPLATE_FILE, data_context)  # this is where to put args to the template renderer
