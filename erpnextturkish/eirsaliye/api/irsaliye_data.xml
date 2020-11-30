@@ -73,8 +73,8 @@
 					<!-- <cbc:ID>1234567895</cbc:ID> -->
 					<cbc:StreetName>{{ context.set_warehouse_address_doc.address_line1 }} {{ context.set_warehouse_address_doc.address_line2 }}</cbc:StreetName>
 					<!-- <cbc:BuildingNumber>79/A</cbc:BuildingNumber> -->
-					<cbc:CitySubdivisionName>{{ context.set_warehouse_address_doc.city | [0:context.set_warehouse_address_doc.city|indexof('/')] }}</cbc:CitySubdivisionName>
-					<cbc:CityName>{{ context.set_warehouse_address_doc.city | [context.set_warehouse_address_doc.city|indexof('/')+1:] }}</cbc:CityName>
+					<cbc:CitySubdivisionName>{{ context.set_warehouse_address_doc.city_subdivision_name }}</cbc:CitySubdivisionName>
+					<cbc:CityName>{{ context.set_warehouse_address_doc.city_name }}</cbc:CityName>
 					<cbc:PostalZone>{{ context.set_warehouse_address_doc.pincode }}</cbc:PostalZone>
 					<cac:Country>
 						<cbc:Name>{{ context.set_warehouse_address_doc.country }}</cbc:Name>
@@ -112,8 +112,8 @@
 				<!-- <cbc:ID>1234567890</cbc:ID> -->
 				<cbc:StreetName>{{ context.customer_address_doc.address_line1 }} {{ context.customer_address_doc.address_line2 }}</cbc:StreetName>
 				<!-- <cbc:BuildingNumber>75/A</cbc:BuildingNumber> -->
-				<cbc:CitySubdivisionName>{{ context.customer_address_doc.city | [0:context.customer_address_doc.city|indexof('/')] }}</cbc:CitySubdivisionName>
-				<cbc:CityName>{{ context.customer_address_doc.city | [context.customer_address_doc.city|indexof('/')+1:] }}</cbc:CityName>
+				<cbc:CitySubdivisionName>{{ context.customer_address_doc.city_subdivision_name }}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{ context.customer_address_doc.city_name }}</cbc:CityName>
 				<cbc:PostalZone>{{context.customer_address_doc.td_posta_kodu}}</cbc:PostalZone>
 				<cac:Country>
 					<cbc:Name>{{ context.customer_address_doc.country }}</cbc:Name>
@@ -136,24 +136,24 @@
 		<cac:ShipmentStage>
 			<cac:TransportMeans>
 				<cac:RoadTransport>
-					<cbc:LicensePlateID schemeID="PLAKA">06DR4077</cbc:LicensePlateID>
+					<cbc:LicensePlateID schemeID="PLAKA">{{ context.customer_address_doc.email_id }}</cbc:LicensePlateID>
 				</cac:RoadTransport>
 			</cac:TransportMeans>
 			<cac:DriverPerson>
-				<cbc:FirstName>Mehmet</cbc:FirstName>
-				<cbc:FamilyName>Öztürk</cbc:FamilyName>
-				<cbc:Title>Şoför</cbc:Title>
-				<cbc:NationalityID>14922266699</cbc:NationalityID>
+				<cbc:FirstName>{{ context.delivery_note_doc.driver_first_name }}</cbc:FirstName>
+				<cbc:FamilyName>{{ context.delivery_note_doc.driver_family_name }}</cbc:FamilyName>
+				<!-- <cbc:Title>Şoför</cbc:Title> -->
+				<!-- <cbc:NationalityID>14922266699</cbc:NationalityID> -->
 			</cac:DriverPerson>
-			<cac:DriverPerson>
+			<!-- <cac:DriverPerson>
 				<cbc:FirstName>Mustafa</cbc:FirstName>
 				<cbc:FamilyName>Öztürk</cbc:FamilyName>
 				<cbc:Title>Şoför</cbc:Title>
 				<cbc:NationalityID>14922266600</cbc:NationalityID>
-			</cac:DriverPerson>
+			</cac:DriverPerson> -->
 		</cac:ShipmentStage>
 		<cac:Delivery>
-			<cac:CarrierParty>
+			<!-- <cac:CarrierParty>
 				<cac:PartyIdentification>
 					<cbc:ID schemeID="VKN">1288331523</cbc:ID>
 				</cac:PartyIdentification>
@@ -167,13 +167,13 @@
 						<cbc:Name>Türkiye</cbc:Name>
 					</cac:Country>
 				</cac:PostalAddress>
-			</cac:CarrierParty>
+			</cac:CarrierParty> -->
 			<cac:Despatch>
-				<cbc:ActualDespatchDate>2020-11-14</cbc:ActualDespatchDate>
-				<cbc:ActualDespatchTime>09:00:00</cbc:ActualDespatchTime>
+				<cbc:ActualDespatchDate>{{ context.delivery_note_doc.posting_date }}</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>{{ context.delivery_note_doc.posting_time }}</cbc:ActualDespatchTime>
 			</cac:Despatch>
 		</cac:Delivery>
-		<cac:TransportHandlingUnit>
+		<!-- <cac:TransportHandlingUnit>
 			<cac:TransportEquipment>
 				<cbc:ID schemeID="DORSEPLAKA">06DR4088</cbc:ID>
 			</cac:TransportEquipment>
@@ -189,53 +189,29 @@
 		<cbc:OutstandingReason>Ürünlerin 10 tanesi daha sonra gönderilecektir.</cbc:OutstandingReason>
 		<cac:OrderLineReference>
 			<cbc:LineID>1</cbc:LineID>
-		</cac:OrderLineReference>
-		<cac:Item>
+		</cac:OrderLineReference> -->
+		<!-- <cac:Item>
 			<cbc:Name>Masa Üstü Bilgisayar</cbc:Name>
 			<cac:SellersItemIdentification>
 				<cbc:ID>PNC1234</cbc:ID>
 			</cac:SellersItemIdentification>
-		</cac:Item>
-	</cac:DespatchLine>
+		</cac:Item> -->
+	<!-- </cac:DespatchLine> -->
+	{% for item in context.delivery_note_doc.items %}
 	<cac:DespatchLine>
-		<cbc:ID>2</cbc:ID>
-		<cbc:DeliveredQuantity unitCode="C62">10</cbc:DeliveredQuantity>
-		<cbc:OutstandingQuantity unitCode="C62">2</cbc:OutstandingQuantity>
-		<cbc:OutstandingReason>Ürünlerin 2 tanesi daha sonra gönderilecektir.</cbc:OutstandingReason>
+		<cbc:ID>{{ item.idx }}</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="{{ item.td_eirsaliye_birimi }}">{{ item.qty}}</cbc:DeliveredQuantity>
+		<!-- <cbc:OutstandingQuantity unitCode="C62">2</cbc:OutstandingQuantity> -->
+		<!-- <cbc:OutstandingReason>Ürünlerin 2 tanesi daha sonra gönderilecektir.</cbc:OutstandingReason> -->
 		<cac:OrderLineReference>
-			<cbc:LineID>2</cbc:LineID>
+			<cbc:LineID>1</cbc:LineID>
 		</cac:OrderLineReference>
 		<cac:Item>
-			<cbc:Name>Notebook Bilgisayar</cbc:Name>
+			<cbc:Name>{{ item.item_name }}</cbc:Name>
 			<cac:SellersItemIdentification>
-				<cbc:ID>PNC1235</cbc:ID>
+				<cbc:ID> {{ item.item_code}}</cbc:ID>
 			</cac:SellersItemIdentification>
 		</cac:Item>
 	</cac:DespatchLine>
-	<cac:DespatchLine>
-		<cbc:ID>3</cbc:ID>
-		<cbc:DeliveredQuantity unitCode="C62">12</cbc:DeliveredQuantity>
-		<cac:OrderLineReference>
-			<cbc:LineID>3</cbc:LineID>
-		</cac:OrderLineReference>
-		<cac:Item>
-			<cbc:Name>Notebook Çantası</cbc:Name>
-			<cac:SellersItemIdentification>
-				<cbc:ID>PNC1236</cbc:ID>
-			</cac:SellersItemIdentification>
-		</cac:Item>
-	</cac:DespatchLine>
-	<cac:DespatchLine>
-		<cbc:ID>4</cbc:ID>
-		<cbc:DeliveredQuantity unitCode="C62">2</cbc:DeliveredQuantity>
-		<cac:OrderLineReference>
-			<cbc:LineID>4</cbc:LineID>
-		</cac:OrderLineReference>
-		<cac:Item>
-			<cbc:Name>Yazıcı</cbc:Name>
-			<cac:SellersItemIdentification>
-				<cbc:ID>PNC1237</cbc:ID>
-			</cac:SellersItemIdentification>
-		</cac:Item>
-	</cac:DespatchLine>
+	{% endfor %}
 </DespatchAdvice>

@@ -152,7 +152,7 @@
    "fieldname": "td_birim_eslestirme",
    "fieldtype": "Table",
    "label": "Birim E\u015fle\u015ftirme",
-   "options": "TD EFatura Birim Eslestirme"
+   "options": "TD EIrsaliye Birim Eslestirme"
   },
   {
    "description": "Sat\u0131\u015f Faturas\u0131 Not Parametreleri (Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress)",
@@ -187,7 +187,7 @@
    "label": "Posta Kodu"
   }
  ],
- "modified": "2020-11-28 17:37:25.432801",
+ "modified": "2020-11-30 16:15:56.681504",
  "modified_by": "Administrator",
  "module": "EIrsaliye",
  "name": "E Irsaliye Ayarlar",

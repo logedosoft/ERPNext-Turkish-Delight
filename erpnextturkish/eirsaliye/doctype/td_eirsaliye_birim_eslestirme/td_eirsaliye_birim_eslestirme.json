@@ -1,11 +1,11 @@
 {
- "creation": "2020-05-21 00:27:48.740497",
+ "creation": "2020-11-30 16:15:02.156177",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "td_birim",
-  "td_efatura_birimi"
+  "td_eirsaliye_birimi"
  ],
  "fields": [
   {
@@ -18,18 +18,18 @@
   },
   {
    "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim ad\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
-   "fieldname": "td_efatura_birimi",
+   "fieldname": "td_eirsaliye_birimi",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "E-Fatura Birimi",
+   "label": "E-Irsaliye Birimi",
    "reqd": 1
   }
  ],
  "istable": 1,
- "modified": "2020-11-30 16:17:11.126284",
+ "modified": "2020-11-30 16:15:45.447740",
  "modified_by": "Administrator",
- "module": "ERPNext Turkish",
- "name": "TD EFatura Birim Eslestirme",
+ "module": "EIrsaliye",
+ "name": "TD EIrsaliye Birim Eslestirme",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
