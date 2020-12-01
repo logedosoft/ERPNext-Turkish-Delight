@@ -15,7 +15,7 @@
 	<cbc:CustomizationID>TR1.2.1</cbc:CustomizationID>
 	<cbc:ProfileID>TEMELIRSALIYE</cbc:ProfileID>
 	<cbc:CopyIndicator>false</cbc:CopyIndicator>
-	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}/cbc:UUID>
+	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}</cbc:UUID>
 	<cbc:IssueDate>{{context.delivery_note_doc.date}}</cbc:IssueDate>
 	<cbc:IssueTime>{{context.delivery_note_doc.time}}</cbc:IssueTime>
 	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
@@ -135,6 +135,7 @@
 				<cbc:ActualDespatchTime>{{ context.delivery_note_doc.posting_time }}</cbc:ActualDespatchTime>
 			</cac:Despatch>
 		</cac:Delivery>
+	</cac:Shipment>
 	{% for item in context.delivery_note_doc.items %}
 	<cac:DespatchLine>
 		<cbc:ID>{{ item.idx }}</cbc:ID>
