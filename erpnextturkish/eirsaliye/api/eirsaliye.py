@@ -212,11 +212,11 @@ def validate_eirsaliye(delivery_note_name):
     if error:
         faultcode = soup.find('faultcode').getText()
         faultstring = soup.find('faultstring').getText()
-        # console(faultcode, faultstring)
+        frappe.msgprint(str(faultcode) + " " + str(faultstring))
         return str(faultcode) + " " + str(faultstring)
     if belgeOid:
         msg = soup.find('belgeOid').getText()
-        # console(msg)
+        frappe.msgprint(str(msg))
         return str(msg)
     if msg_return:
         msg = {}
