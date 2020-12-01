@@ -16,8 +16,8 @@
 	<cbc:ProfileID>TEMELIRSALIYE</cbc:ProfileID>
 	<cbc:CopyIndicator>false</cbc:CopyIndicator>
 	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}</cbc:UUID>
-	<cbc:IssueDate>{{context.delivery_note_doc.date}}</cbc:IssueDate>
-	<cbc:IssueTime>{{context.delivery_note_doc.time}}</cbc:IssueTime>
+	<cbc:IssueDate>{{context.delivery_note_doc.posting_date}}</cbc:IssueDate>
+	<cbc:IssueTime>{{context.delivery_note_doc.posting_time}}</cbc:IssueTime>
 	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
 	<cac:Signature>
 		<cbc:ID schemeID="VKN_TCKN">{{context.settings_doc.vergi_no}}</cbc:ID>
