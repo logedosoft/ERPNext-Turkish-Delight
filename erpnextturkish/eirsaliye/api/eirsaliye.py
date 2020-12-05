@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from erpnextturkish.eirsaliye.api.utlis import to_base64, get_hash_md5, render_template
 from frappe.contacts.doctype.address.address import get_default_address
+from frappe.utils import format_datetime
 import requests
 import uuid
 from erpnextturkish import console
@@ -39,6 +40,7 @@ def send_eirsaliye(delivery_note_name):
     validate_address(customer_address_doc)
     
     doc = set_driver_name(doc)
+    doc.posting_time = format_datetime(str(doc.posting_time), "HH:mm:ss")
     
     user = {}
     user["full_name"] = frappe.get_value("User",frappe.session.user,"full_name")
