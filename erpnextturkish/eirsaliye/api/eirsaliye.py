@@ -14,13 +14,15 @@ from erpnextturkish import console
 @frappe.whitelist()
 def send_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
-    validate_delivery_note(doc)
 
     if not doc.eirsaliye_uuid:
         doc.eirsaliye_uuid = str(uuid.uuid1())
         doc.db_update()
         frappe.db.commit()
         doc.reload()
+
+    #Validate the DN fields.
+    validate_delivery_note(doc)
 
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
