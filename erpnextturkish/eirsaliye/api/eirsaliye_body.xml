@@ -2,22 +2,22 @@
     <soapenv:Header> 
     <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"> 
     <wsse:UsernameToken>
-    <wsse:Username>{{context.user}}</wsse:Username>
-    <wsse:Password>{{context.password}}</wsse:Password>
+    <wsse:Username>{{context.settings_doc.user_name}}</wsse:Username>
+    <wsse:Password>{{context.settings_doc.password_uncoded}}</wsse:Password>
     </wsse:UsernameToken>
     </wsse:Security>
     </soapenv:Header>
     <soapenv:Body>
         <ser:belgeGonderExt>
             <parametreler>
-                <belgeHash>{{context.belgeHash}}</belgeHash>
-                <belgeNo>{{context.delivery_note_name}}</belgeNo>
+                <belgeHash>{{context.settings_doc.belgeHash}}</belgeHash>
+                <belgeNo>{{context.delivery_note_doc.name}}</belgeNo>
                 <belgeTuru>IRSALIYE_UBL</belgeTuru>
                 <belgeVersiyon>1.0</belgeVersiyon>
-                <erpKodu>{{context.erp_kodu}}</erpKodu>
+                <erpKodu>{{context.settings_doc.erp_kodu}}</erpKodu>
                 <mimeType>application/xml</mimeType>
-                <vergiTcKimlikNo>{{context.td_vergi_no}}</vergiTcKimlikNo>
-                <veri>{{context.veri}}</veri>
+                <vergiTcKimlikNo>{{context.settings_doc.d_vergi_no}}</vergiTcKimlikNo>
+                <veri>{{context.settings_doc.veri}}</veri>
             </parametreler>
         </ser:belgeGonderExt>
     </soapenv:Body>

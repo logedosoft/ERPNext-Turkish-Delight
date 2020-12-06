@@ -72,24 +72,20 @@ def send_eirsaliye(delivery_note_name):
         "customer_address_doc": customer_address_doc,
         "user": user,
     }
+
     TEMPLATE_FILE = "irsaliye_data.xml"
     outputText = render_template(TEMPLATE_FILE, data_context)  # this is where to put args to the template renderer
-    veri = to_base64(outputText)
-    belgeHash = get_hash_md5(outputText)
+    settings_doc.veri = to_base64(outputText)
+    settings_doc.belgeHash = get_hash_md5(outputText)
     
     endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
-    user = settings_doc.user_name
-    password = settings_doc.get_password('password')
-
+    settings_doc.password_uncoded = settings_doc.get_password('password')
+    
     body_context = {
-        "delivery_note_name": doc.name,
-        "veri": veri,
-        "belgeHash": belgeHash,
-        "user": user,
-        "password": password,
-        "erp_kodu": settings_doc.erp_kodu,
-        "td_vergi_no": settings_doc.td_vergi_no,
+        "delivery_note_doc" : doc,
+        "settings_doc": settings_doc,
     }
+
     body = render_template("eirsaliye_body.xml", body_context)
     body = body.encode('utf-8')
     session = requests.session()
@@ -102,6 +98,7 @@ def send_eirsaliye(delivery_note_name):
     soup = BeautifulSoup(xml, 'xml')
     error = soup.find_all('Fault')
     belgeOid = soup.find_all('belgeOid')
+
     if error:
         faultcode = soup.find('faultcode').getText()
         faultstring = soup.find('faultstring').getText()
