@@ -136,6 +136,13 @@ fixtures = [
 		"Delivery Note-eirsaliye_uuid",
 		"Delivery Note-belgeno",
 		"Customer-ld_tax_office",
+		"Delivery Note-yenidengonderilebilirmi",
+		"Delivery Note-gonderimcevabidetayi",
+		"Delivery Note-gonderimcevabikodu",
+		"Delivery Note-gonderimdurumu",
+		"Delivery Note-yerelbelgeoid",
+		"Delivery Note-durum",
+		"Delivery Note-column_break_20",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 	

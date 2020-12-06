@@ -9,6 +9,7 @@ from frappe.contacts.doctype.address.address import get_default_address
 from frappe.utils import format_datetime
 import requests
 import uuid
+from frappe.desk.form.utils import add_comment
 from erpnextturkish import console
 
 
@@ -21,7 +22,11 @@ def send_eirsaliye(delivery_note_name):
         doc.db_update()
         frappe.db.commit()
         doc.reload()
-
+    if doc.yerelbelgeoid:
+        data = validate_eirsaliye(delivery_note_name)
+        if data.get("belgeNo"):
+            return data
+    
     #Validate the DN fields.
     validate_delivery_note(doc)
 
@@ -69,7 +74,6 @@ def send_eirsaliye(delivery_note_name):
     }
     TEMPLATE_FILE = "irsaliye_data.xml"
     outputText = render_template(TEMPLATE_FILE, data_context)  # this is where to put args to the template renderer
-    console(outputText)
     veri = to_base64(outputText)
     belgeHash = get_hash_md5(outputText)
     
@@ -93,7 +97,7 @@ def send_eirsaliye(delivery_note_name):
     session.headers.update({"Content-Length": str(len(body))})
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
-
+    add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(xml, 'xml')
     error = soup.find_all('Fault')
@@ -105,12 +109,11 @@ def send_eirsaliye(delivery_note_name):
         return str(faultcode) + " " + str(faultstring)
     if belgeOid:
         msg = soup.find('belgeOid').getText()
-        doc.belgeno = msg
+        doc.yerelbelgeoid = msg
         doc.db_update()
         frappe.db.commit()
         doc.reload()
         frappe.msgprint(str(msg))
-        validate_eirsaliye(doc.name)
         return str(msg)
 
 
@@ -188,6 +191,8 @@ def validate_customer(doc):
 @frappe.whitelist()
 def validate_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
+    if not doc.yerelbelgeoid and not doc.belgeno:
+        frappe.throw(_("Please send the delivery note first"))
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
@@ -197,7 +202,7 @@ def validate_eirsaliye(delivery_note_name):
         "user": user,
         "password": password,
         "td_vergi_no": settings_doc.td_vergi_no,
-        "belgeno": doc.belgeno,
+        "belgeno": doc.yerelbelgeoid or doc.belgeno,
     }
     body = render_template("validate_eirsaliye.xml", body_context)
     body = body.encode('utf-8')
@@ -206,34 +211,60 @@ def validate_eirsaliye(delivery_note_name):
     session.headers.update({"Content-Length": str(len(body))})
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
-    # console(str(xml))
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(xml, 'xml')
-    error = soup.find_all('Fault')
-    belgeOid = soup.find_all('belgeOid')
-    msg_return = soup.find_all('return')
-
-    if error:
-        faultcode = soup.find('faultcode').getText()
-        faultstring = soup.find('faultstring').getText()
-        frappe.msgprint(str(faultcode) + " " + str(faultstring))
-        return str(faultcode) + " " + str(faultstring)
-    if belgeOid:
-        msg = soup.find('belgeOid').getText()
-        frappe.msgprint(str(msg))
-        return str(msg)
-    if msg_return:
-        msg = {}
-        if soup.find_all('aciklama'):
-            msg["aciklama"] = soup.find('aciklama').getText()
+    msg = {}
+    if soup.find_all('belgeOid'):
+        msg["belgeOid"] = soup.find('belgeOid').getText()
+    if soup.find_all('faultstring'):
+        msg["faultstring"] = soup.find('faultstring').getText()
+    if soup.find_all('faultcode'):
+        msg["faultcode"] = soup.find('faultcode').getText()
+    if soup.find_all('aciklama'):
+        msg["aciklama"] = soup.find('aciklama').getText()
+    if soup.find_all('alimTarihi'):
+        msg["alimTarihi"] = soup.find('alimTarihi').getText()
+    if soup.find_all('ettn'):
+        msg["ettn"] = soup.find('ettn').getText()
+    if soup.find_all('belgeNo'):
+        msg["belgeNo"] = soup.find('belgeNo').getText()
+    if soup.find_all('gonderimCevabiDetayi'):
+        msg["gonderimCevabiDetayi"] = soup.find('gonderimCevabiDetayi').getText()
+    if soup.find_all('olusturulmaTarihi'):
+        msg["olusturulmaTarihi"] = soup.find('olusturulmaTarihi').getText()
+    if soup.find_all('yanitDetayi'):
+        msg["yanitDetayi"] = soup.find('yanitDetayi').getText()
+    if soup.find_all('durum'):
         msg["durum"] = soup.find('durum').getText()
+    if soup.find_all('gonderimCevabiKodu'):
         msg["gonderimCevabiKodu"] = soup.find('gonderimCevabiKodu').getText()
+    if soup.find_all('gonderimDurumu'):
         msg["gonderimDurumu"] = soup.find('gonderimDurumu').getText()
+    if soup.find_all('yanitDurumu'):
         msg["yanitDurumu"] = soup.find('yanitDurumu').getText()
+    if soup.find_all('ulastiMi'):
         msg["ulastiMi"] = soup.find('ulastiMi').getText()
+    if soup.find_all('yenidenGonderilebilirMi'):
         msg["yenidenGonderilebilirMi"] = soup.find('yenidenGonderilebilirMi').getText()
+    if soup.find_all('yerelBelgeOid'):
         msg["yerelBelgeOid"] = soup.find('yerelBelgeOid').getText()
-        # console(msg)
-        frappe.msgprint(str(msg))
-        return(msg)
+
+    if msg.get("belgeNo") and not doc.belgeno:
+        doc.belgeno = msg.get("belgeNo")
+    if msg.get("durum"):
+        doc.durum = msg.get("durum")
+    if msg.get("yenidenGonderilebilirMi"):
+        doc.yenidengonderilebilirmi = msg.get("yenidenGonderilebilirMi")
+    if msg.get("gonderimCevabiDetayi"):
+        doc.gonderimcevabidetayi = msg.get("gonderimCevabiDetayi")
+    if msg.get("gonderimCevabiKodu"):
+        doc.gonderimCevabiKodu = msg.get("gonderimCevabiKodu")
+    if msg.get("gonderimDurumu"):
+        doc.gonderimdurumu = msg.get("gonderimDurumu")
+    if msg.get("yerelBelgeOid") and not doc.yerelbelgeoid:
+        doc.yerelbelgeoid = msg.get("yerelBelgeOid")
+    doc.db_update()
+    frappe.db.commit()
+    add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
+    return(msg)
 

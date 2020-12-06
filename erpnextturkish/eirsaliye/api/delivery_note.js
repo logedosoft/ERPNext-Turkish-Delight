@@ -23,7 +23,8 @@ var add_irsaliye_btns = function(frm) {
             callback: function (data) {
                 if (data.message) {
                     frm.reload_doc()
-                    console.log(data.message)
+                    console.table(data.message)
+                    show_msg(data)
                 }
             }
         });
@@ -37,9 +38,39 @@ var add_irsaliye_btns = function(frm) {
             callback: function (data) {
                 if (data.message) {
                     frm.reload_doc()
-                    console.log(data.message)
+                    console.table(data.message)
+                    show_msg(data)
                 }
             }
         });
     });
+}
+
+var show_msg = function(data) {
+    if (data.message.belgeNo) {
+        frappe.msgprint({
+            title: __('Success'),
+            indicator: 'green',
+            message: __(`Delivery Note Registered Successfully with number "${data.message.belgeNo}"`)
+        });
+    }
+    else if (data.message.durum == 1){
+        frappe.msgprint({
+            title: __('Wating'),
+            indicator: 'blue',
+            message: __(`Processing has not finished, please try again later`)
+        });
+    }
+    else if (data.message.durum || data.message.aciklama){
+        frappe.msgprint({
+            title: __('Error'),
+            indicator: 'red',
+            message: data.message.aciklama || data.message.durum 
+        });
+    }
+    else {
+        frappe.msgprint({
+            message: data.message 
+        });
+    }
 }
