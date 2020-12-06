@@ -73,8 +73,7 @@ def send_eirsaliye(delivery_note_name):
         "user": user,
     }
 
-    TEMPLATE_FILE = "irsaliye_data.xml"
-    outputText = render_template(TEMPLATE_FILE, data_context)  # this is where to put args to the template renderer
+    outputText = render_template(data_context, file=settings_doc.xml_data)  # this is where to put args to the template renderer
     settings_doc.veri = to_base64(outputText)
     settings_doc.belgeHash = get_hash_md5(outputText)
     
@@ -86,7 +85,7 @@ def send_eirsaliye(delivery_note_name):
         "settings_doc": settings_doc,
     }
 
-    body = render_template("eirsaliye_body.xml", body_context)
+    body = render_template(body_context, file=settings_doc.xml_body)
     body = body.encode('utf-8')
     session = requests.session()
     session.headers = {"Content-Type": "text/xml; charset=utf-8"}
@@ -201,7 +200,7 @@ def validate_eirsaliye(delivery_note_name):
         "td_vergi_no": settings_doc.td_vergi_no,
         "belgeno": doc.yerelbelgeoid or doc.belgeno,
     }
-    body = render_template("validate_eirsaliye.xml", body_context)
+    body = render_template(body_context, file_name="validate_eirsaliye.xml")
     body = body.encode('utf-8')
     session = requests.session()
     session.headers = {"Content-Type": "text/xml; charset=utf-8"}

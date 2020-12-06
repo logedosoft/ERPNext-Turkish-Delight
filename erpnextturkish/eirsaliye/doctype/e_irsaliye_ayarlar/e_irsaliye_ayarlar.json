@@ -32,7 +32,9 @@
   "td_adres_ulke",
   "canli_section",
   "td_birim_eslestirme",
-  "td_sb_notlar"
+  "td_sb_notlar",
+  "xml_data",
+  "xml_body"
  ],
  "fields": [
   {
@@ -162,7 +164,6 @@
    "reqd": 1
   },
   {
-   "description": "Sat\u0131\u015f Faturas\u0131 Not Parametreleri (Sat\u0131\u015f Faturas\u0131: docSI, M\u00fc\u015fteri: docCustomer, M\u00fc\u015fteri Adresi: docCustomerAddress)",
    "fieldname": "td_sb_notlar",
    "fieldtype": "Section Break"
   },
@@ -194,9 +195,21 @@
    "fieldtype": "Data",
    "label": "Posta Kodu",
    "reqd": 1
+  },
+  {
+   "fieldname": "xml_data",
+   "fieldtype": "Code",
+   "label": "XML Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "xml_body",
+   "fieldtype": "Code",
+   "label": "XML Body",
+   "reqd": 1
   }
  ],
- "modified": "2020-12-01 01:37:25.040303",
+ "modified": "2020-12-06 16:04:40.111223",
  "modified_by": "Administrator",
  "module": "EIrsaliye",
  "name": "E Irsaliye Ayarlar",
