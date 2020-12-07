@@ -16,7 +16,7 @@ app_license = "MIT"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/erpnextturkish/css/erpnextturkish.css"
-# app_include_js = "/assets/erpnextturkish/js/erpnextturkish.js"
+app_include_js = "/assets/js/to_console.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/erpnextturkish/css/erpnextturkish.css"
@@ -33,7 +33,8 @@ app_license = "MIT"
 doctype_js = {
     "Purchase Order": "public/js/purchase_order.js",
     "Sales Invoice": "public/js/sales_invoice.js",
-	"Customer": "public/js/customer.js"
+	"Customer": "public/js/customer.js",
+	"Delivery Note": "eirsaliye/api/delivery_note.js"
 }
 # Home Pages
 # ----------
@@ -83,13 +84,11 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+ 	# "E Irsaliye Ayarlar": {
+ 	# 	"onload": "erpnextturkish.eirsaliye.api.eirsaliye.send_eirsaliye",
+	# }
+}
 
 # Scheduled Tasks
 # ---------------
@@ -131,3 +130,21 @@ doctype_js = {
 # 	"Task": "erpnextturkish.task.get_dashboard_data"
 # }
 
+fixtures = [
+	{"doctype":"Custom Field", "filters": [["name", "in", (
+		"Delivery Note-e_irsaliye_section",
+		"Delivery Note-eirsaliye_uuid",
+		"Delivery Note-belgeno",
+		"Customer-ld_tax_office",
+		"Delivery Note-yenidengonderilebilirmi",
+		"Delivery Note-gonderimcevabidetayi",
+		"Delivery Note-gonderimcevabikodu",
+		"Delivery Note-gonderimdurumu",
+		"Delivery Note-yerelbelgeoid",
+		"Delivery Note-durum",
+		"Delivery Note-column_break_20",
+	)]]},
+	{"doctype":"Property Setter", "filters": [["name", "in", (
+	
+	)]]},
+]

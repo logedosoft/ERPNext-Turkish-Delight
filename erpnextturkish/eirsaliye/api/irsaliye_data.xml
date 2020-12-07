@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2"
+	xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+	xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2 UBL-DespatchAdvice-2.1.xsd">
+	<ext:UBLExtensions>
+		<ext:UBLExtension>
+			<ext:ExtensionContent>
+			</ext:ExtensionContent>
+		</ext:UBLExtension>
+	</ext:UBLExtensions>
+	<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+	<cbc:CustomizationID>TR1.2.1</cbc:CustomizationID>
+	<cbc:ProfileID>TEMELIRSALIYE</cbc:ProfileID>
+	<cbc:CopyIndicator>false</cbc:CopyIndicator>
+	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}</cbc:UUID>
+	<cbc:IssueDate>{{context.delivery_note_doc.posting_date}}</cbc:IssueDate>
+	<cbc:IssueTime>{{context.delivery_note_doc.posting_time}}</cbc:IssueTime>
+	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
+	<cac:Signature>
+		<cbc:ID schemeID="VKN_TCKN">{{context.settings_doc.vergi_no}}</cbc:ID>
+		<cac:SignatoryParty>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="VKN">{{context.settings_doc.td_vergi_no}}</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PostalAddress>
+				<cbc:StreetName>{{context.settings_doc.td_adres_sokak}}</cbc:StreetName>
+				<cbc:BuildingNumber>{{context.settings_doc.td_adres_bina_no}}</cbc:BuildingNumber>
+				<cbc:CitySubdivisionName>{{context.settings_doc.td_adres_ilce}}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{context.settings_doc.td_adres_il}}</cbc:CityName>
+				<cbc:PostalZone>{{context.settings_doc.td_posta_kodu}}</cbc:PostalZone>
+				<cac:Country>
+				<cbc:Name>{{context.settings_doc.td_adres_ulke}}</cbc:Name>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:SignatoryParty>
+		<cac:DigitalSignatureAttachment>
+			<cac:ExternalReference>
+				<cbc:URI>#Signature</cbc:URI>
+			</cac:ExternalReference>
+		</cac:DigitalSignatureAttachment>
+	</cac:Signature>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="VKN">{{context.settings_doc.vergi_no}}</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>{{context.settings_doc.td_firma_adi}}</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>{{context.settings_doc.td_adres_sokak}}</cbc:StreetName>
+				<cbc:BuildingNumber>{{context.settings_doc.td_adres_bina_no}}</cbc:BuildingNumber>
+				<cbc:CitySubdivisionName>{{context.settings_doc.td_adres_ilce}}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{context.settings_doc.td_adres_il}}</cbc:CityName>
+				<cbc:PostalZone>{{context.settings_doc.td_posta_kodu}}</cbc:PostalZone>
+				<cac:Country>
+					<cbc:Name>{{context.settings_doc.td_adres_ulke}}</cbc:Name>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PhysicalLocation>
+				<cbc:ID>{{context.delivery_note_doc.set_warehouse}}</cbc:ID>
+				<cac:Address>
+					<cbc:StreetName>{{ context.set_warehouse_address_doc.address_line1 }} {{ context.set_warehouse_address_doc.address_line2 }}</cbc:StreetName>
+					<cbc:CitySubdivisionName>{{ context.set_warehouse_address_doc.city_subdivision_name }}</cbc:CitySubdivisionName>
+					<cbc:CityName>{{ context.set_warehouse_address_doc.city_name }}</cbc:CityName>
+					<cbc:PostalZone>{{ context.set_warehouse_address_doc.pincode }}</cbc:PostalZone>
+					<cac:Country>
+						<cbc:Name>{{ context.set_warehouse_address_doc.country }}</cbc:Name>
+					</cac:Country>
+				</cac:Address>
+			</cac:PhysicalLocation>
+			<cac:PartyTaxScheme>
+				<cac:TaxScheme>
+				<cbc:Name>{{context.settings_doc.td_vergi_dairesi}}</cbc:Name>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:Contact>
+				<cbc:Telephone>{{ context.set_warehouse_address_doc.phone }}</cbc:Telephone>
+				<cbc:Telefax>{{ context.set_warehouse_address_doc.fax }}</cbc:Telefax>
+				<cbc:ElectronicMail>{{ context.set_warehouse_address_doc.email_id }}</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+		<cac:DespatchContact>
+			<cbc:Name>{{ context.user.full_name }}</cbc:Name>
+		</cac:DespatchContact>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="VKN">{{ context.customer_doc.tax_id }}</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>{{ context.customer_doc.customer_name }}</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>{{ context.customer_address_doc.address_line1 }} {{ context.customer_address_doc.address_line2 }}</cbc:StreetName>
+				<cbc:CitySubdivisionName>{{ context.customer_address_doc.city_subdivision_name }}</cbc:CitySubdivisionName>
+				<cbc:CityName>{{ context.customer_address_doc.city_name }}</cbc:CityName>
+				<cbc:PostalZone>{{context.customer_address_doc.pincode}}</cbc:PostalZone>
+				<cac:Country>
+					<cbc:Name>{{ context.customer_address_doc.country }}</cbc:Name>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cac:TaxScheme>
+					<cbc:Name>{{ context.customer_doc.ld_tax_office }}</cbc:Name>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:Contact>
+				<cbc:Telephone>{{ context.customer_address_doc.phone }}</cbc:Telephone>
+				<cbc:Telefax>{{ context.customer_address_doc.fax }}</cbc:Telefax>
+				<cbc:ElectronicMail>{{ context.customer_address_doc.email_id }}</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DeliveryCustomerParty>
+	<cac:Shipment>
+		<cbc:ID/>
+		<cac:ShipmentStage>
+			<cac:TransportMeans>
+				<cac:RoadTransport>
+					<cbc:LicensePlateID schemeID="PLAKA">{{ context.delivery_note_doc.vehicle_no }}</cbc:LicensePlateID>
+				</cac:RoadTransport>
+			</cac:TransportMeans>
+			<cac:DriverPerson>
+				<cbc:FirstName>{{ context.delivery_note_doc.driver_first_name }}</cbc:FirstName>
+				<cbc:FamilyName>{{ context.delivery_note_doc.driver_family_name }}</cbc:FamilyName>
+			</cac:DriverPerson>
+		</cac:ShipmentStage>
+		<cac:Delivery>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>{{ context.delivery_note_doc.posting_date }}</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>{{ context.delivery_note_doc.posting_time }}</cbc:ActualDespatchTime>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	{% for item in context.delivery_note_doc.items %}
+	<cac:DespatchLine>
+		<cbc:ID>{{ item.idx }}</cbc:ID>
+		<cbc:DeliveredQuantity unitCode="{{ item.td_eirsaliye_birimi }}">{{ item.qty}}</cbc:DeliveredQuantity>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>{{ item.item_name }}</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID> {{ item.item_code}}</cbc:ID>
+			</cac:SellersItemIdentification>
+		</cac:Item>
+	</cac:DespatchLine>
+	{% endfor %}
+</DespatchAdvice>
