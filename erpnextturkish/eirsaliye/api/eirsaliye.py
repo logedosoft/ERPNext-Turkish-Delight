@@ -275,7 +275,6 @@ def login_test(eirsaliye_settings):
         "password": password,
     }
     body = render_template(body_context, file_name="login_test.xml")
-    console(body)
     body = body.encode('utf-8')
     session = requests.session()
     session.headers = {"Content-Type": "text/xml; charset=utf-8"}
