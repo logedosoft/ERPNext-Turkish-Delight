@@ -9,6 +9,7 @@ from frappe.contacts.doctype.address.address import get_default_address
 from frappe.utils import format_datetime
 import requests
 import uuid
+from bs4 import BeautifulSoup
 from frappe.desk.form.utils import add_comment
 from erpnextturkish import console
 
@@ -93,7 +94,6 @@ def send_eirsaliye(delivery_note_name):
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
     add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
-    from bs4 import BeautifulSoup
     soup = BeautifulSoup(xml, 'xml')
     error = soup.find_all('Fault')
     belgeOid = soup.find_all('belgeOid')
@@ -207,7 +207,6 @@ def validate_eirsaliye(delivery_note_name):
     session.headers.update({"Content-Length": str(len(body))})
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
-    from bs4 import BeautifulSoup
     soup = BeautifulSoup(xml, 'xml')
     msg = {}
     if soup.find_all('belgeOid'):
@@ -264,3 +263,31 @@ def validate_eirsaliye(delivery_note_name):
     add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
     return(msg)
 
+
+@frappe.whitelist()
+def login_test(eirsaliye_settings):
+    settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
+    endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
+    user_name = settings_doc.user_name
+    password = settings_doc.get_password('password')
+    body_context = {
+        "user_name": user_name,
+        "password": password,
+    }
+    body = render_template(body_context, file_name="login_test.xml")
+    console(body)
+    body = body.encode('utf-8')
+    session = requests.session()
+    session.headers = {"Content-Type": "text/xml; charset=utf-8"}
+    session.headers.update({"Content-Length": str(len(body))})
+    response = session.post(url=endpoint, data=body, verify=False)
+    xml = response.content
+    xml = xml.decode('utf-8')
+    if response.status_code == 200:
+        frappe.msgprint(_("You have logged in Successfully"))
+    else:
+        soup = BeautifulSoup(xml, 'xml')
+        if soup.find_all('faultstring'):
+            faultstring = soup.find('faultstring').getText()
+            frappe.throw(_(faultstring))
+    return(xml)
