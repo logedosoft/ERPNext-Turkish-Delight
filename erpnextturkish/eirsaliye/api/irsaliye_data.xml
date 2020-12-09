@@ -106,7 +106,7 @@
 			</cac:PostalAddress>
 			<cac:PartyTaxScheme>
 				<cac:TaxScheme>
-					<cbc:Name>{{ context.customer_doc.ld_tax_office }}</cbc:Name>
+					<cbc:Name>{{ context.customer_doc.tax_office }}</cbc:Name>
 				</cac:TaxScheme>
 			</cac:PartyTaxScheme>
 			<cac:Contact>

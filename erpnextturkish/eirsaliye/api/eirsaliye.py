@@ -178,7 +178,7 @@ def validate_address(doc):
 
 
 def validate_customer(doc):
-    field_list = ["tax_id", "ld_tax_office"]
+    field_list = ["tax_id", "tax_office"]
     for field in field_list:
         if not doc.get(field):
             frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
