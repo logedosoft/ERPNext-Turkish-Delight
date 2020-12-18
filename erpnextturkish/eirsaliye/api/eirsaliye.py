@@ -182,6 +182,10 @@ def validate_customer(doc):
     for field in field_list:
         if not doc.get(field):
             frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+    if doc.customer_type == "Company" and len(doc.ld_tax_office) != 10:
+        frappe.throw(_("Tax ID field must have 10 numeric characters for Companys: {0}").format(doc.customer_name))
+    elif doc.customer_type == "Individual" and len(doc.ld_tax_office) != 11:
+        frappe.throw(_("Tax ID field must have 11 numeric characters for Individuals: {0}").format(doc.customer_name))
 
 
 @frappe.whitelist()
