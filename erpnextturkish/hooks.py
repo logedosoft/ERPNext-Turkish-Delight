@@ -135,7 +135,7 @@ fixtures = [
 		"Delivery Note-e_irsaliye_section",
 		"Delivery Note-eirsaliye_uuid",
 		"Delivery Note-belgeno",
-		"Customer-tax_office",
+		"Customer-ld_tax_office",
 		"Delivery Note-yenidengonderilebilirmi",
 		"Delivery Note-gonderimcevabidetayi",
 		"Delivery Note-gonderimcevabikodu",
