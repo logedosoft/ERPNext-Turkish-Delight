@@ -14,6 +14,14 @@ from frappe.desk.form.utils import add_comment
 from erpnextturkish import console
 
 
+
+def on_submit_validate(doc, method):
+    field_list = ["set_warehouse", "driver_name", "vehicle_no", "transporter_name"]
+    for field in field_list:
+        if not doc.get(field):
+            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+
+
 @frappe.whitelist()
 def send_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)

@@ -85,9 +85,9 @@ doctype_js = {
 # Hook on document methods and events
 
 doc_events = {
- 	# "E Irsaliye Ayarlar": {
- 	# 	"onload": "erpnextturkish.eirsaliye.api.eirsaliye.send_eirsaliye",
-	# }
+ 	"Delivery Note": {
+ 		"on_submit": "erpnextturkish.eirsaliye.api.eirsaliye.on_submit_validate",
+	}
 }
 
 # Scheduled Tasks
