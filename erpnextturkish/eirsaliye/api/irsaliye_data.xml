@@ -18,6 +18,7 @@
 	<cbc:UUID>{{context.delivery_note_doc.eirsaliye_uuid}}</cbc:UUID>
 	<cbc:IssueDate>{{context.delivery_note_doc.posting_date}}</cbc:IssueDate>
 	<cbc:IssueTime>{{context.delivery_note_doc.posting_time}}</cbc:IssueTime>
+	<cbc:Note>{{context.delivery_note_doc.ld_note}}</cbc:Note>
 	<cbc:DespatchAdviceTypeCode>SEVK</cbc:DespatchAdviceTypeCode>
 	<cac:Signature>
 		<cbc:ID schemeID="VKN_TCKN">{{context.settings_doc.vergi_no}}</cbc:ID>

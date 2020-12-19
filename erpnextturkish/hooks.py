@@ -143,6 +143,7 @@ fixtures = [
 		"Delivery Note-yerelbelgeoid",
 		"Delivery Note-durum",
 		"Delivery Note-column_break_20",
+		"Delivery Note-ld_note"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 	
