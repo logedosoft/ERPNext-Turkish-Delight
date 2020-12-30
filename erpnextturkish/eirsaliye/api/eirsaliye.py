@@ -39,6 +39,11 @@ def send_eirsaliye(delivery_note_name):
     #Validate the DN fields.
     validate_delivery_note(doc)
 
+    if doc.belgeno:#If belgeno field is not empty
+        dctResponse = validate_eirsaliye(doc.name)
+        if dctResponse.get('durum') != 2:#If durum is not xml error return it back so we should send the DN only if we hasn't sent it or if we had an XML error before.
+            return
+
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     validate_settings_doc(settings_doc)
