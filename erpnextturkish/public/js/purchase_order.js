@@ -3,7 +3,7 @@ frappe.ui.form.on("Purchase Order", {
 	onload_post_render: (frm) => {
         //Forma dosya guncelle butonunu ekleyelim
         frm.add_custom_button(
-            __('Dosya Eklerini Güncelle'),
+            __('Dosya Eklerini Güncelle2'),
 			function() {
                 console.log("Dosya Eklerini Güncelle started");
 				frappe.call({
