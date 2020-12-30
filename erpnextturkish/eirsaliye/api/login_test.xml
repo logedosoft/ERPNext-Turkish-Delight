@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.csap.cs.com.tr/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ser:wsLogin>
+         <userId>{{context.user_name}}</userId>
+         <password>{{context.password}}</password>
+      </ser:wsLogin>
+   </soapenv:Body>
+</soapenv:Envelope>

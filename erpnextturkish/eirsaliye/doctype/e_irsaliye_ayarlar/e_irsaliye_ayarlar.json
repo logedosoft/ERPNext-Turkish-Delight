@@ -1,0 +1,233 @@
+{
+ "autoname": "format:{company}-{entegrator}",
+ "creation": "2020-11-21 16:51:41.040371",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "entegrator",
+  "company",
+  "test_modu",
+  "user_name",
+  "password",
+  "btn_login_test",
+  "td_cb_01_column",
+  "eirsaliye_url",
+  "test_eirsaliye_url",
+  "erp_kodu",
+  "test_section",
+  "td_firma_adi",
+  "vergi_no",
+  "td_vergi_no",
+  "td_vergi_dairesi",
+  "td_mersis_no",
+  "td_ticaret_sicil_no",
+  "td_cb_02_column",
+  "td_adres_sokak",
+  "td_adres_bina_no",
+  "td_adres_kapi_no",
+  "td_adres_ilce",
+  "td_adres_il",
+  "td_posta_kodu",
+  "td_adres_ulke",
+  "canli_section",
+  "td_birim_eslestirme",
+  "td_sb_notlar",
+  "xml_data",
+  "xml_body"
+ ],
+ "fields": [
+  {
+   "fieldname": "entegrator",
+   "fieldtype": "Select",
+   "label": "Entegrat\u00f6r",
+   "options": "QNB",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "test_modu",
+   "fieldtype": "Check",
+   "label": "Test Modu"
+  },
+  {
+   "fieldname": "user_name",
+   "fieldtype": "Data",
+   "label": "Kullan\u0131c\u0131 Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "Parola",
+   "reqd": 1
+  },
+  {
+   "fieldname": "btn_login_test",
+   "fieldtype": "Button",
+   "label": "Login Test"
+  },
+  {
+   "fieldname": "td_cb_01_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "test_section",
+   "fieldtype": "Section Break",
+   "label": "F\u0130RMA B\u0130LG\u0130LER\u0130"
+  },
+  {
+   "fieldname": "td_firma_adi",
+   "fieldtype": "Data",
+   "label": "Firma Ad\u0131",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_vergi_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vergi No (VKN)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_vergi_dairesi",
+   "fieldtype": "Data",
+   "label": "Vergi Dairesi",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_mersis_no",
+   "fieldtype": "Data",
+   "label": "Mersis No"
+  },
+  {
+   "fieldname": "td_ticaret_sicil_no",
+   "fieldtype": "Data",
+   "label": "Ticaret Sicil No"
+  },
+  {
+   "fieldname": "td_cb_02_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "td_adres_sokak",
+   "fieldtype": "Data",
+   "label": "Sokak",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_adres_bina_no",
+   "fieldtype": "Data",
+   "label": "Bina No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_adres_kapi_no",
+   "fieldtype": "Data",
+   "label": "Kap\u0131 No"
+  },
+  {
+   "fieldname": "td_adres_ilce",
+   "fieldtype": "Data",
+   "label": "\u0130l\u00e7e",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_adres_il",
+   "fieldtype": "Data",
+   "label": "\u0130l",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_adres_ulke",
+   "fieldtype": "Data",
+   "label": "\u00dclke",
+   "reqd": 1
+  },
+  {
+   "fieldname": "canli_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "G\u0130B Standard\u0131na g\u00f6re olmas\u0131 gereken birim adlar\u0131.\n(\u00d6rnek: Adet - NIU, Metre - MTR, Kilogram - KGM)",
+   "fieldname": "td_birim_eslestirme",
+   "fieldtype": "Table",
+   "label": "Birim E\u015fle\u015ftirme",
+   "options": "TD EIrsaliye Birim Eslestirme",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_sb_notlar",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "eirsaliye_url",
+   "fieldtype": "Data",
+   "label": "E-Irsaliye Adresi",
+   "reqd": 1
+  },
+  {
+   "fieldname": "test_eirsaliye_url",
+   "fieldtype": "Data",
+   "label": "Test E-Irsaliye Adresi"
+  },
+  {
+   "fieldname": "erp_kodu",
+   "fieldtype": "Data",
+   "label": "ERP Kodu",
+   "reqd": 1
+  },
+  {
+   "fieldname": "vergi_no",
+   "fieldtype": "Data",
+   "label": "VKN TCKN",
+   "reqd": 1
+  },
+  {
+   "fieldname": "td_posta_kodu",
+   "fieldtype": "Data",
+   "label": "Posta Kodu",
+   "reqd": 1
+  },
+  {
+   "fieldname": "xml_data",
+   "fieldtype": "Code",
+   "label": "XML Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "xml_body",
+   "fieldtype": "Code",
+   "label": "XML Body",
+   "reqd": 1
+  }
+ ],
+ "modified": "2020-12-06 16:04:40.111223",
+ "modified_by": "Administrator",
+ "module": "EIrsaliye",
+ "name": "E Irsaliye Ayarlar",
+ "name_case": "Title Case",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
