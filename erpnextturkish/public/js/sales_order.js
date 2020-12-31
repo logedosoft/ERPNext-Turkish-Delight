@@ -3,36 +3,45 @@ frappe.ui.form.on("Sales Order", {
     onload_post_render: (frm) => {
         if(frm.doc.status !== 'Closed') {
             if(frm.doc.status !== 'On Hold') {
-                frm.add_custom_button(__("Manufacture23"), () => {
+                frm.add_custom_button(__("Manufacture"), () => {
                     frappe.call({
                         method: 'erpnextturkish.selling.api.selling_utils.get_work_order_items',
                         args: {
                             strSalesOrder: frm.docname
                         },
                         callback: (r) => {
-                            console.log(r);
                             if(!r.message) {
                                 frappe.msgprint({
-                                    title: __('Work Order not created'),
-                                    message: __('No Items with Bill of Materials to Manufacture'),
-                                    indicator: 'orange'
-                                });
-                                return;
-                            }
-                            else if(!r.message) {
-                                frappe.msgprint({
-                                    title: __('Work Order not created'),
-                                    message: __('Work Order already created for all items with BOM'),
+                                    title: __('Item Fetch Failed'),
+                                    message: __(r.message),
                                     indicator: 'orange'
                                 });
                                 return;
                             } else {
-                                const fields = [{
+                                const fields = [
+                                {
+                                    fieldtype: 'Link',
+                                    fieldname: 's_warehouse',
+                                    options: 'Warehouse',
+                                    reqd: 1,
+                                    label: __('Select Source Warehouse'),
+                                    in_list_view: 1,
+                                },
+                                {
+                                    fieldtype: 'Link',
+                                    fieldname: 't_warehouse',
+                                    options: 'Warehouse',
+                                    reqd: 1,
+                                    label: __('Select Target Warehouse'),
+                                    in_list_view: 1,
+                                },
+                                {
                                     label: 'Items',
                                     fieldtype: 'Table',
                                     fieldname: 'items',
                                     description: __('Select BOM and Qty for Production'),
-                                    fields: [{
+                                    fields: [
+                                    {
                                         fieldtype: 'Read Only',
                                         fieldname: 'item_code',
                                         label: __('Item Code'),
@@ -59,24 +68,25 @@ frappe.ui.form.on("Sales Order", {
                                         reqd: 1,
                                         label: __('Sales Order Item'),
                                         hidden: 1
-                                    }],
-                                    data: r.message,
-                                    get_data: () => {
-                                        return r.message
-                                    }
-                                }]
+                                        }],
+                                        data: r.message,
+                                        get_data: () => {
+                                            return r.message
+                                        }
+                                    }]
                                 var d = new frappe.ui.Dialog({
                                     title: __('Select Items to Manufacture'),
                                     fields: fields,
                                     primary_action: function() {
                                         var data = d.get_values();
-                                        me.frm.call({
-                                            method: 'make_work_orders',
+                                        frm.call({
+                                            method: 'erpnextturkish.selling.api.selling_utils.create_manufacture_se_for_so',
                                             args: {
                                                 items: data,
-                                                company: me.frm.doc.company,
-                                                sales_order: me.frm.docname,
-                                                project: me.frm.project
+                                                company: frm.doc.company,
+                                                sales_order: frm.docname,
+                                                s_warehouse: data.s_warehouse,
+                                                t_warehouse: data.t_warehouse
                                             },
                                             freeze: true,
                                             callback: function(r) {
