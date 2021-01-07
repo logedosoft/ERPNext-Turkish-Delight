@@ -3,12 +3,14 @@ frappe.ui.form.on("Sales Order", {
     onload_post_render: (frm) => {
         if(frm.doc.status !== 'Closed' && frm.doc.status !== 'On Hold' && frm.doc.docstatus == 1) {
             frm.add_custom_button(__("Manufacture"), () => {
+                console.log("Starting get_work_order_items");
                 frappe.call({
                     method: 'erpnextturkish.selling.api.selling_utils.get_work_order_items',
                     args: {
                         strSalesOrder: frm.docname
                     },
                     callback: (r) => {
+                        console.log(r);
                         if(!r.message) {
                             frappe.msgprint({
                                 title: __('Item Fetch Failed'),
@@ -67,12 +69,12 @@ frappe.ui.form.on("Sales Order", {
                                     reqd: 1,
                                     label: __('Sales Order Item'),
                                     hidden: 1
-                                    }],
-                                    data: r.message,
-                                    get_data: () => {
-                                        return r.message
-                                    }
-                                }]
+                                }],
+                                data: r.message,
+                                get_data: () => {
+                                    return r.message
+                                }
+                            }]
                             var d = new frappe.ui.Dialog({
                                 title: __('Select Items to Manufacture'),
                                 fields: fields,
