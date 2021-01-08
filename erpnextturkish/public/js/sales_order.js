@@ -1,6 +1,6 @@
 //Sales Order Customizations
 frappe.ui.form.on("Sales Order", {
-    onload_post_render: (frm) => {
+    refresh: (frm) => {
         if(frm.doc.status !== 'Closed' && frm.doc.status !== 'On Hold' && frm.doc.docstatus == 1) {
             frm.add_custom_button(__("Manufacture"), () => {
                 console.log("Starting get_work_order_items");
@@ -89,14 +89,18 @@ frappe.ui.form.on("Sales Order", {
                                             s_warehouse: data.s_warehouse,
                                             t_warehouse: data.t_warehouse
                                         },
+                                        btn: $('.primary-action'),
                                         freeze: true,
                                         callback: function(r) {
                                             if(r.message) {
                                                 frappe.msgprint({
-                                                    message: __('Stock Entries Created: {0}',
-                                                        [r.message.map(function(d) {
-                                                            return repl('<a href="#Form/Stock Entry/%(name)s">%(name)s</a>', {name:d})
-                                                        }).join(', ')]),
+                                                    message: __('Stock Entries Created: Click {0} to list them.<br>Created Stock Entries:{1}',
+                                                        [
+                                                            repl('<a href="#List/Stock Entry/List?ld_sales_order=%(name)s">here</a>', {name:frm.docname}),
+                                                            r.message.map(function(d) {
+                                                                return repl('<a href="#Form/Stock Entry/%(name)s">%(name)s</a>', {name:d})
+                                                            }).join(', ')
+                                                        ]),
                                                     indicator: 'green'
                                                 })
                                             }
@@ -117,7 +121,7 @@ frappe.ui.form.on("Sales Order", {
                         });
                     }
                 })
-            });
+            }, __('Create'));
         }
     }
 });

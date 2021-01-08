@@ -26,7 +26,7 @@ def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_war
     items = json.loads(items).get('items')
 
     for dctItem in items:
-        dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse)
+        dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse, sales_order)
         docSE = frappe.get_doc(dctSE)
         docSE.insert()
         docSE.submit()
@@ -35,7 +35,7 @@ def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_war
 
     return lstSE
 
-def create_manufacture_se(bom_no, qty, company, s_warehouse, t_warehouse):
+def create_manufacture_se(bom_no, qty, company, s_warehouse, t_warehouse, sales_order):
     stock_entry = frappe.new_doc("Stock Entry")
     stock_entry.purpose = "Manufacture"
     stock_entry.company = company
@@ -43,6 +43,7 @@ def create_manufacture_se(bom_no, qty, company, s_warehouse, t_warehouse):
     stock_entry.bom_no = bom_no
     #stock_entry.use_multi_level_bom = work_order.use_multi_level_bom
     stock_entry.fg_completed_qty = qty
+    stock_entry.ld_sales_order = sales_order
 
     stock_entry.from_warehouse = s_warehouse
     stock_entry.to_warehouse = t_warehouse
