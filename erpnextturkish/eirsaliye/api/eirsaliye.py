@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from erpnextturkish.eirsaliye.api.utlis import to_base64, get_hash_md5, render_template
+from erpnextturkish.eirsaliye.api.utils import to_base64, get_hash_md5, render_template
 from frappe.contacts.doctype.address.address import get_default_address
 from frappe.utils import format_datetime
 import requests

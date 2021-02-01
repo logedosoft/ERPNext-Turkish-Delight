@@ -29,17 +29,22 @@ function EInvoiceProcess(frm, strOperation) {
 
 frappe.ui.form.on("Sales Invoice", {
 	refresh: (frm) => {
-
-        if (frm.doc.docstatus == 1 && !(cint(frm.doc.is_return) && frm.doc.return_against)) {
-			frm.add_custom_button(__('Gönder'),
-				function() {
-                    EInvoiceProcess(frm, "Send");
-                }, __('E-Fatura'));
-            frm.add_custom_button(__('Durum Güncelle'),
-				function() {
-                    EInvoiceProcess(frm, "Refresh");
-                }, __('E-Fatura'));
-			frm.page.set_inner_btn_group_as_primary(__('E-Fatura'));
-		}
+        //Get einvoice.enable settings
+        var prmEInvoiceEnable = frappe.db.get_single_value("EFatura Ayarlar", "td_enable");
+        Promise.all([prmEInvoiceEnable]).then(function(objResult) {
+            if (objResult && objResult.length == 1 && objResult[0] === 1) {
+                if (frm.doc.docstatus == 1 && !(cint(frm.doc.is_return) && frm.doc.return_against)) {
+                    frm.add_custom_button(__('Gönder'),
+                        function() {
+                            EInvoiceProcess(frm, "Send");
+                        }, __('E-Fatura'));
+                    frm.add_custom_button(__('Durum Güncelle'),
+                        function() {
+                            EInvoiceProcess(frm, "Refresh");
+                        }, __('E-Fatura'));
+                    frm.page.set_inner_btn_group_as_primary(__('E-Fatura'));
+                }
+            }
+        });
     }
 });

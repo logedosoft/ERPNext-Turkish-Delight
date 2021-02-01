@@ -53,7 +53,7 @@ var show_msg = function(data) {
         frappe.msgprint({
             title: __('Success'),
             indicator: 'green',
-            message: __(`Delivery Note Registered Successfully with number "${data.message.belgeNo}"`)
+            message: __('Delivery Note Registered Successfully with number {0}.', [data.message.belgeNo])
         });
     }
     else if (data.message.durum == 1){
