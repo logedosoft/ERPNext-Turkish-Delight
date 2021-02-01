@@ -3,10 +3,10 @@ frappe.ui.form.on('Delivery Note', {
 
     },
     onload: function (frm) {
-        add_irsaliye_btns(frm)
+        //add_irsaliye_btns(frm)
     },
     refresh: function (frm) {
-        add_irsaliye_btns(frm)
+        add_irsaliye_btns(frm);
     },
 })
 
@@ -14,7 +14,7 @@ var add_irsaliye_btns = function(frm) {
     if (frm.doc.docstatus != 1 || frm.doc.is_return) {
         return
     }
-    frm.add_custom_button(__('Gönder E Irsaliye'), function () {
+    frm.add_custom_button(__('Gönder'), function () {
         frappe.call({
             method: 'erpnextturkish.eirsaliye.api.eirsaliye.send_eirsaliye',
             args: {
@@ -28,8 +28,8 @@ var add_irsaliye_btns = function(frm) {
                 }
             }
         });
-    });
-    frm.add_custom_button(__('Vaildate E Irsaliye'), function () {
+    }, __("E-İrsaliye"));
+    frm.add_custom_button(__('Durum Güncelle'), function () {
         frappe.call({
             method: 'erpnextturkish.eirsaliye.api.eirsaliye.validate_eirsaliye',
             args: {
@@ -43,7 +43,9 @@ var add_irsaliye_btns = function(frm) {
                 }
             }
         });
-    });
+    }, __("E-İrsaliye"));
+
+    frm.page.set_inner_btn_group_as_primary(__('E-İrsaliye'));
 }
 
 var show_msg = function(data) {
@@ -58,7 +60,7 @@ var show_msg = function(data) {
         frappe.msgprint({
             title: __('Wating'),
             indicator: 'blue',
-            message: __(`Processing has not finished, please try again later`)
+            message: __(`Processing has not finished, please try again later!`)
         });
     }
     else if (data.message.durum || data.message.aciklama){

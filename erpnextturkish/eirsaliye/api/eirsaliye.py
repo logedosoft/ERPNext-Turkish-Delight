@@ -47,7 +47,7 @@ def send_eirsaliye(delivery_note_name):
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     validate_settings_doc(settings_doc)
-    
+
     set_warehouse_address_doc = frappe.get_doc("Address", get_default_address("Warehouse", doc.set_warehouse))
     set_warehouse_address_doc = set_missing_address_values(set_warehouse_address_doc)
     validate_address(set_warehouse_address_doc)
@@ -195,9 +195,9 @@ def validate_customer(doc):
     for field in field_list:
         if not doc.get(field):
             frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
-    if doc.customer_type == "Company" and len(doc.ld_tax_id) != 10:
+    if doc.customer_type == "Company" and len(doc.tax_id) != 10:
         frappe.throw(_("Tax ID field must have 10 numeric characters for Companys: {0}").format(doc.customer_name))
-    elif doc.customer_type == "Individual" and len(doc.ld_tax_id) != 11:
+    elif doc.customer_type == "Individual" and len(doc.tax_id) != 11:
         frappe.throw(_("Tax ID field must have 11 numeric characters for Individuals: {0}").format(doc.customer_name))
 
 

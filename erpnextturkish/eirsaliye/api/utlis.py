@@ -31,7 +31,7 @@ def render_template(context, file_name=None, file=None):
     elif file:
         template = Environment(loader=BaseLoader).from_string(file)
     else:
-        frappe.throw(_("Missing file name or file to rendreing Jinja Temlate"))
+        frappe.throw(_("Missing file name or file to render with Jinja Temlate"))
     
     outputText = template.render(context=context)
     return outputText
