@@ -71,9 +71,18 @@ var show_msg = function(data) {
             message: data.message.aciklama || data.message.durum 
         });
     }
+    else if (data.message.faultcode || data.message.faultstring) {
+        frappe.msgprint({
+            title: __('Error'),
+            indicator: 'red',
+            message: __('Server returned: {0}.{1}', [data.message.faultcode, data.message.faultstring])
+        });
+    }
     else {
         frappe.msgprint({
-            message: data.message 
+            title: __('Error'),
+            indicator: 'red',
+            message: __('Server returned: {0}', [data.message])
         });
     }
 }

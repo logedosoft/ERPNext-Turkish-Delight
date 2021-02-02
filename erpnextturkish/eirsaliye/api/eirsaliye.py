@@ -24,6 +24,8 @@ def on_submit_validate(doc, method):
 
 @frappe.whitelist()
 def send_eirsaliye(delivery_note_name):
+    strResult = ""
+
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
 
     if not doc.eirsaliye_uuid:
@@ -114,16 +116,21 @@ def send_eirsaliye(delivery_note_name):
     if error:
         faultcode = soup.find('faultcode').getText()
         faultstring = soup.find('faultstring').getText()
-        frappe.msgprint(str(faultcode) + " " + str(faultstring))
-        return str(faultcode) + " " + str(faultstring)
+        #frappe.msgprint(str(faultcode) + " " + str(faultstring))
+        
+        strResult = str(faultcode) + " " + str(faultstring)
+    
     if belgeOid:
         msg = soup.find('belgeOid').getText()
         doc.yerelbelgeoid = msg
         doc.db_update()
         frappe.db.commit()
         doc.reload()
-        frappe.msgprint(str(msg))
-        return str(msg)
+        #frappe.msgprint(str(msg))
+
+        strResult = str(msg)
+
+    return strResult
 
 
 def set_missing_address_values(address_doc):
@@ -205,7 +212,7 @@ def validate_customer(doc):
 def validate_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
     if not doc.yerelbelgeoid and not doc.belgeno:
-        frappe.throw(_("Please send the delivery note first"))
+        frappe.throw(_("Please send the delivery note first!"))
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
