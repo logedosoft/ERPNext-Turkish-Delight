@@ -17,9 +17,10 @@ from erpnextturkish import console
 
 def on_submit_validate(doc, method):
     field_list = ["set_warehouse", "driver_name", "vehicle_no", "transporter_name"]
+    translation_dict = {'set_warehouse': 'Ürün Çıkış Deposu', 'driver_name': 'Sürücü Adı', 'vehicle_no': 'Araç Plakası', 'transporter_name': 'Taşıyıcı'}
     for field in field_list:
         if not doc.get(field):
-            frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
+            frappe.throw(_("'{0}' alanı boş geçilemez!").format(translation_dict[field])) #frappe.throw(_("Field: '{0}' can not be emtpy in DocType: {1} {2}").format(field, doc.doctype, doc.name))
 
 
 @frappe.whitelist()
