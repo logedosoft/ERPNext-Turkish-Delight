@@ -73,7 +73,7 @@ def send_eirsaliye(delivery_note_name):
             fields = ["td_eirsaliye_birimi"]
         )
         if len(eirsaliye_birimi_list) == 0:
-            frappe.throw(_("There is no equivalent to the unit of measure: {0} in E Irsaliye Ayarlar: {1}").format(item.uom, eirsaliye_settings))
+            frappe.throw(_("Please set {0} uom in e-Receipt settings for company {1}.").format(item.uom, eirsaliye_settings))
         td_eirsaliye_birimi = eirsaliye_birimi_list[0]["td_eirsaliye_birimi"]
         item.td_eirsaliye_birimi = td_eirsaliye_birimi
 

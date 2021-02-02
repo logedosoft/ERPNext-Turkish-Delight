@@ -21,6 +21,7 @@ var add_irsaliye_btns = function(frm) {
                 'delivery_note_name': frm.doc.name
             },
             callback: function (data) {
+                console.log(data);
                 if (data.message) {
                     frm.reload_doc()
                     console.table(data.message)
