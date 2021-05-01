@@ -113,9 +113,9 @@ def send_eirsaliye(delivery_note_name):
     session.headers.update({"Content-Length": str(len(body))})
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
-    frappe.msgprint(xml)
-    print("XML CONTENT IS")
-    print(xml)
+    #frappe.msgprint(xml)
+    #print("XML CONTENT IS")
+    #print(xml)
     add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
     soup = BeautifulSoup(xml, 'xml')
     error = soup.find_all('Fault')

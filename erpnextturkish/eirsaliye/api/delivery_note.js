@@ -25,7 +25,7 @@ var add_irsaliye_btns = function(frm) {
                 if (data.message) {
                     frm.reload_doc()
                     console.table(data.message)
-                    show_msg(data)
+                    show_msg(data, "send")
                 }
             }
         });
@@ -37,10 +37,13 @@ var add_irsaliye_btns = function(frm) {
                 'delivery_note_name': frm.doc.name
             },
             callback: function (data) {
+                console.log(data);
                 if (data.message) {
                     frm.reload_doc()
                     console.table(data.message)
-                    show_msg(data)
+                    if (data.message.result == false) {
+                        show_msg(data, "validate")
+                    }
                 }
             }
         });
@@ -49,12 +52,12 @@ var add_irsaliye_btns = function(frm) {
     frm.page.set_inner_btn_group_as_primary(__('E-İrsaliye'));
 }
 
-var show_msg = function(data) {
-    if (data.message.description.belgeNo) {
+var show_msg = function(data, strOperation) {//strOperation = ['send', 'validate']
+    if (strOperation == "send" && data.message.result == true && data.message.description) {
         frappe.msgprint({
             title: __('Success'),
             indicator: 'green',
-            message: __('Delivery Note saved with number {0}.', [data.message.description.belgeNo])
+            message: __('Delivery Note saved with number {0}.', [data.message.description])
         });
     }
     else if (data.message.description.durum == 1){
