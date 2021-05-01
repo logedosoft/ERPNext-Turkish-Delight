@@ -18,6 +18,23 @@ def get_work_order_items(strSalesOrder):
 
     return docSO.get_work_order_items(for_raw_material_request = 1)#It won't check existing WOs
 
+# @frappe.whitelist()
+# def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_warehouse):
+#     #Creates manufacture stock entries with given BOM and qty
+#     lstSE = []
+
+#     items = json.loads(items).get('items')
+
+#     for dctItem in items:
+#         dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse, sales_order)
+#         docSE = frappe.get_doc(dctSE)
+#         docSE.insert()
+#         docSE.submit()
+        
+#         lstSE.append(docSE.name)
+
+#     return lstSE
+
 @frappe.whitelist()
 def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_warehouse):
     #Creates manufacture stock entries with given BOM and qty
@@ -26,14 +43,39 @@ def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_war
     items = json.loads(items).get('items')
 
     for dctItem in items:
-        dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse, sales_order)
-        docSE = frappe.get_doc(dctSE)
-        docSE.insert()
-        docSE.submit()
-        
-        lstSE.append(docSE.name)
+        docItem = frappe.get_doc("Item", dctItem['item_code']) # Item kodlarını getirdik
 
+        #print("Item Group Fonksiyonu Başlangıç")
+        docParent_Item_Group = get_main_parent_item_group(docItem.item_group)
+
+        if(docParent_Item_Group == "GRUP-Hazir Mamuller"):
+            dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse, sales_order)
+            docSE = frappe.get_doc(dctSE)
+            docSE.insert()
+            docSE.submit()
+        
+            lstSE.append(docSE.name)
+            
     return lstSE
+
+def get_main_parent_item_group(strItemGroup):
+    #item group en başa kadar gidecek
+    blnControl= True
+
+    lstItemGroup =[]
+
+    while (blnControl == True):
+        docItem_group = frappe.get_doc("Item Group", strItemGroup) 
+        if(docItem_group.parent_item_group != ""):
+            strItemGroup = docItem_group.parent_item_group
+            lstItemGroup.append(strItemGroup)
+        else:
+            blnControl =False
+    
+    if (blnControl ==False):
+        strItemGroup = lstItemGroup[(len(lstItemGroup)-2)]
+
+    return strItemGroup
 
 def create_manufacture_se(bom_no, qty, company, s_warehouse, t_warehouse, sales_order):
     stock_entry = frappe.new_doc("Stock Entry")
