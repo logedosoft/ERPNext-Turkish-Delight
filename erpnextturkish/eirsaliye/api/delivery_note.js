@@ -50,28 +50,28 @@ var add_irsaliye_btns = function(frm) {
 }
 
 var show_msg = function(data) {
-    if (data.message.belgeNo) {
+    if (data.message.description.belgeNo) {
         frappe.msgprint({
             title: __('Success'),
             indicator: 'green',
-            message: __('Delivery Note Registered Successfully with number {0}.', [data.message.belgeNo])
+            message: __('Delivery Note saved with number {0}.', [data.message.description.belgeNo])
         });
     }
-    else if (data.message.durum == 1){
+    else if (data.message.description.durum == 1){
         frappe.msgprint({
-            title: __('Wating'),
+            title: __('Waiting'),
             indicator: 'blue',
             message: __(`Processing has not finished, please try again later!`)
         });
     }
-    else if (data.message.durum || data.message.aciklama){
+    else if (data.message.description.durum || data.message.description.aciklama){
         frappe.msgprint({
             title: __('Error'),
             indicator: 'red',
-            message: data.message.aciklama || data.message.durum 
+            message: data.message.description.aciklama || data.message.description.durum 
         });
     }
-    else if (data.message.faultcode || data.message.faultstring) {
+    else if (data.message.description.faultcode || data.message.description.faultstring) {
         frappe.msgprint({
             title: __('Error'),
             indicator: 'red',
@@ -79,10 +79,18 @@ var show_msg = function(data) {
         });
     }
     else {
-        frappe.msgprint({
-            title: __('Error'),
-            indicator: 'red',
-            message: __('Server returned: {0}', [data.message])
-        });
+        if (data.message.result === false) {
+            frappe.msgprint({
+                title: __('Error'),
+                indicator: 'gray',
+                message: __('Server returned: {0}', [data.message.desciption])
+            });
+        } else {
+            frappe.msgprint({
+                title: __('Warning'),
+                indicator: 'gray',
+                message: __('Server returned: {0}', [data.message.desciption])
+            });
+        }       
     }
 }

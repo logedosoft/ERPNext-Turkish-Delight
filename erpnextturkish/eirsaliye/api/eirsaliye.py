@@ -25,7 +25,11 @@ def on_submit_validate(doc, method):
 
 @frappe.whitelist()
 def send_eirsaliye(delivery_note_name):
+    import urllib3
+
     strResult = ""
+
+    urllib3.disable_warnings()#Remove TLS warning
 
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
 
@@ -109,6 +113,9 @@ def send_eirsaliye(delivery_note_name):
     session.headers.update({"Content-Length": str(len(body))})
     response = session.post(url=endpoint, data=body, verify=False)
     xml = response.content
+    frappe.msgprint(xml)
+    print("XML CONTENT IS")
+    print(xml)
     add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
     soup = BeautifulSoup(xml, 'xml')
     error = soup.find_all('Fault')
@@ -119,7 +126,8 @@ def send_eirsaliye(delivery_note_name):
         faultstring = soup.find('faultstring').getText()
         #frappe.msgprint(str(faultcode) + " " + str(faultstring))
         
-        strResult = str(faultcode) + " " + str(faultstring)
+        #strResult = str(faultcode) + " " + str(faultstring)
+        dctResult = {'result': False, 'description': _("Error Code:{0}. Error Description:{1}").format(faultcode, faultstring)}
     
     if belgeOid:
         msg = soup.find('belgeOid').getText()
@@ -129,9 +137,10 @@ def send_eirsaliye(delivery_note_name):
         doc.reload()
         #frappe.msgprint(str(msg))
 
-        strResult = str(msg)
+        #strResult = str(msg)
+        dctResult = {'result': True, 'description': msg}
 
-    return strResult
+    return dctResult#strResult
 
 
 def set_missing_address_values(address_doc):
@@ -214,6 +223,7 @@ def validate_eirsaliye(delivery_note_name):
     doc = frappe.get_doc("Delivery Note", delivery_note_name)
     if not doc.yerelbelgeoid and not doc.belgeno:
         frappe.throw(_("Please send the delivery note first!"))
+    
     eirsaliye_settings = frappe.get_all("E Irsaliye Ayarlar", filters = {"company": doc.company})[0]
     settings_doc = frappe.get_doc("E Irsaliye Ayarlar", eirsaliye_settings)
     endpoint = settings_doc.test_eirsaliye_url if settings_doc.test_modu else settings_doc.eirsaliye_url
@@ -285,8 +295,14 @@ def validate_eirsaliye(delivery_note_name):
         doc.yerelbelgeoid = msg.get("yerelBelgeOid")
     doc.db_update()
     frappe.db.commit()
-    add_comment(doc.doctype, doc.name, str(xml), doc.modified_by)
-    return(msg)
+    
+    add_comment(doc.doctype, doc.name, _("Durum Kontrol Cevabı: {0}".format(msg)), doc.modified_by)
+    print(_("Durum Kontrol Cevabı: {0}".format(xml)))
+    
+    return {#return(msg)
+        'result': True,
+        'description': msg
+    }
 
 
 @frappe.whitelist()
