@@ -26,20 +26,23 @@ def create_manufacture_se_for_so(items, company, sales_order, s_warehouse, t_war
 
     items = json.loads(items).get('items')
 
+    item_group_man = frappe.db.get_single_value("ERPNext Turkish Settings", "item_group_man")
+    item_group_transter = frappe.db.get_single_value("ERPNext Turkish Settings", "item_group_transter")
+
     for dctItem in items:
         docItem = frappe.get_doc("Item", dctItem['item_code']) # Item kodlarını getirdik
 
         #print("Item Group Fonksiyonu Başlangıç")
         docParent_Item_Group = get_main_parent_item_group(docItem.item_group)
 
-        if(docParent_Item_Group == "GRUP-Hazir Mamuller"):
+        if(docParent_Item_Group == item_group_man): #"GRUP-Hazir Mamuller"
             dctSE = create_manufacture_se(dctItem['bom'], dctItem['required_qty'], company, s_warehouse, t_warehouse, sales_order)
             docSE = frappe.get_doc(dctSE)
             docSE.insert()
             docSE.submit()
         
             lstSE.append(docSE.name)
-        elif(docParent_Item_Group == "GRUP-Malzemeler"):
+        elif(docParent_Item_Group == item_group_transter): #"GRUP-Malzemeler"
             lstSETransfer.append({'item_code': docItem.item_code, 'uom': docItem.stock_uom, 'qty': dctItem['required_qty']})
 
     #Ambtar transferi yapilacak malzemeler icin fis olusturalim
