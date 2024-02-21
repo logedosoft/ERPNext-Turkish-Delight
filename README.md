@@ -1,5 +1,13 @@
 ## ERPNext Turkish Delight
 
+### Utility Functions
+
+#### Execute Item Re-Order Check Manually
+
+---
+
+## ERPNext Turkish Delight Uygulama Özellikleri
+
 E-Fatura ve diğer kolaylaştırıcı çözümler...
 
 ### E-Fatura Gönderimi
