@@ -2,7 +2,8 @@
 
 ### Utility Functions
 
-#### Execute Item Re-Order Check Manually
+#### Execute Item Re-Order Manually
+ERPNext runs auto re-order each night at 00:45. Sometimes we need to test if our settings are correct or not. So we've created a button to manually trigger and test the outcome.
 
 https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/c2dbcd15-eb25-4104-9f2f-430074850c04
 
