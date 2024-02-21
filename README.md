@@ -4,6 +4,8 @@
 
 #### Execute Item Re-Order Check Manually
 # cool-beans
+https://raw.githubusercontent.com/logedosoft/ERPNext-Turkish-Delight/master/erpnextturkish/public/SS_AUTOREORDER_BTN.mp4
+
 https://github.com/logedosoft/ERPNext-Turkish-Delight/blob/73f2c70754c28161cd21b7c57939a9779906fc71/erpnextturkish/public/SS_AUTOREORDER_BTN.mp4
 
 https://user-images.githubusercontent.com/6877923/115474571-03c75800-a23e-11eb-8096-8973aad5fa9f.mp4
