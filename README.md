@@ -3,6 +3,14 @@
 ### Utility Functions
 
 #### Execute Item Re-Order Check Manually
+# cool-beans
+
+https://example.com/video.mp4
+https://github.com/logedosoft/ERPNext-Turkish-Delight/blob/73f2c70754c28161cd21b7c57939a9779906fc71/erpnextturkish/public/SS_AUTOREORDER_BTN.mp4
+
+<video controls src="<video controls src="https://github.com/logedosoft/ERPNext-Turkish-Delight/blob/73f2c70754c28161cd21b7c57939a9779906fc71/erpnextturkish/public/SS_AUTOREORDER_BTN.mp4" title="Title"></video>" title="Title"></video>
+
+Press play to see the video.
 
 ---
 
