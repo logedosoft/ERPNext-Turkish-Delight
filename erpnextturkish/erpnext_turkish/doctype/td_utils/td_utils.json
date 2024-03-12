@@ -38,7 +38,7 @@
   },
   {
    "default": "0",
-   "description": "Planned Qty is calculating by considering sales order qty, work order qty and delivered qty. This check will make the calculations the also consider the qty in active production plans.",
+   "description": "The Planned Quantity is calculated by taking into account the quantity of sales orders, work orders, and delivered items. This check ensures that the calculations also consider the quantity in active production plans.",
    "fieldname": "pp_must_check_already_planned_qty",
    "fieldtype": "Check",
    "label": "Production Plan must check already planned qty"
@@ -47,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-12 15:43:38.167252",
+ "modified": "2024-03-12 15:54:40.808845",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",
