@@ -125,6 +125,11 @@ doc_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "erpnextturkish.event.get_events"
 # }
 #
+
+override_doctype_class = {
+    "Production Plan": "erpnextturkish.overrides.production_plan.LDProductionPlan"
+}
+
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps

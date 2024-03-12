@@ -10,7 +10,8 @@
   "sbstock_section",
   "execute_item_reorder_check",
   "sb_manufacturing_section",
-  "seperate_wo_and_sco_in_pp"
+  "seperate_wo_and_sco_in_pp",
+  "pp_must_check_already_planned_qty"
  ],
  "fields": [
   {
@@ -34,12 +35,19 @@
    "fieldname": "seperate_wo_and_sco_in_pp",
    "fieldtype": "Check",
    "label": "Seperate Work Order and SCO buttons in Production Plan"
+  },
+  {
+   "default": "0",
+   "description": "Planned Qty is calculating by considering sales order qty, work order qty and delivered qty. This check will make the calculations the also consider the qty in active production plans.",
+   "fieldname": "pp_must_check_already_planned_qty",
+   "fieldtype": "Check",
+   "label": "Production Plan must check already planned qty"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-07 15:58:52.986888",
+ "modified": "2024-03-12 15:43:38.167252",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",
