@@ -8,7 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "sbstock_section",
-  "execute_item_reorder_check"
+  "execute_item_reorder_check",
+  "sb_manufacturing_section",
+  "seperate_wo_and_sco_in_pp"
  ],
  "fields": [
   {
@@ -20,12 +22,24 @@
    "fieldname": "execute_item_reorder_check",
    "fieldtype": "Button",
    "label": "Execute Auto Re-Order"
+  },
+  {
+   "fieldname": "sb_manufacturing_section",
+   "fieldtype": "Section Break",
+   "label": "Manufacturing"
+  },
+  {
+   "default": "0",
+   "description": "Production Plan -> Create button shows \"Work Order / Subcontract PO\". This setting hides it and shows 2 separate button for each.",
+   "fieldname": "seperate_wo_and_sco_in_pp",
+   "fieldtype": "Check",
+   "label": "Seperate Work Order and SCO buttons in Production Plan"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-02-20 23:35:25.225627",
+ "modified": "2024-03-07 15:58:52.986888",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",

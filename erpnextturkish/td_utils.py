@@ -14,6 +14,30 @@ import dateutil
 
 from bs4 import BeautifulSoup
 
+@frappe.whitelist()
+def pp_create_wosco(docPP, strType):
+	#Create WO, Subassembly WO and SCO from PP. https://app.asana.com/0/1206337061845755/1206535127766803/f
+	#strType = ['Work Order', 'Subcontracting Order']
+	docPP = frappe.get_doc(json.loads(docPP))
+
+	from erpnext.manufacturing.doctype.work_order.work_order import get_default_warehouse
+
+	wo_list, po_list = [], []
+	subcontracted_po = {}
+	default_warehouses = get_default_warehouse()
+
+	if strType == "Work Order":
+		docPP.make_work_order_for_finished_goods(wo_list, default_warehouses)
+	if strType == "Subcontracting Order":
+		docPP.make_subcontracted_purchase_order(subcontracted_po, po_list)
+	docPP.show_list_created_message("Work Order", wo_list)
+	docPP.show_list_created_message("Purchase Order", po_list)
+
+	if strType == "Work Order" and not wo_list:
+		frappe.msgprint(_("No Work Orders were created!"))
+	if strType == "Subcontracting Order" and not po_list:
+		frappe.msgprint(_("No Subcontracting Purchase Orders were created!"))
+
 def get_service_xml(strType):
 	strResult = ''
 
