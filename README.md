@@ -7,7 +7,7 @@ ERPNext runs auto re-order each night at 00:45. Sometimes we need to test if our
 
 https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/c2dbcd15-eb25-4104-9f2f-430074850c04
 
-#### Production Plan Create button have 2 more options
+#### Production Plan -> Create button have 2 options
 Create -> "WO / SCO" buttons are seperated.
 ![image](https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/02a3ea19-47a2-4e06-b2c8-309a2b7e1e24)
 
