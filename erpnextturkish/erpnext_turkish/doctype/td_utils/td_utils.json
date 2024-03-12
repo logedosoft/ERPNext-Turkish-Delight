@@ -11,7 +11,10 @@
   "execute_item_reorder_check",
   "sb_manufacturing_section",
   "seperate_wo_and_sco_in_pp",
-  "pp_must_check_already_planned_qty"
+  "pp_must_check_already_planned_qty",
+  "sbsales_section_section",
+  "create_pp_from_so",
+  "create_manufacture_str_from_so"
  ],
  "fields": [
   {
@@ -42,12 +45,31 @@
    "fieldname": "pp_must_check_already_planned_qty",
    "fieldtype": "Check",
    "label": "Production Plan must check already planned qty"
+  },
+  {
+   "fieldname": "sbsales_section_section",
+   "fieldtype": "Section Break",
+   "label": "Selling"
+  },
+  {
+   "default": "0",
+   "description": "Create button in Sales Order will also have Production Plan option.",
+   "fieldname": "create_pp_from_so",
+   "fieldtype": "Check",
+   "label": "Create Production Plan from Sales Orders"
+  },
+  {
+   "default": "0",
+   "description": "Create button in Sales Order will also have Manufacture option. This enables users to bypass Work Order creation and creates Manufacture Stock Entry on the fly.",
+   "fieldname": "create_manufacture_str_from_so",
+   "fieldtype": "Check",
+   "label": "Create Manufacture Stock Entry from Sales Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-12 15:54:40.808845",
+ "modified": "2024-03-12 17:06:53.367991",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",
