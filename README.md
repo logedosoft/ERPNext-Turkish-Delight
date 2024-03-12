@@ -14,6 +14,13 @@ Create -> "WO / SCO" buttons are seperated.
 Should be activated from TD Utils.
 ![image](https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/0162dba2-da6a-4fbe-852b-7a2fb82688ed)
 
+#### Production Plan -> Planned Qty calculation must also consider already planned qty.
+The Planned Quantity is calculated by taking into account the quantity of sales orders, work orders, and delivered items. This check ensures that the calculations also consider the quantity in active production plans.
+
+Should be activated from TD Utils.
+![image](https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/322660a4-a9f7-4b44-960f-a44f4fecdd27)
+
+
 ---
 
 ## ERPNext Turkish Delight Uygulama Özellikleri
