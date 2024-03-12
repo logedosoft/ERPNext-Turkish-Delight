@@ -21,6 +21,12 @@ Should be activated from TD Utils.
 ![image](https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/322660a4-a9f7-4b44-960f-a44f4fecdd27)
 
 
+#### Sales Order -> Create button also have Production Plan option
+
+Should be activated from TD Utils.
+![image](https://github.com/logedosoft/ERPNext-Turkish-Delight/assets/710051/833a768c-3713-48ee-84dd-10522adc6a59)
+
+
 ---
 
 ## ERPNext Turkish Delight Uygulama Özellikleri
