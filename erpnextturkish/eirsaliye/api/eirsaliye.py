@@ -16,7 +16,7 @@ from erpnextturkish import console
 
 
 def on_submit_validate(doc, method):
-    blnCheckEReceipt = True#Sevkiyat yapilamnadigi icin eklendi, seceneye baglanmnali
+    blnCheckEReceipt = False#Sevkiyat yapilamnadigi icin eklendi, seceneye baglanmnali
     if (blnCheckEReceipt):
         field_list = ["set_warehouse", "driver_name", "vehicle_no", "transporter_name"]
         translation_dict = {'set_warehouse': 'Ürün Çıkış Deposu', 'driver_name': 'Sürücü Adı', 'vehicle_no': 'Araç Plakası', 'transporter_name': 'Taşıyıcı'}
