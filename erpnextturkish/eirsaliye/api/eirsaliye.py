@@ -13,10 +13,8 @@ from bs4 import BeautifulSoup
 from frappe.desk.form.utils import add_comment
 from erpnextturkish import console
 
-
-
 def on_submit_validate(doc, method):
-    blnCheckEReceipt = False#Sevkiyat yapilamnadigi icin eklendi, seceneye baglanmnali
+    blnCheckEReceipt = frappe.db.get_single_value("TD Utils", "enable_ereceipt")
     if (blnCheckEReceipt):
         field_list = ["set_warehouse", "driver_name", "vehicle_no", "transporter_name"]
         translation_dict = {'set_warehouse': 'Ürün Çıkış Deposu', 'driver_name': 'Sürücü Adı', 'vehicle_no': 'Araç Plakası', 'transporter_name': 'Taşıyıcı'}

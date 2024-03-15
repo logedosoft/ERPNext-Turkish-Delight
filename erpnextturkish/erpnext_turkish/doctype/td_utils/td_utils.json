@@ -14,7 +14,9 @@
   "pp_must_check_already_planned_qty",
   "sbsales_section_section",
   "create_pp_from_so",
-  "create_manufacture_str_from_so"
+  "create_manufacture_str_from_so",
+  "sbereceipt_section",
+  "enable_ereceipt"
  ],
  "fields": [
   {
@@ -64,12 +66,23 @@
    "fieldname": "create_manufacture_str_from_so",
    "fieldtype": "Check",
    "label": "Create Manufacture Stock Entry from Sales Order"
+  },
+  {
+   "fieldname": "sbereceipt_section",
+   "fieldtype": "Section Break",
+   "label": "E-Receipt"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_ereceipt",
+   "fieldtype": "Check",
+   "label": "Enable E-Receipt"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-12 17:06:53.367991",
+ "modified": "2024-03-15 08:22:54.240284",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",
