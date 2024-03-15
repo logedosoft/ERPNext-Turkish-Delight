@@ -29,6 +29,7 @@ def pp_create_wosco(docPP, strType):
 	if strType == "Work Order":
 		docPP.make_work_order_for_finished_goods(wo_list, default_warehouses)
 	if strType == "Subcontracting Order":
+		docPP.make_work_order_for_subassembly_items(wo_list, subcontracted_po, default_warehouses)
 		docPP.make_subcontracted_purchase_order(subcontracted_po, po_list)
 	docPP.show_list_created_message("Work Order", wo_list)
 	docPP.show_list_created_message("Purchase Order", po_list)
