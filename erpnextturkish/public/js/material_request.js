@@ -18,3 +18,12 @@ frappe.ui.form.on("Material Request", {
 		});
 	}
 });
+
+frappe.ui.form.on('TD Variant Selector', {
+	item_template(frm, cdt, cdn) {
+		console.log(cdn);
+	},
+	select(frm, cdt, cdn) {
+		console.log(cdt + ' - ' + cdn);
+	}
+})
