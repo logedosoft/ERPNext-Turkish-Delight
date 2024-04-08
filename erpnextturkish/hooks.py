@@ -36,7 +36,8 @@ doctype_js = {
 	"Customer": "public/js/customer.js",
 	"Delivery Note": "eirsaliye/api/delivery_note.js",
 	"Sales Order": "public/js/sales_order.js",
-	"Production Plan": "public/js/production_plan.js"
+	"Production Plan": "public/js/production_plan.js",
+	"Material Request": "public/js/material_request.js"
 }
 # Home Pages
 # ----------

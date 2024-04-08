@@ -16,7 +16,9 @@
   "create_pp_from_so",
   "create_manufacture_str_from_so",
   "sbereceipt_section",
-  "enable_ereceipt"
+  "enable_ereceipt",
+  "sbvariant_section",
+  "show_variant_selection_in_mr"
  ],
  "fields": [
   {
@@ -77,12 +79,24 @@
    "fieldname": "enable_ereceipt",
    "fieldtype": "Check",
    "label": "Enable E-Receipt"
+  },
+  {
+   "fieldname": "sbvariant_section",
+   "fieldtype": "Section Break",
+   "label": "Variant Tools"
+  },
+  {
+   "default": "0",
+   "description": "Shows variant selection grid above items grid if enabled. It provides easy item selection.",
+   "fieldname": "show_variant_selection_in_mr",
+   "fieldtype": "Check",
+   "label": "Show Variant Template in Material Request"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-15 08:22:54.240284",
+ "modified": "2024-04-08 18:48:06.422752",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",

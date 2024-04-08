@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-08 18:54:47.351937",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_template",
+  "select",
+  "variant_data"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Template",
+   "options": "Item"
+  },
+  {
+   "fieldname": "select",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "label": "Select"
+  },
+  {
+   "fieldname": "variant_data",
+   "fieldtype": "JSON",
+   "label": "variant data"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-04-08 18:57:44.339970",
+ "modified_by": "Administrator",
+ "module": "ERPNext Turkish",
+ "name": "TD Variant Selector",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
