@@ -15,6 +15,29 @@ import dateutil
 from bs4 import BeautifulSoup
 
 @frappe.whitelist()
+def get_template_attributes(strTemplateItemCode):
+	result = []#It will have arrays of attributes with attribute_name, attribute_values, attribute_abbr
+	docItem = frappe.get_doc("Item", strTemplateItemCode)
+	for attribute in docItem.attributes:
+		docItemAttribute = frappe.get_doc("Item Attribute", attribute.attribute)
+		attribute_info = {'attribute_name': docItemAttribute.attribute_name, 'attribute_values': [], 'attribute_abbr': []}
+		result.append(attribute_info)
+		for attribute_value in docItemAttribute.item_attribute_values:
+			attribute_info['attribute_values'].append(attribute_value.attribute_value)
+			attribute_info['attribute_abbr'].append(attribute_value.abbr)
+
+	#Create columns and rows list. Values with higher count should be in rows.
+	if len(result) == 2:
+		if len(result[0]['attribute_values']) > len(result[1]['attribute_values']):
+			columns = result[0]
+			rows = result[1]
+		else:
+			columns = result[1]
+			rows = result[0]
+			
+	return {'columns': columns, 'rows': rows, 'result': result}
+
+@frappe.whitelist()
 def pp_create_wosco(docPP, strType):
 	#Create WO, Subassembly WO and SCO from PP. https://app.asana.com/0/1206337061845755/1206535127766803/f
 	#strType = ['Work Order', 'Subcontracting Order']
