@@ -37,31 +37,32 @@ function ShowVariantSelectorDialog(frm, cdt, cdn) {
 				columns: 1
 			});
 		}
-		variant_fields.push({
+		/*variant_fields.push({
 			fieldname: 'total',
 			label: __('Total'),
 			fieldtype: 'Int',
 			in_list_view: 1,
 			read_only: 1,
 			columns: 1
-		});
+		});*///Will be added after initial tests are completed!
 		let variant_data = [];
-		for (let i = 0; i < template_data.rows.attribute_abbr.length; i++) {
-			let row_info = {};
-			for (let j = 0; j < template_data.columns.attribute_abbr.length; j++) {
-				row_info['attribute_name'] = template_data.rows.attribute_abbr[i];
-				row_info[template_data.columns.attribute_abbr[j]] = 0
-				row_info['total'] = 0
+		if (row.variant_data && row.variant_data.length > 0) {
+			variant_data = JSON.parse(row.variant_data);
+		} else {
+			for (let i = 0; i < template_data.rows.attribute_abbr.length; i++) {
+				let row_info = {};
+				for (let j = 0; j < template_data.columns.attribute_abbr.length; j++) {
+					row_info['attribute_name'] = template_data.rows.attribute_abbr[i];
+					row_info[template_data.columns.attribute_abbr[j]] = 0
+					row_info['total'] = 0
+				}
+				variant_data.push(row_info);
 			}
-			variant_data.push(row_info);
 		}
-		console.log(variant_fields);
-		console.log(variant_data);
 		var dlgVariantSelector = new frappe.ui.Dialog({
 			size: "extra-large",
 			fields: [
-				{ 'fieldname': 'ht', 'fieldtype': 'HTML' },
-				{ 'fieldname': 'today', 'fieldtype': 'Date', 'default': frappe.datetime.nowdate() },
+				{ 'fieldname': 'directive', 'fieldtype': 'HTML' },
 				{
 					fieldname: "variant_data",
 					fieldtype: "Table",
@@ -77,11 +78,14 @@ function ShowVariantSelectorDialog(frm, cdt, cdn) {
 			primary_action: function () {
 				dlgVariantSelector.hide();
 				console.log(dlgVariantSelector.get_values());
+				console.log(dlgVariantSelector.get_values().variant_data);
+				console.log(typeof dlgVariantSelector.get_values().variant_data);
+				frappe.model.set_value(cdt, cdn, 'variant_data', JSON.stringify(dlgVariantSelector.get_values().variant_data));
 			}
 		});
-		dlgVariantSelector.fields_dict.ht.$wrapper.html('Ürün Tercihinizi Giriniz');
+		dlgVariantSelector.fields_dict.directive.$wrapper.html('Ürün Tercihinizi Giriniz');
 		dlgVariantSelector.show();
-		dlgVariantSelector.fields_dict["variant_data"].grid.wrapper.find('.row-check').hide();
+		dlgVariantSelector.fields_dict.variant_data.grid.wrapper.find('.row-check').hide();
 	});
 }
 
