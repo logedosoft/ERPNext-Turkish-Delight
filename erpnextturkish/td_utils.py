@@ -15,27 +15,64 @@ import dateutil
 from bs4 import BeautifulSoup
 
 @frappe.whitelist()
+def get_template_item_info(doc, template_data):
+	#Variant selector. https://app.asana.com/0/1199512727558833/1206652223240041/f
+	#We get selected values from the template data
+ 	#Find proper item codes
+	#Return item array with item code and qty
+	#The client side will process it and create new lines
+	doc = frappe.get_doc(json.loads(doc))
+	template_data = json.loads(template_data)
+	result = False
+	result_message = ""
+	result_data = []
+
+	for item in template_data:
+		print(frappe.as_json(item))
+		frappe.log_error("VS 0", frappe.as_json(item))
+
+	docTemplateItem = frappe.get_doc("Item", item["item_code"])
+
+	return {'result': result, 'result_message': result_message, 'result_data': result_data}
+
+@frappe.whitelist()
 def get_template_attributes(strTemplateItemCode):
-	result = []#It will have arrays of attributes with attribute_name, attribute_values, attribute_abbr
+	#Variant selector. https://app.asana.com/0/1199512727558833/1206652223240041/f
+	data = []#It will have arrays of attributes with attribute_name, attribute_values, attribute_abbr
+	result = False
+	result_message = ""
+	
 	docItem = frappe.get_doc("Item", strTemplateItemCode)
 	for attribute in docItem.attributes:
 		docItemAttribute = frappe.get_doc("Item Attribute", attribute.attribute)
 		attribute_info = {'attribute_name': docItemAttribute.attribute_name, 'attribute_values': [], 'attribute_abbr': []}
-		result.append(attribute_info)
+		data.append(attribute_info)
 		for attribute_value in docItemAttribute.item_attribute_values:
 			attribute_info['attribute_values'].append(attribute_value.attribute_value)
 			attribute_info['attribute_abbr'].append(attribute_value.abbr)
 
 	#Create columns and rows list. Values with higher count should be in rows.
-	if len(result) == 2:
-		if len(result[0]['attribute_values']) > len(result[1]['attribute_values']):
-			columns = result[0]
-			rows = result[1]
+	if len(data) == 2:
+		result = True
+		if len(data[0]['attribute_values']) > len(data[1]['attribute_values']):
+			columns = data[0]
+			rows = data[1]
+			#column_attribute_name = data[0]['attribute_name']
+			#row_attribute_name = data[1]['attribute_name']
 		else:
-			columns = result[1]
-			rows = result[0]
+			columns = data[1]
+			rows = data[0]
+			#column_attribute_name = data[1]['attribute_name']
+			#row_attribute_name = data[0]['attribute_name']
+	else:
+		result = False
+		result_message = _("Template must have 2 attributes")
 			
-	return {'columns': columns, 'rows': rows, 'result': result}
+	return {
+		'columns': columns, 'rows': rows, 'data': data,
+		#'column_attribute_name': column_attribute_name, 'row_attribute_name': row_attribute_name,
+		'op_result': result, 'op_message': result_message
+	}
 
 @frappe.whitelist()
 def pp_create_wosco(docPP, strType):
