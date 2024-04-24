@@ -14,6 +14,58 @@ import dateutil
 
 from bs4 import BeautifulSoup
 
+
+
+"""
+/BASLANGIC
+
+--BURADA KALDIM
+@frappe.whitelist()
+def process_json_data(strTemplateItem, json):
+	#strTemplateItem = Armut
+	#json = {"template_item_code": "Gomlek Kodu", "attributes": [{"attr1_name": "BLU", "attr2_name": "M"}, {"attr1_name": "BLU", "attr2_name": "L"}]}
+	result = []
+	json = json.loads(json)
+	for attribute in json['attributes']:
+		item_code = get_item_code(json['template_item_code'], attribute['attr1_name'], attribute['attr2_name'])
+		result.append(item_code, 5)
+
+
+	return result
+
+def get_item_code(strTemplateItem, attr1_name, attr2_name):
+	#strTemplateItem = Gomlek Kodu
+ 	#attr1_name = BLU
+ 	#attr2_name = M
+  	return "{}-{}-{}".format(strTemplateItem, attr1_name, attr2_name)
+"""
+
+@frappe.whitelist()
+def process_json_data(strTemplateItem):
+	#json = [{"attribute_name":"RED","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"total":0,"S":0,"M":5,"L":5,"XL":0,"idx":5,"name":"row 5"}]
+	#strTemplateItem = 'Gömlek Kodu'
+	#Ürün Kodu , miktar listesi dönmeli. 
+ 
+	result = []
+	#result = ["Gömlek-BLU-M", 5]
+	result.append({"item_code":"Gömlek-BLU-L", "qty":5})
+	result.append({"item_code":"Gömlek-WHI-S", "qty":2})
+
+	return {"result":result}
+
+def get_item_code(strTemplateItem, attr1_name, attr2_name):
+	#strTemplateItem = Gomlek Kodu
+ 	#attr1_name = BLU
+ 	#attr2_name = M
+  	return "{}-{}-{}".format(strTemplateItem, attr1_name, attr2_name)
+
+"""
+
+/SON
+
+"""
+
+
 @frappe.whitelist()
 def get_template_attributes(strTemplateItemCode):
 	result = []#It will have arrays of attributes with attribute_name, attribute_values, attribute_abbr

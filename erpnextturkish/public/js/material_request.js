@@ -76,6 +76,27 @@ function ShowVariantSelectorDialog(frm, cdt, cdn) {
 				}
 			],
 			primary_action: function () {
+
+				frappe.call({
+					method: "erpnextturkish.td_utils.process_json_data",
+					args: {
+						strTemplateItem: row.item_template
+					},
+					callback: (r) => {
+						console.log(r);
+						const results = r.message.result;
+						results.forEach(element => {
+							console.log(element.item_code);
+							console.log(element.qty);
+							var child = cur_frm.add_child("items");
+							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);
+							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);
+						});
+						cur_frm.refresh_field("items")
+					}
+				})
+
+
 				dlgVariantSelector.hide();
 				console.log(dlgVariantSelector.get_values());
 				console.log(dlgVariantSelector.get_values().variant_data);
