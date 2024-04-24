@@ -45,7 +45,7 @@ def process_json_data(strTemplateItem):
 	#json = [{"attribute_name":"RED","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"total":0,"S":0,"M":5,"L":5,"XL":0,"idx":5,"name":"row 5"}]
 	#strTemplateItem = 'Gömlek Kodu'
 	#Ürün Kodu , miktar listesi dönmeli. 
- 
+	#
 	result = []
 	#result = ["Gömlek-BLU-M", 5]
 	result.append({"item_code":"Gömlek-BLU-L", "qty":5})

@@ -113,7 +113,7 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 						const results = r.message.result;
 						results.forEach(element => {
 							console.log(element.item_code);
-							console.log(element.qty);
+							console.log(element.qty);//
 							var child = cur_frm.add_child("items");
 							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);
 							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);
