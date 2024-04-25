@@ -111,12 +111,14 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 					callback: (r) => {
 						console.log(r);
 						const results = r.message.result;
+						frm.set_value('items', []);//clear items table
+						frm.refresh_field('items');
 						results.forEach(element => {
 							console.log(element.item_code);
-							console.log(element.qty);//
+							console.log(element.qty);
 							var child = cur_frm.add_child("items");
-							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);
-							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);
+							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);//row set value
+							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);//row set value
 						});
 						cur_frm.refresh_field("items")
 					}
@@ -128,7 +130,7 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 				console.log(dlgVariantSelector.get_values().variant_data);
 				console.log(typeof dlgVariantSelector.get_values().variant_data);
 				frappe.model.set_value(cdt, cdn, 'variant_data', JSON.stringify(dlgVariantSelector.get_values().variant_data));
-				save_template_data(frm, dlgVariantSelector.get_values().variant_data, row);
+				//save_template_data(frm, dlgVariantSelector.get_values().variant_data, row);
 			}
 		});
 		dlgVariantSelector.fields_dict.directive.$wrapper.html('Ürün Tercihinizi Giriniz');

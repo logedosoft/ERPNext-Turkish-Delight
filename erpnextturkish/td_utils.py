@@ -83,6 +83,8 @@ def get_template_item_info(doc, template_data):
 		print(frappe.as_json(item))
 		frappe.log_error("VS 0", frappe.as_json(item))
 
+	#frappe.log_error("Hata", item)
+
 	docTemplateItem = frappe.get_doc("Item", item["item_code"])
 
 	return {'result': result, 'result_message': result_message, 'result_data': result_data}
