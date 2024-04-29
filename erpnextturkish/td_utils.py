@@ -25,18 +25,12 @@ def process_variant_json_data(strTemplateItem, jsonData):
     }
 
     item_template_info = get_item_template_attributes(strTemplateItem)
-    frappe.log_error("VS 0", frappe.as_json(item_template_info))
 
     dctVariantInfo = json.loads(jsonData)
-    frappe.log_error("VS 1", frappe.as_json(dctVariantInfo))
     for variant_info in dctVariantInfo:
-        #frappe.log_error("VS 2", frappe.as_json(variant_info))
         docColumnAttribute = frappe.get_doc("Item Attribute", variant_info['column_attribute_name'])
-        #frappe.log_error("VS 3", frappe.as_json(docColumnAttribute))
         for column_attr in docColumnAttribute.item_attribute_values:
-            #frappe.log_error("VS 4", column_attr.abbr)
             if variant_info[column_attr.abbr] > 0:
-                print(variant_info[column_attr.abbr])
                 
                 strItemCode = item_template_info['item_code_info'][0] #GOMLE
                 strAttr = item_template_info['item_code_info'][1] #RENK

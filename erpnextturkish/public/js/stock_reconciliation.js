@@ -111,24 +111,33 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 					},
 					callback: (r) => {
 						console.log(r);
-						erpnext.utils.remove_empty_first_row(frm, "items");
-						r.message.variant_item_info.forEach((variant) => {
-							console.log(variant);
-							var child = cur_frm.add_child("items");
-							frappe.model.set_value(child.doctype, child.name, "item_code", variant.item_code);
-							frappe.model.set_value(child.doctype, child.name, "qty", variant.qty);
-						});
-						cur_frm.refresh_field("items")
+						if (r.message.op_result === false) {
+							frappe.throw(r.message.op_message);
+						} else {
+							erpnext.utils.remove_empty_first_row(frm, "items");
+							//Remove previously added rows from the item grid for the current variant row.
+							let dItemGridLength = frm.doc.items.length;
+							for (var dIndex = dItemGridLength - 1; dIndex >= 0; dIndex--) {
+								if (frm.doc.items[dIndex].custom_ld_variant_grid_row_name === row.name) {
+									frm.doc.items.splice(dIndex, 1);
+								}
+							}
+							//Add new variant item rows
+							for (var dIndex = 0; dIndex < r.message.variant_item_info.length; dIndex++) {
+								//r.message.variant_item_info.forEach((variant) => {
+								var variant = r.message.variant_item_info[dIndex];
+								var child = frm.add_child("items");
+								frappe.model.set_value(child.doctype, child.name, "item_code", variant.item_code);
+								frappe.model.set_value(child.doctype, child.name, "qty", variant.qty);
+								frappe.model.set_value(child.doctype, child.name, "custom_ld_variant_grid_row_name", row.name);
+							}
+							frm.refresh_field("items");
+						}
 					}
 				})
 
-
 				dlgVariantSelector.hide();
-				console.log(dlgVariantSelector.get_values());
-				console.log(dlgVariantSelector.get_values().variant_data);
-				console.log(typeof dlgVariantSelector.get_values().variant_data);
 				frappe.model.set_value(cdt, cdn, 'variant_data', JSON.stringify(dlgVariantSelector.get_values().variant_data));
-				//save_template_data(frm, dlgVariantSelector.get_values().variant_data, row);
 			}
 		});
 		dlgVariantSelector.fields_dict.directive.$wrapper.html('Ürün Tercihinizi Giriniz');
