@@ -14,34 +14,41 @@ import dateutil
 
 from bs4 import BeautifulSoup
 
-
 @frappe.whitelist()
-def process_json_data(strTemplateItem,jsonData):
-    #json = [{"attribute_name":"RED","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"total":0,"S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"total":0,"S":0,"M":5,"L":5,"XL":0,"idx":5,"name":"row 5"}]
-    #strTemplateItem = 'Gömlek Kodu'
-    #Ürün Kodu , miktar listesi dönmeli. 
-    
-    # JSON verisine göre frappe.db.get_list atılacak.
-    # select * from Item where item_name = 'Gomlek-BLU-M' and variant_of = 'Gomlek Kodu'
-    #jsonData = {"attribute_name":"RED","XS":0,"column_attribute_name":"Size","row_attribute_name":"Colour","S":0,"M":0,"L":0,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"column_attribute_name":"Size","row_attribute_name":"Colour","S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"column_attribute_name":"Size","row_attribute_name":"Colour","S":0,"M":0,"L":5,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"column_attribute_name":"Size","row_attribute_name":"Colour","S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"column_attribute_name":"Size","row_attribute_name":"Colour","S":0,"M":0,"L":0,"XL":0,"idx":5,"name":"row 5"}]
+def process_variant_json_data(strTemplateItem, jsonData):
+    #We will try to find the correct item codes based on Item Template and json data
+    #jsonData = [{"attribute_name":"RED","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":2,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":5,"M":0,"L":0,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":5,"name":"row 5"}]
+    #Algorithm: get attribute in info
+    result = {
+        'op_result': True, 'op_message': '',
+        'variant_item_info': [] #{'item_code':'', 'qty':0}
+    }
 
+    item_template_info = get_item_template_attributes(strTemplateItem)
+    frappe.log_error("VS 0", frappe.as_json(item_template_info))
 
-    #strTemplateItem => Gömlek Kodu
-    #variant_of => Gömlek Kodu
-    
+    dctVariantInfo = json.loads(jsonData)
+    frappe.log_error("VS 1", frappe.as_json(dctVariantInfo))
+    for variant_info in dctVariantInfo:
+        #frappe.log_error("VS 2", frappe.as_json(variant_info))
+        docColumnAttribute = frappe.get_doc("Item Attribute", variant_info['column_attribute_name'])
+        #frappe.log_error("VS 3", frappe.as_json(docColumnAttribute))
+        for column_attr in docColumnAttribute.item_attribute_values:
+            #frappe.log_error("VS 4", column_attr.abbr)
+            if variant_info[column_attr.abbr] > 0:
+                print(variant_info[column_attr.abbr])
+                
+                strItemCode = item_template_info['item_code_info'][0] #GOMLE
+                strAttr = item_template_info['item_code_info'][1] #RENK
+                if strAttr == variant_info['row_attribute_name']:
+                    strItemCode += "-" + variant_info['attribute_name']
+                
+                strItemCode += "-" + column_attr.abbr
+                result['variant_item_info'].append({
+                    'item_code':strItemCode, 'qty':variant_info[column_attr.abbr]
+                })
 
-    # select * from Item where item_code = strTemplateItem
-    arrVariants = frappe.db.get_list('Item',
-        filters={
-            'variant_of': strTemplateItem
-        },
-        fields=['item_name'],
-        #as_list=True
-    )
-
-    print(arrVariants)
-
-    return {"result":arrVariants}
+    return result
 
 def get_item_code(strTemplateItem, attr1_name, attr2_name):
     #strTemplateItem = Gomlek Kodu
@@ -74,15 +81,18 @@ def get_template_item_info(doc, template_data):
     return {'result': result, 'result_message': result_message, 'result_data': result_data}
 
 @frappe.whitelist()
-def get_template_attributes(strTemplateItemCode):
+def get_item_template_attributes(strTemplateItemCode):
     #Variant selector. https://app.asana.com/0/1199512727558833/1206652223240041/f
     data = []#It will have arrays of attributes with attribute_name, attribute_values, attribute_abbr
     result = False
     result_message = ""
+    arrItemCodeInfo = [] #Variant item code info
     
     docItem = frappe.get_doc("Item", strTemplateItemCode)
+    arrItemCodeInfo.append(docItem.item_name) #Will add variant abbrv info
     for attribute in docItem.attributes:
         docItemAttribute = frappe.get_doc("Item Attribute", attribute.attribute)
+        arrItemCodeInfo.append(attribute.attribute)
         attribute_info = {'attribute_name': docItemAttribute.attribute_name, 'attribute_values': [], 'attribute_abbr': []}
         data.append(attribute_info)
         for attribute_value in docItemAttribute.item_attribute_values:
@@ -108,6 +118,7 @@ def get_template_attributes(strTemplateItemCode):
             
     return {
         'columns': columns, 'rows': rows, 'data': data,
+        'item_code_info': arrItemCodeInfo,
         #'column_attribute_name': column_attribute_name, 'row_attribute_name': row_attribute_name,
         'op_result': result, 'op_message': result_message
     }

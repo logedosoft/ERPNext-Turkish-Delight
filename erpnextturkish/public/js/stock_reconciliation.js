@@ -23,7 +23,7 @@ function save_template_data(frm, template_data, row) {
 async function get_template_data(template_item_code) {
 	//Will return attributes of the selected item template. (IE possible values)
 	return await frappe.call({
-		method: "erpnextturkish.td_utils.get_template_attributes",
+		method: "erpnextturkish.td_utils.get_item_template_attributes",
 		args: {
 			strTemplateItemCode: template_item_code
 		},
@@ -102,21 +102,21 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 				}
 			],
 			primary_action: function () {
-
+				//Process variant data and create item rows
 				frappe.call({
-					method: "erpnextturkish.td_utils.process_json_data",
+					method: "erpnextturkish.td_utils.process_variant_json_data",
 					args: {
-						strTemplateItem: row.item_template
+						strTemplateItem: row.item_template,
+						jsonData: JSON.stringify(dlgVariantSelector.get_values().variant_data)
 					},
 					callback: (r) => {
 						console.log(r);
-						const results = r.message.result;
-						results.forEach(element => {
-							console.log(element.item_code);
-							console.log(element.qty);//
+						erpnext.utils.remove_empty_first_row(frm, "items");
+						r.message.variant_item_info.forEach((variant) => {
+							console.log(variant);
 							var child = cur_frm.add_child("items");
-							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);
-							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);
+							frappe.model.set_value(child.doctype, child.name, "item_code", variant.item_code);
+							frappe.model.set_value(child.doctype, child.name, "qty", variant.qty);
 						});
 						cur_frm.refresh_field("items")
 					}
@@ -128,7 +128,7 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 				console.log(dlgVariantSelector.get_values().variant_data);
 				console.log(typeof dlgVariantSelector.get_values().variant_data);
 				frappe.model.set_value(cdt, cdn, 'variant_data', JSON.stringify(dlgVariantSelector.get_values().variant_data));
-				save_template_data(frm, dlgVariantSelector.get_values().variant_data, row);
+				//save_template_data(frm, dlgVariantSelector.get_values().variant_data, row);
 			}
 		});
 		dlgVariantSelector.fields_dict.directive.$wrapper.html('Ürün Tercihinizi Giriniz');
