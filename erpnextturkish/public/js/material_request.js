@@ -106,7 +106,8 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 				frappe.call({
 					method: "erpnextturkish.td_utils.process_json_data",
 					args: {
-						strTemplateItem: row.item_template
+						strTemplateItem: row.item_template,
+						jsonData: JSON.stringify(dlgVariantSelector.get_values().variant_data)
 					},
 					callback: (r) => {
 						console.log(r);
