@@ -23,7 +23,7 @@ function save_template_data(frm, template_data, row) {
 async function get_template_data(template_item_code) {
 	//Will return attributes of the selected item template. (IE possible values)
 	return await frappe.call({
-		method: "erpnextturkish.td_utils.get_template_attributes",
+		method: "erpnextturkish.td_utils.get_item_template_attributes",
 		args: {
 			strTemplateItemCode: template_item_code
 		},
@@ -104,24 +104,35 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 			primary_action: function () {
 
 				frappe.call({
-					method: "erpnextturkish.td_utils.process_json_data",
+					method: "erpnextturkish.td_utils.process_variant_json_data",
 					args: {
 						strTemplateItem: row.item_template,
 						jsonData: JSON.stringify(dlgVariantSelector.get_values().variant_data)
 					},
 					callback: (r) => {
 						console.log(r);
-						const results = r.message.result;
-						frm.set_value('items', []);//clear items table
-						frm.refresh_field('items');
-						results.forEach(element => {
-							console.log(element.item_code);
-							console.log(element.qty);
-							var child = cur_frm.add_child("items");
-							frappe.model.set_value(child.doctype, child.name, "item_code", element.item_code);//row set value
-							frappe.model.set_value(child.doctype, child.name, "qty", element.qty);//row set value
-						});
-						cur_frm.refresh_field("items")
+						if (r.message.op_result === false) {
+							frappe.throw(r.message.op_message);
+						} else {
+							erpnext.utils.remove_empty_first_row(frm, "items");
+							//Remove previously added rows from the item grid for the current variant row.
+							let dItemGridLength = frm.doc.items.length;
+							for (var dIndex = dItemGridLength - 1; dIndex >= 0; dIndex--) {
+								if (frm.doc.items[dIndex].custom_ld_variant_grid_row_name === row.name) {
+									frm.doc.items.splice(dIndex, 1);
+								}
+							}
+							//Add new variant item rows
+							for (var dIndex = 0; dIndex < r.message.variant_item_info.length; dIndex++) {
+								//r.message.variant_item_info.forEach((variant) => {
+								var variant = r.message.variant_item_info[dIndex];
+								var child = frm.add_child("items");
+								frappe.model.set_value(child.doctype, child.name, "item_code", variant.item_code);
+								frappe.model.set_value(child.doctype, child.name, "qty", variant.qty);
+								frappe.model.set_value(child.doctype, child.name, "custom_ld_variant_grid_row_name", row.name);
+							}
+							frm.refresh_field("items");
+						}
 					}
 				})
 
