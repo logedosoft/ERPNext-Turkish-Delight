@@ -14,63 +14,36 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 
 #from bs4 import BeautifulSoup
 
+def doviz_kaydet(paraBirimi, guncelDovizKuru):
+    getDovizDoc = frappe.db.get_list('Currency Exchange',
+        filters={
+            'date': today(),
+            'from_currency':paraBirimi,
+        },
+        fields=['name','exchange_rate']
+    )
+    if not getDovizDoc:
+        doc = frappe.get_doc({
+            'doctype': 'Currency Exchange',
+            'date': today(),
+            'from_currency':paraBirimi,
+            'to_currency':'TRY',
+            'exchange_rate': guncelDovizKuru,
+            'for_buying': 1,
+            'for_selling': 1,
+        })
+        doc.insert()
+    elif getDovizDoc[0].exchange_rate != guncelDovizKuru:
+        doc = frappe.get_doc('Currency Exchange', getDovizDoc[0].name)
+        doc.exchange_rate = guncelDovizKuru
+        doc.db_update()
 
 @frappe.whitelist()
 def kur_guncelle():
     flUSDCurrRate = guncel_kur_getir("USD","Döviz Satış")   #32.0000
     flEURCurrRate = guncel_kur_getir("EUR","Döviz Satış")   #35.0000
-
-    getUSD = frappe.db.get_list('Currency Exchange',
-        filters={
-            'date': today(),
-            'from_currency':'USD',
-        },
-        fields=['name','exchange_rate']
-    )
-
-    getEUR = frappe.db.get_list('Currency Exchange',
-        filters={
-            'date': today(),
-            'from_currency':'EUR',
-        },
-        fields=['name','exchange_rate']
-    )
-
-    #frappe.msgprint(str(getUSD[0].name) + "test")
-
-    if not getUSD:
-        doc = frappe.get_doc({
-            'doctype': 'Currency Exchange',
-            'date': today(),
-            'from_currency':'USD',
-            'to_currency':'TRY',
-            'exchange_rate': flUSDCurrRate,
-            'for_buying': 1,
-            'for_selling': 1,   
-        })
-        doc.insert()
-    elif getUSD[0].exchange_rate != flUSDCurrRate:
-        doc = frappe.get_doc('Currency Exchange', getUSD[0].name)
-        doc.exchange_rate = flUSDCurrRate
-        doc.db_update()
-
-    if not getEUR:
-        doc = frappe.get_doc({
-            'doctype': 'Currency Exchange',
-            'date': today(),
-            'from_currency':'EUR',
-            'to_currency':'TRY',
-            'exchange_rate': flEURCurrRate,
-            'for_buying': 1,
-            'for_selling': 1,   
-        })
-        doc.insert()
-    elif getEUR[0].exchange_rate != flEURCurrRate:
-        doc = frappe.get_doc('Currency Exchange', getEUR[0].name)
-        doc.exchange_rate = flEURCurrRate
-        doc.db_update()
-
-    #"Currency Exchange" , buying selling
+    doviz_kaydet("USD", flUSDCurrRate)
+    doviz_kaydet("EUR", flEURCurrRate)
 
 
 def guncel_kur_getir(paraBirimi : str, kurTipi : str):
