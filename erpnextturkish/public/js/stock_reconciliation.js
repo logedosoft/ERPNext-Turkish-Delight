@@ -129,6 +129,9 @@ function ShowVariantSelectorDialog(frm, cdt, cdn, row) {
 								var child = frm.add_child("items");
 								frappe.model.set_value(child.doctype, child.name, "item_code", variant.item_code);
 								frappe.model.set_value(child.doctype, child.name, "qty", variant.qty);
+								if(frm.doc.set_warehouse){
+									frappe.model.set_value(child.doctype, child.name, "warehouse", frm.doc.set_warehouse);
+								}
 								frappe.model.set_value(child.doctype, child.name, "custom_ld_variant_grid_row_name", row.name);
 							}
 							frm.refresh_field("items");

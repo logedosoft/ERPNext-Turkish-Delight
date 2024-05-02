@@ -74,6 +74,12 @@ def get_template_item_info(doc, template_data):
 
     return {'result': result, 'result_message': result_message, 'result_data': result_data}
 
+def is_item_exist(attribute_info, strTemplateItem):
+    blnResult = False
+    print(attribute_info)
+    print(strTemplateItem)
+    return blnResult
+
 @frappe.whitelist()
 def get_item_template_attributes(strTemplateItemCode):
     #Variant selector. https://app.asana.com/0/1199512727558833/1206652223240041/f
@@ -92,6 +98,9 @@ def get_item_template_attributes(strTemplateItemCode):
         for attribute_value in docItemAttribute.item_attribute_values:
             attribute_info['attribute_values'].append(attribute_value.attribute_value)
             attribute_info['attribute_abbr'].append(attribute_value.abbr)
+
+
+    is_item_exist(attribute_info, strTemplateItemCode)
 
     #Create columns and rows list. Values with higher count should be in rows.
     if len(data) == 2:
