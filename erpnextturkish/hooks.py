@@ -97,6 +97,15 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
+scheduler_events = {
+    "cron": {
+        "0 * * * *": [
+            "erpnextturkish.currency_utils.refresh_currency"
+        ]
+    }
+}
+
+
 # scheduler_events = {
 # 	"all": [
 # 		"erpnextturkish.tasks.all"

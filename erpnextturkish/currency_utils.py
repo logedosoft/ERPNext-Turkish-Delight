@@ -14,7 +14,7 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 
 #from bs4 import BeautifulSoup
 
-def doviz_kaydet(paraBirimi, guncelDovizKuru):
+def save_currency_exchange(paraBirimi, guncelDovizKuru):
     getDovizDoc = frappe.db.get_list('Currency Exchange',
         filters={
             'date': today(),
@@ -32,21 +32,23 @@ def doviz_kaydet(paraBirimi, guncelDovizKuru):
             'for_buying': 1,
             'for_selling': 1,
         })
-        doc.insert()
+        doc.save()
     elif getDovizDoc[0].exchange_rate != guncelDovizKuru:
         doc = frappe.get_doc('Currency Exchange', getDovizDoc[0].name)
         doc.exchange_rate = guncelDovizKuru
-        doc.db_update()
+        doc.save()
 
 @frappe.whitelist()
-def kur_guncelle():
-    flUSDCurrRate = guncel_kur_getir("USD","Döviz Satış")   #32.0000
-    flEURCurrRate = guncel_kur_getir("EUR","Döviz Satış")   #35.0000
-    doviz_kaydet("USD", flUSDCurrRate)
-    doviz_kaydet("EUR", flEURCurrRate)
+def refresh_currency():
+    #https://app.asana.com/0/1129878054518524/1207204389066772/f
+    frappe.log_error("kurGuncelle","calisti")
+    flUSDCurrRate = get_tcmb_rate("USD","Döviz Satış")   #32.0000
+    flEURCurrRate = get_tcmb_rate("EUR","Döviz Satış")   #35.0000
+    save_currency_exchange("USD", flUSDCurrRate)
+    save_currency_exchange("EUR", flEURCurrRate)
 
 
-def guncel_kur_getir(paraBirimi : str, kurTipi : str):
+def get_tcmb_rate(paraBirimi : str, kurTipi : str):
     from xml.etree.ElementTree import fromstring,ElementTree as ET
     import requests
     r = requests.get("https://www.tcmb.gov.tr/kurlar/today.xml")
