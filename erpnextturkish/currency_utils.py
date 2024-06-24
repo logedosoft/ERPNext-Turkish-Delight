@@ -40,12 +40,14 @@ def save_currency_exchange(paraBirimi, guncelDovizKuru):
 
 @frappe.whitelist()
 def refresh_currency():
+    #We need to create a setting for this.
+    pass
     #https://app.asana.com/0/1129878054518524/1207204389066772/f
-    frappe.log_error("kurGuncelle","calisti")
-    flUSDCurrRate = get_tcmb_rate("USD","Döviz Satış")   #32.0000
-    flEURCurrRate = get_tcmb_rate("EUR","Döviz Satış")   #35.0000
-    save_currency_exchange("USD", flUSDCurrRate)
-    save_currency_exchange("EUR", flEURCurrRate)
+    #frappe.log_error("kurGuncelle","calisti")
+    #flUSDCurrRate = get_tcmb_rate("USD","Döviz Satış")   #32.0000
+    #flEURCurrRate = get_tcmb_rate("EUR","Döviz Satış")   #35.0000
+    #save_currency_exchange("USD", flUSDCurrRate)
+    #save_currency_exchange("EUR", flEURCurrRate)
 
 
 def get_tcmb_rate(paraBirimi : str, kurTipi : str):

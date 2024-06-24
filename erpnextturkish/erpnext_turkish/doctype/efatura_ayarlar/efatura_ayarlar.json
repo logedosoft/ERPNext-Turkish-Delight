@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-11-26 23:52:55.869135",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -49,7 +50,7 @@
    "fieldname": "entegrator",
    "fieldtype": "Select",
    "label": "Entegrat\u00f6r",
-   "options": "Uyumsoft"
+   "options": "Uyumsoft - Bien Teknoloji"
   },
   {
    "default": "0",
@@ -256,11 +257,11 @@
   }
  ],
  "issingle": 1,
- "modified": "2021-02-01 16:38:39.114241",
+ "links": [],
+ "modified": "2024-06-24 11:07:19.532783",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
- "name_case": "Title Case",
  "owner": "Administrator",
  "permissions": [
   {
@@ -277,5 +278,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
