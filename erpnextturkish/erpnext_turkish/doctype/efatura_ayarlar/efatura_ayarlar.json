@@ -65,6 +65,7 @@
    "label": "F\u0130RMA B\u0130LG\u0130LER\u0130"
   },
   {
+   "description": "http://connect-test.bienteknoloji.com.tr/Services/BasicIntegration",
    "fieldname": "test_efatura_adresi",
    "fieldtype": "Data",
    "label": "Test E-Fatura Adresi"
@@ -79,6 +80,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "description": "http://connect.bienteknoloji.com.tr/Services/BasicIntegration",
    "fieldname": "efatura_adresi",
    "fieldtype": "Data",
    "label": "E-Fatura Adresi"
@@ -266,7 +268,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-06-24 23:14:14.583479",
+ "modified": "2024-06-24 23:47:23.524605",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
