@@ -151,7 +151,7 @@ def pp_create_wosco(docPP, strType):
     if strType == "Subcontracting Order" and not po_list:
         frappe.msgprint(_("No Subcontracting Purchase Orders were created!"))
 
-def get_service_xml(strType):
+def get_service_xml_for_uyumsoft(strType):
     strResult = ''
 
     if strType == 'einvoice-body':
@@ -436,6 +436,291 @@ def get_service_xml(strType):
 
     return strResult
 
+def get_service_xml_for_bien_teknoloji(strType):
+    strResult = ''
+
+    if strType == 'einvoice-body':
+        #<s:Header><wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken><wsse:Username>Uyumsoft</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Uyumsoft</wsse:Password><wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">zOBB+xvgK+JpkdzfssWwKg==</wsse:Nonce><wsu:Created>2020-02-17T21:46:40.646Z</wsu:Created></wsse:UsernameToken></wsse:Security></s:Header>
+        strResult = """
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+
+    <s:Header>
+        <wsse:Security s:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+            <wsse:UsernameToken>
+                <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </s:Header>
+
+    <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <SaveAsDraft xmlns="http://tempuri.org/">
+            <invoices>
+                <InvoiceInfo LocalDocumentId="{{docSI.name}}">
+                    <Invoice>
+                        <ProfileID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TICARIFATURA</ProfileID>
+                        <ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"/>
+                        <CopyIndicator xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">false</CopyIndicator>
+                        <IssueDate xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.posting_date_formatted}}</IssueDate>
+                        <IssueTime xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.posting_time_formatted}}</IssueTime>
+                        <InvoiceTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">SATIS</InvoiceTypeCode>
+                        <Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not1_formul}}</Note>
+                        <Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not2_formul}}</Note>
+                        <Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not3_formul}}</Note>
+                        <Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_not4_formul}}</Note>
+                        <DocumentCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</DocumentCurrencyCode>
+                        <PricingCurrencyCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">TRY</PricingCurrencyCode>
+                        <LineCountNumeric xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.line_count}}</LineCountNumeric>
+                        
+                        <AccountingSupplierParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+                            <Party>
+                                <PartyIdentification>
+                                    <ID schemeID="VKN" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_vergi_no if docEISettings.td_vergi_no else ''}}</ID>
+                                </PartyIdentification>
+                                <PartyIdentification>
+                                    <ID schemeID="MERSISNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_mersis_no if docEISettings.td_mersis_no else ''}}</ID>
+                                </PartyIdentification>
+                                <PartyIdentification>
+                                    <ID schemeID="TICARETSICILNO" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_ticaret_sicil_no if docEISettings.td_ticaret_sicil_no else ''}}</ID>
+                                </PartyIdentification>
+                                <PartyName>
+                                    <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_firma_adi if docEISettings.td_firma_adi else ''}}</Name>
+                                </PartyName>
+                                <PostalAddress>
+                                    <Room xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_kapi_no|replace("&", "&#38;") if docEISettings.td_adres_kapi_no else ''}}</Room>
+                                    <StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_sokak|replace("&", "&#38;") if docEISettings.td_adres_sokak else ''}}</StreetName>
+                                    <BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_bina_no|replace("&", "&#38;") if docEISettings.td_adres_bina_no else ''}}</BuildingNumber>
+                                    <CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_ilce if docEISettings.td_adres_ilce else ''}}</CitySubdivisionName>
+                                    <CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_il if docEISettings.td_adres_il else ''}}</CityName>
+                                    <Country>
+                                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_adres_ulke if docEISettings.td_adres_ulke else ''}}</Name>
+                                    </Country>
+                                </PostalAddress>
+                                <PartyTaxScheme>
+                                    <TaxScheme>
+                                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docEISettings.td_vergi_dairesi if docEISettings.td_vergi_dairesi else ''}}</Name>
+                                    </TaxScheme>
+                                </PartyTaxScheme>
+                            </Party>
+                        </AccountingSupplierParty>
+
+                        <AccountingCustomerParty xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+                            <Party>
+                                <PartyIdentification>
+                                    <ID schemeID="{{docCustomer.id_scheme}}" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_id}}</ID>
+                                </PartyIdentification>
+
+                                <PartyName>
+                                    <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.customer_name}}</Name>
+                                </PartyName>
+
+                                <PostalAddress>
+                                    <StreetName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.address_line1|replace("&", "&#38;") if docCustomerAddress.address_line1 else ''}}</StreetName>
+                                    <BuildingNumber xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.address_line2|replace("&", "&#38;") if docCustomerAddress.address_line2 else ''}}</BuildingNumber>
+                                    <CitySubdivisionName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.county|replace("&", "&#38;") if docCustomerAddress.county else ''}}</CitySubdivisionName>
+                                    <CityName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.city|replace("&", "&#38;") if docCustomerAddress.city else ''}}</CityName>
+                                    <PostalZone xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.pincode|replace("&", "&#38;") if docCustomerAddress.pincode else ''}}</PostalZone>
+                                    <Country>
+                                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomerAddress.country or ''}}</Name>
+                                    </Country>
+                                </PostalAddress>
+
+                                <PartyTaxScheme>
+                                    <TaxScheme>
+                                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCustomer.tax_office or ''}}</Name>
+                                    </TaxScheme>
+                                </PartyTaxScheme>
+
+                            </Party>
+                        </AccountingCustomerParty>
+
+                        <TaxTotal xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+                            <TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxAmount}}</TaxAmount>
+                            <TaxSubtotal>
+                                <TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxAmount}}</TaxAmount>
+                                <Percent xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxPercent}}</Percent>
+                                <TaxCategory>
+                                    <TaxScheme>
+                                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KDV</Name>
+                                        <TaxTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0015</TaxTypeCode>
+                                    </TaxScheme>
+                                </TaxCategory>
+                            </TaxSubtotal>
+                        </TaxTotal>
+
+                        <LegalMonetaryTotal xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+                            <LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.LineExtensionAmount}}</LineExtensionAmount>
+                            <TaxExclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxExclusiveAmount}}</TaxExclusiveAmount>
+                            <TaxInclusiveAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.TaxInclusiveAmount}}</TaxInclusiveAmount>
+                            <AllowanceTotalAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.AllowanceTotalAmount}}</AllowanceTotalAmount>
+                            <PayableAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docSI.PayableAmount}}</PayableAmount>
+                        </LegalMonetaryTotal>
+
+                        {{docSI.contentLines}}
+
+                    </Invoice>
+                    <TargetCustomer VknTckn="{{docCustomer.tax_id}}" Alias="{{docCustomer.td_alici_alias}}" Title="{{docCustomer.customer_name}}"/>
+                    <EArchiveInvoiceInfo DeliveryType="Electronic"/>
+                    <Scenario>Automated</Scenario>
+                </InvoiceInfo>
+            </invoices>
+        </SaveAsDraft>
+    </s:Body>
+</s:Envelope>
+"""
+    elif strType == "einvoice-line":
+            strResult = """
+    <InvoiceLine xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+        <ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.idx}}</ID>
+        <Note xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Note>
+        
+        <InvoicedQuantity unitCode="{{docCurrentLine.efatura_birimi}}" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.qty}}</InvoicedQuantity>
+        <LineExtensionAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.amount}}</LineExtensionAmount>
+        
+        <AllowanceCharge>
+            <ChargeIndicator xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">false</ChargeIndicator>
+            <MultiplierFactorNumeric>0.0</MultiplierFactorNumeric>
+            <Amount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.discount_amount}}</Amount>
+            <PerUnitAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.qty}}</PerUnitAmount>
+            <BaseAmount currencyID="TRL">{{docCurrentLine.AllowanceBaseAmount}}</BaseAmount>
+        </AllowanceCharge>
+
+        <TaxTotal>
+            <TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.TaxAmount}}</TaxAmount>
+            <TaxSubtotal>
+                <TaxAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.TaxAmount}}</TaxAmount>
+                <Percent xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.TaxPercent}}</Percent>
+                <TaxCategory>
+                    <TaxScheme>
+                        <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">KDV</Name>
+                        <TaxTypeCode xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">0015</TaxTypeCode>
+                    </TaxScheme>
+                </TaxCategory>
+            </TaxSubtotal>
+        </TaxTotal>
+
+        <Item>
+            <Description xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></Description>
+            <Name xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docItem.item_code}} {{docItem.item_name}}</Name>
+            <BrandName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></BrandName>
+            <ModelName xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></ModelName>
+            <BuyersItemIdentification>
+                <ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></ID>
+            </BuyersItemIdentification>
+            <SellersItemIdentification>
+                <ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></ID>
+            </SellersItemIdentification>
+            <ManufacturersItemIdentification>
+                <ID xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"></ID>
+            </ManufacturersItemIdentification>
+        </Item>
+        <Price>
+            <PriceAmount currencyID="TRY" xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">{{docCurrentLine.rate}}</PriceAmount>
+        </Price>
+    </InvoiceLine>
+        """
+
+    elif strType == "einvoice-headers":
+        strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/SaveAsDraft',
+            'Connection': 'Keep-Alive'
+        }
+    
+    elif strType == "login-test-headers":
+        strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IBasicIntegration/WhoAmI',
+            'Connection': 'Keep-Alive'
+        }
+    elif strType == "login-test-body":
+        strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+    <soapenv:Body>
+        <tem:WhoAmI>
+            <tem:userInfo Username="{{docEISettings.kullaniciadi}}" Password="{{docEISettings.parola}}"/>
+        </tem:WhoAmI>
+    </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+    elif strType == "query-invoice-status-headers":
+        strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/QueryOutboxInvoiceStatus',
+            'Connection': 'Keep-Alive'
+        }
+    
+    elif strType == "query-invoice-status-body":
+        strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken>
+            <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+    </soapenv:Header>
+   <soapenv:Body>
+      <tem:QueryOutboxInvoiceStatus>
+         <tem:invoiceIds>
+            <tem:string>{{docSI.td_efatura_uuid}}</tem:string>
+         </tem:invoiceIds>
+      </tem:QueryOutboxInvoiceStatus>
+   </soapenv:Body>
+</soapenv:Envelope>
+"""
+    elif strType == "query-get-user-aliasses-headers":
+        strResult = {
+            'Accept-Encoding': 'gzip,deflate',
+            'Accept': 'text/xml',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'SOAPAction': 'http://tempuri.org/IIntegration/GetUserAliasses',
+            'Connection': 'Keep-Alive'
+        }
+
+    elif strType == "query-get-user-aliasses-body":
+        strResult = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken>
+            <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+    </soapenv:Header>
+   <soapenv:Body>
+      <tem:GetUserAliasses>
+         <tem:vknTckn>{{docCustomer.tax_id}}</tem:vknTckn>
+      </tem:GetUserAliasses>
+   </soapenv:Body>
+</soapenv:Envelope>
+        """
+
+    return strResult
+
+def get_service_xml(strType, strIntegrator):
+    if strIntegrator == 'Uyumsoft':
+        return get_service_xml_for_uyumsoft(strType)
+    elif strIntegrator == "Bien Teknoloji":
+        return get_service_xml_for_bien_teknoloji(strType)
+
 @frappe.whitelist()
 def send_einvoice(strSalesInvoiceName):
 
@@ -589,13 +874,13 @@ def get_user_aliasses(strCustomerName = None, docCustomer = None):
         if docCustomer is None:
             docCustomer = frappe.get_doc("Customer", strCustomerName)
 
-        body = get_service_xml('query-get-user-aliasses-body')
-        headers = get_service_xml('query-get-user-aliasses-headers')
-
         #Ayarlari alalim
         docEISettings = frappe.get_single("EFatura Ayarlar")		
         docEISettings.kullaniciadi = docEISettings.kullaniciadi 
         docEISettings.parola = docEISettings.get_password('parola')
+
+        body = get_service_xml('query-get-user-aliasses-body', docEISettings.entegrator)
+        headers = get_service_xml('query-get-user-aliasses-headers', docEISettings.entegrator)
 
         body = frappe.render_template(body, context={"docEISettings": docEISettings, "docCustomer": docCustomer}, is_path=False)
         
@@ -653,14 +938,14 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
         docSI = frappe.get_doc("Sales Invoice", strSaleInvoiceName)
 
     try:
-        body = get_service_xml('query-invoice-status-body')
-
-        headers = get_service_xml('query-invoice-status-headers')
-
         #Ayarlari alalim
         docEISettings = frappe.get_single("EFatura Ayarlar")		
         docEISettings.kullaniciadi = docEISettings.kullaniciadi 
         docEISettings.parola = docEISettings.get_password('parola')
+
+        body = get_service_xml('query-invoice-status-body', docEISettings.entegrator)
+
+        headers = get_service_xml('query-invoice-status-headers', docEISettings.entegrator)
 
         if docEISettings.test_modu:
             strServerURL = docEISettings.test_efatura_adresi
@@ -693,14 +978,14 @@ def login_test():
     strResult = ""
 
     try:
-        body = get_service_xml('login-test-body')
-
-        headers = get_service_xml('login-test-headers')
-
         #Ayarlari alalim
         docEISettings = frappe.get_single("EFatura Ayarlar")		
         docEISettings.kullaniciadi = docEISettings.kullaniciadi 
         docEISettings.parola = docEISettings.get_password('parola')
+
+        body = get_service_xml('login-test-body', docEISettings.entegrator)
+
+        headers = get_service_xml('login-test-headers', docEISettings.entegrator)
 
         if docEISettings.test_modu:
             strServerURL = docEISettings.test_efatura_adresi
@@ -711,7 +996,12 @@ def login_test():
 
         #response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=headers, data=body)
         #response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=headers, data=body)
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect Login Request", f"URL={strServerURL}, Headers={headers}, Body={body}")
+        
         response = requests.post(strServerURL, headers=headers, data=body)
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect Login Response", f"Code={response.status_code}, Response={response.text}")
 
         bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
         if response.status_code == 500:

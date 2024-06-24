@@ -8,6 +8,7 @@
   "entegrator",
   "td_enable",
   "test_modu",
+  "detailed_log",
   "kullaniciadi",
   "parola",
   "btn_login_test",
@@ -50,7 +51,7 @@
    "fieldname": "entegrator",
    "fieldtype": "Select",
    "label": "Entegrat\u00f6r",
-   "options": "Uyumsoft - Bien Teknoloji"
+   "options": "Uyumsoft\nBien Teknoloji"
   },
   {
    "default": "0",
@@ -253,12 +254,19 @@
    "default": "0",
    "fieldname": "td_enable",
    "fieldtype": "Check",
-   "label": "Enable"
+   "label": "Aktif"
+  },
+  {
+   "default": "0",
+   "description": "Her i\u015flem i\u00e7in log kay\u0131d\u0131 olu\u015fturur. Error Log ile izlenebilir.",
+   "fieldname": "detailed_log",
+   "fieldtype": "Check",
+   "label": "Log olu\u015ftur"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-06-24 11:07:19.532783",
+ "modified": "2024-06-24 23:14:14.583479",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "EFatura Ayarlar",
