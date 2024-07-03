@@ -568,6 +568,24 @@ def get_service_xml_for_bien_teknoloji(strType):
     </s:Body>
 </s:Envelope>
 """
+    elif strType == "einvoice-tevkifat":
+        strResult = """
+<WithholdingTaxTotal>
+    <TaxAmount currencyID="TRY">{{kdv_tevkifat1}}</TaxAmount>
+    <TaxSubtotal>
+        <TaxableAmount currencyID="TRY">{{kdv_tam}}</TaxableAmount>
+        <TaxAmount currencyID="TRY">{{kdv_tevkifat2}}</TaxAmount>
+        <Percent>50</Percent>
+        <TaxCategory>
+            <TaxScheme>
+                <Name>604 YEMEK SERVİS HİZMETİ *GT 117-Bölüm (3.2.4)+</Name>
+                <TaxTypeCode>604</TaxTypeCode>
+            </TaxScheme>
+        </TaxCategory>
+    </TaxSubtotal>
+</WithholdingTaxTotal>
+                    """
+
     elif strType == "einvoice-line":
             strResult = """
     <InvoiceLine xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
@@ -627,7 +645,7 @@ def get_service_xml_for_bien_teknoloji(strType):
             'Content-Type': 'text/xml;charset=UTF-8',
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
-            'SOAPAction': 'http://tempuri.org/IIntegration/SaveAsDraft',
+            'SOAPAction': 'http://tempuri.org/IBasicIntegration/SaveAsDraft',
             'Connection': 'Keep-Alive'
         }
     
@@ -659,23 +677,16 @@ def get_service_xml_for_bien_teknoloji(strType):
             'Content-Type': 'text/xml;charset=UTF-8',
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
-            'SOAPAction': 'http://tempuri.org/IIntegration/QueryOutboxInvoiceStatus',
+            'SOAPAction': 'http://tempuri.org/IBasicIntegration/QueryOutboxInvoiceStatus',
             'Connection': 'Keep-Alive'
         }
     
     elif strType == "query-invoice-status-body":
         strResult = """
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-   <soapenv:Header>
-      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
-         <wsse:UsernameToken>
-            <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
-            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
-         </wsse:UsernameToken>
-      </wsse:Security>
-    </soapenv:Header>
    <soapenv:Body>
       <tem:QueryOutboxInvoiceStatus>
+        <tem:userInfo Username="{{docEISettings.kullaniciadi}}" Password="{{docEISettings.parola}}"/>
          <tem:invoiceIds>
             <tem:string>{{docSI.td_efatura_uuid}}</tem:string>
          </tem:invoiceIds>
@@ -690,27 +701,21 @@ def get_service_xml_for_bien_teknoloji(strType):
             'Content-Type': 'text/xml;charset=UTF-8',
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
-            'SOAPAction': 'http://tempuri.org/IIntegration/GetUserAliasses',
+            #'SOAPAction': 'http://tempuri.org/IIntegration/GetUserAliasses',
+            'SOAPAction': 'http://tempuri.org/IBasicIntegration/GetUserAliasses',
             'Connection': 'Keep-Alive'
         }
 
     elif strType == "query-get-user-aliasses-body":
         strResult = """
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-   <soapenv:Header>
-      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
-         <wsse:UsernameToken>
-            <wsse:Username>{{docEISettings.kullaniciadi}}</wsse:Username>
-            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{{docEISettings.parola}}</wsse:Password>
-         </wsse:UsernameToken>
-      </wsse:Security>
-    </soapenv:Header>
-   <soapenv:Body>
-      <tem:GetUserAliasses>
-         <tem:vknTckn>{{docCustomer.tax_id}}</tem:vknTckn>
-      </tem:GetUserAliasses>
-   </soapenv:Body>
-</soapenv:Envelope>
+		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+			<soapenv:Body>
+				<tem:GetUserAliasses>
+					<tem:userInfo Username="{{docEISettings.kullaniciadi}}" Password="{{docEISettings.parola}}"/>
+					<tem:vknTckn>{{docCustomer.tax_id}}</tem:vknTckn>
+				</tem:GetUserAliasses>
+			</soapenv:Body>
+		</soapenv:Envelope>
         """
 
     return strResult
@@ -736,17 +741,17 @@ def send_einvoice(strSalesInvoiceName):
         strHeaders = frappe.safe_eval(docEISettings.td_efatura_header) #get_service_xml('einvoice-headers')
         strBody = docEISettings.td_efatura_xml_genel #get_service_xml('einvoice-body')
         strLine = docEISettings.td_efatura_xml_satir #get_service_xml('einvoice-line')
+        strTaxWithholding = get_service_xml('einvoice-tevkifat', docEISettings.entegrator)
 
         docCustomerAddress = frappe.get_doc("Address", docSI.customer_address)
-        docCustomer.id_scheme = "VKN" if docCustomer.customer_type == "Company" else "TCKN"
+
+        docCustomer.id_scheme = "VKN" if len(docCustomer.tax_id) == 10 else "TCKN"
         #Eger alias tanimli degil ise bulalim
         if not docCustomer.td_alici_alias:
             docCustomer.td_alici_alias = get_user_aliasses(docCustomer=docCustomer)['alias']
 
-        #Bazi yerlerde tax_office bazen taxoffice diye alan acmisiz. Toparlayalim.
-        if hasattr(docCustomer, 'taxoffice'):
-            docCustomer.tax_office = docCustomer.taxoffice if docCustomer.taxoffice is not None else ''
-        elif hasattr(docCustomer, 'tax_office'):
+        #Vergi dairesi alalim
+        if hasattr(docCustomer, 'tax_office'):
             docCustomer.tax_office = docCustomer.tax_office if docCustomer.tax_office is not None else ''
         else:
             raise ValueError('Müşteri kartlarında için vergi dairesi alanı (tax_office) bulunamadı. (Customize Form ile Customer için tax_office alanı eklenmeli).')
@@ -794,6 +799,16 @@ def send_einvoice(strSalesInvoiceName):
         docSI.posting_time_formatted = get_time(docSI.posting_time).strftime("%H:%M:%S")#format_time(time_string=docSI.posting_time, format_string='HH:mm:ss')#str(dateutil.parser.parse(docSI.posting_time)).strftime("%H-%M-%S")#docSI.posting_time #"03:55:40"# formatdate(docSI.posting_time, "HH:mm")#"HH:mm:ss.SSSSSSSZ")
         docSI.line_count = len(docSI.items)
 
+        tax_withoholding = docSI.TaxAmount / 2
+        tax_total = docSI.TaxAmount
+
+        strTaxWithholding = frappe.render_template(strTaxWithholding, context=
+		{
+			"kdv_tevkifat1": tax_withoholding, 
+			"kdv_tevkifat2": tax_withoholding,
+			"kdv_tam": tax_total
+		}, is_path=False)
+
         #Ana dokuman dosyamizi olusturalim. Once not parametreleri dolsun sonra asil dokuman.
         strDocXML = frappe.render_template(strBody, context=
         {
@@ -820,7 +835,13 @@ def send_einvoice(strSalesInvoiceName):
         #webservisine gonderelim
         #response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
         #response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=strHeaders, data=strDocXML.encode('utf-8'))
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect SendEInvoice Request", f"URL={strServerURL},\nHeaders={strHeaders},\nData={strDocXML}")
+        
         response = requests.post(strServerURL, headers=strHeaders, data=strDocXML.encode('utf-8'))
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect SendEInvoice Response", f"Code={response.status_code},\nResponse={response.text}")
+
         # You can inspect the response just like you did before. response.headers, response.text, response.content, response.status_code
 
         bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
@@ -860,7 +881,7 @@ def send_einvoice(strSalesInvoiceName):
 
     except Exception as e:
         strResult = _("Hata oluştu! Detay:{0}").format(e)
-        frappe.log_error(frappe.get_traceback(), _("E-Fatura (send_einvoice) sunucudan gelen mesaj işlenemedi."))
+        frappe.log_error(frappe.get_traceback(), _("E-Fatura (send_einvoice) generated an error."))
     
     return {'result':strResult, 'response':response.text if 'response' in locals() else ''}
 
@@ -886,12 +907,17 @@ def get_user_aliasses(strCustomerName = None, docCustomer = None):
         
         if docEISettings.test_modu:
             strServerURL = docEISettings.test_efatura_adresi
-            #Test modunda gonderdigimiz xml i  de saklayalim
             frappe.log_error(body, _("E-Fatura (get_user_aliasses) gönderilen paket"))
         else:
             strServerURL = docEISettings.efatura_adresi
 
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect GetUserAliasses Request", f"URL={strServerURL},\nHeaders={headers},\nBody={body}")
+
         response = requests.post(strServerURL, headers=headers, data=body)
+
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect GetUserAliasses Response", f"Code={response.status_code},\nResponse={response.text}")
 
         bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
 
@@ -944,17 +970,23 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
         docEISettings.parola = docEISettings.get_password('parola')
 
         body = get_service_xml('query-invoice-status-body', docEISettings.entegrator)
+        body = frappe.render_template(body, context={"docEISettings": docEISettings, "docSI": docSI}, is_path=False)
 
         headers = get_service_xml('query-invoice-status-headers', docEISettings.entegrator)
 
         if docEISettings.test_modu:
             strServerURL = docEISettings.test_efatura_adresi
+            frappe.log_error(body, _("E-Fatura (get_invoice_status) gönderilen paket"))
         else:
             strServerURL = docEISettings.efatura_adresi
 
-        body = frappe.render_template(body, context={"docEISettings": docEISettings, "docSI": docSI}, is_path=False)
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect GetInvoiceStatus Request", f"URL={strServerURL},\nHeaders={headers},\nBody={body}")
 
         response = requests.post(strServerURL, headers=headers, data=body)
+
+        if docEISettings.detailed_log == True:
+            frappe.log_error("E-Connect GetInvoiceStatus Response", f"Code={response.status_code}, Response={response.text}")
 
         bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
         if response.status_code == 500:
@@ -984,15 +1016,15 @@ def login_test():
         docEISettings.parola = docEISettings.get_password('parola')
 
         body = get_service_xml('login-test-body', docEISettings.entegrator)
+        body = frappe.render_template(body, context={"docEISettings": docEISettings}, is_path=False)
 
         headers = get_service_xml('login-test-headers', docEISettings.entegrator)
 
         if docEISettings.test_modu:
             strServerURL = docEISettings.test_efatura_adresi
+            frappe.log_error(body, _("E-Fatura (login_test) gönderilen paket"))
         else:
             strServerURL = docEISettings.efatura_adresi
-
-        body = frappe.render_template(body, context={"docEISettings": docEISettings}, is_path=False)
 
         #response = requests.post('https://efatura-test.uyumsoft.com.tr/services/integration', headers=headers, data=body)
         #response = requests.post('https://efatura.uyumsoft.com.tr/services/integration', headers=headers, data=body)
@@ -1018,7 +1050,7 @@ def login_test():
 
     except Exception as e:
         strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
-        frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) sunucudan gelen mesaj işlenemedi."))
+        frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) hatası"))
 
     return {'result':strResult, 'response':response.text}
 
