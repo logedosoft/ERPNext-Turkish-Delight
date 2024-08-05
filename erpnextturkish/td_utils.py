@@ -1006,12 +1006,13 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
     return {'result':strResult, 'response':response.text}
 
 @frappe.whitelist()
-def login_test():
+def login_test(doc):
     strResult = ""
 
     try:
         #Ayarlari alalim
-        docEISettings = frappe.get_single("EFatura Ayarlar")		
+        #docEISettings = frappe.get_single("EFatura Ayarlar")
+        docEISettings = frappe.get_doc(json.loads(doc))
         docEISettings.kullaniciadi = docEISettings.kullaniciadi 
         docEISettings.parola = docEISettings.get_password('parola')
 
