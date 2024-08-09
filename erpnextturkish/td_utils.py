@@ -15,6 +15,10 @@ import dateutil
 from bs4 import BeautifulSoup
 
 @frappe.whitelist()
+def get_template_variants(strTemplateItemCode):
+    return frappe.get_all('Item Variant Attribute', filters={'variant_of': strTemplateItemCode}, fields=['attribute','attribute_value'])
+
+@frappe.whitelist()
 def process_variant_json_data(strTemplateItem, jsonData):
     #We will try to find the correct item codes based on Item Template and json data
     #jsonData = [{"attribute_name":"RED","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":2,"XL":0,"idx":1,"name":"row 1"},{"attribute_name":"GRE","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":2,"name":"row 2"},{"attribute_name":"BLU","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":5,"M":0,"L":0,"XL":0,"idx":3,"name":"row 3"},{"attribute_name":"BLA","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":4,"name":"row 4"},{"attribute_name":"WHI","XS":0,"column_attribute_name":"Boyut","row_attribute_name":"Renk","S":0,"M":0,"L":0,"XL":0,"idx":5,"name":"row 5"}]
@@ -30,7 +34,7 @@ def process_variant_json_data(strTemplateItem, jsonData):
     for variant_info in dctVariantInfo:
         docColumnAttribute = frappe.get_doc("Item Attribute", variant_info['column_attribute_name'])
         for column_attr in docColumnAttribute.item_attribute_values:
-            if variant_info[column_attr.abbr] > 0:
+            if column_attr.abbr in variant_info and variant_info[column_attr.abbr] > 0:
                 
                 strItemCode = item_template_info['item_code_info'][0] #GOMLE
                 strAttr = item_template_info['item_code_info'][1] #RENK
@@ -89,16 +93,21 @@ def get_item_template_attributes(strTemplateItemCode):
     arrItemCodeInfo = [] #Variant item code info
     
     docItem = frappe.get_doc("Item", strTemplateItemCode)
-    arrItemCodeInfo.append(docItem.item_name) #Will add variant abbrv info
+    arrItemCodeInfo.append(strTemplateItemCode) #Will add variant abbrv info
+        
     for attribute in docItem.attributes:
         docItemAttribute = frappe.get_doc("Item Attribute", attribute.attribute)
         arrItemCodeInfo.append(attribute.attribute)
         attribute_info = {'attribute_name': docItemAttribute.attribute_name, 'attribute_values': [], 'attribute_abbr': []}
         data.append(attribute_info)
-        for attribute_value in docItemAttribute.item_attribute_values:
-            attribute_info['attribute_values'].append(attribute_value.attribute_value)
-            attribute_info['attribute_abbr'].append(attribute_value.abbr)
 
+        for attribute_value in docItemAttribute.item_attribute_values:
+            for i in (get_template_variants(strTemplateItemCode)):
+                if i.attribute_value == attribute_value.attribute_value:
+                    if attribute_value.attribute_value not in attribute_info['attribute_values']:
+                        attribute_info['attribute_values'].append(attribute_value.attribute_value)
+                    if attribute_value.abbr not in attribute_info['attribute_abbr']:
+                        attribute_info['attribute_abbr'].append(attribute_value.abbr)
 
     is_item_exist(attribute_info, strTemplateItemCode)
 
@@ -118,6 +127,11 @@ def get_item_template_attributes(strTemplateItemCode):
     else:
         result = False
         result_message = _("Template must have 2 attributes")
+
+    frappe.log_error(f"""
+strTemplateItemCode: {strTemplateItemCode}
+docItem.item_name: {docItem.item_name}
+""", "T11")
             
     return {
         'columns': columns, 'rows': rows, 'data': data,
