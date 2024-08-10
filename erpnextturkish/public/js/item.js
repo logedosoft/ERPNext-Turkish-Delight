@@ -32,21 +32,23 @@ frappe.ui.form.on("Item", {
 
 				get_template_valid_attributes(frm.doc.name).then( (r) => {
 					//template_data = template_data.message;
-					console.log("DATA ARRIVED");
 					console.log(r);
+					r.message.attribute_list.sort();
 
-					//let dfVariantChart = frappe.meta.docfield_map["TD Variant Size Chart"];
 					let dColumnIndex = 2;
-					let dfVariantChart = frappe.meta.docfield_list["TD Variant Size Chart"]; 
-					//dfVariantChart.attr1.label = "OK3";
-					//dfVariantChart.attr2.label = "OK4";
+					let dfVariantChart = frappe.meta.docfield_list["TD Variant Size Chart"];
 					r.message.attribute_list.forEach( (size, d) => {
-						console.log(size);
-						console.log(d);
 						let column = dfVariantChart.find(num => num.idx === dColumnIndex);
 						column.label = size;
 
 						dColumnIndex += 1;
+					});
+					//Remove columns on right
+					dColumnIndex -= 2;
+					dfVariantChart.forEach( (column, d) => {
+						if (d > dColumnIndex) {
+							grdVariantChart.toggle_display(column.fieldname, false);
+						}
 					});
 
 					grdVariantChart.reset_grid();
