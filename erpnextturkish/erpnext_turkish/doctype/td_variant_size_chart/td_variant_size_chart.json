@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-09 20:52:46.162435",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "part",
+  "attr1",
+  "attr2",
+  "attr3",
+  "attr4",
+  "attr5",
+  "attr6",
+  "attr7",
+  "attr8"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "attr1",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr1",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr2",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr2",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr3",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr3",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr4",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr4",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr5",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr5",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr6",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr6",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr7",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr7",
+   "precision": "1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attr8",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "attr8",
+   "precision": "1"
+  },
+  {
+   "columns": 2,
+   "fieldname": "part",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Sizes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-08-10 18:34:55.163768",
+ "modified_by": "Administrator",
+ "module": "ERPNext Turkish",
+ "name": "TD Variant Size Chart",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

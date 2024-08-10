@@ -1,0 +1,64 @@
+/* LOGEDOSOFT 2024*/
+//Item customizations
+
+async function get_template_valid_attributes(template_item_code) {
+	//Will return attributes of the selected item template. Returns only attributes with valid items.
+	return await frappe.call({
+		method: "erpnextturkish.td_utils.get_template_valid_attributes",
+		args: {
+			strTemplateItemCode: template_item_code
+		},
+		callback: (r) => {			
+			if (r.message.op_result === false) {
+				frappe.throw(r.message.op_message);
+			} else {
+				return r;
+			}
+		}
+	})
+}
+
+frappe.ui.form.on("Item", {
+	onload: function (frm) {
+		//Check td utils, show_variant_size_chart_in_template_item setting. https://app.asana.com/0/1199512727558833/1208016876366999/f
+		frappe.db.get_single_value("TD Utils", "show_variant_size_chart_in_template_item").then((r) => {
+			if (r === 1) {
+				//Variant Size Chart operations
+				let grdVariantChart = frm.get_field("custom_ld_variant_size_chart").grid;
+
+				//TODO:Doesn't work. 
+				//grdVariantChart.wrapper.find('.row-check').hide();
+				//grdVariantChart.wrapper.find('.row-index').hide();
+
+				get_template_valid_attributes(frm.doc.name).then( (r) => {
+					//template_data = template_data.message;
+					console.log("DATA ARRIVED");
+					console.log(r);
+
+					//let dfVariantChart = frappe.meta.docfield_map["TD Variant Size Chart"];
+					let dColumnIndex = 2;
+					let dfVariantChart = frappe.meta.docfield_list["TD Variant Size Chart"]; 
+					//dfVariantChart.attr1.label = "OK3";
+					//dfVariantChart.attr2.label = "OK4";
+					r.message.attribute_list.forEach( (size, d) => {
+						console.log(size);
+						console.log(d);
+						let column = dfVariantChart.find(num => num.idx === dColumnIndex);
+						column.label = size;
+
+						dColumnIndex += 1;
+					});
+
+					grdVariantChart.reset_grid();
+					frm.toggle_display("custom_ld_variant_size_chart", true);
+				});
+
+			} else {
+				frm.toggle_display("custom_ld_variant_size_chart", false);
+			}
+		});
+	},
+	refresh: function (frm) {
+		
+	}
+});

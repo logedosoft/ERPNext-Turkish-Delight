@@ -19,7 +19,8 @@
   "enable_ereceipt",
   "sbvariant_section",
   "show_variant_selection_in_mr",
-  "show_variant_selection_in_sr"
+  "show_variant_selection_in_sr",
+  "show_variant_size_chart_in_template_item"
  ],
  "fields": [
   {
@@ -98,12 +99,18 @@
    "fieldname": "show_variant_selection_in_sr",
    "fieldtype": "Check",
    "label": "Show Variant Template in Stock Reconciliation"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_variant_size_chart_in_template_item",
+   "fieldtype": "Check",
+   "label": "Show Variant Size Chart in Template Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-04-25 13:48:05.283613",
+ "modified": "2024-08-10 18:06:18.769021",
  "modified_by": "Administrator",
  "module": "ERPNext Turkish",
  "name": "TD Utils",
