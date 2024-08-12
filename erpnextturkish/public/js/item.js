@@ -38,9 +38,14 @@ frappe.ui.form.on("Item", {
 
 						let dColumnIndex = 2;
 						let dfVariantChart = frappe.meta.docfield_list["TD Variant Size Chart"];
+						
 						r.message.attribute_list.forEach( (size, d) => {
 							let column = dfVariantChart.find(num => num.idx === dColumnIndex);
 							column.label = size;
+							//Below code works on production, above code works on dev :)
+							let dfAttribute = frappe.meta.get_docfield("TD Variant Size Chart", column.fieldname, frm.doc.name);
+							dfAttribute.label = size;
+							
 
 							dColumnIndex += 1;
 						});
