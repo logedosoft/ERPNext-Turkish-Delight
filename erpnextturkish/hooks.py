@@ -91,7 +91,10 @@ doctype_js = {
 
 doc_events = {
  	"Delivery Note": {
- 		"on_submit": "erpnextturkish.eirsaliye.api.eirsaliye.on_submit_validate",
+ 		"on_submit": "erpnextturkish.eirsaliye.api.eirsaliye.on_submit_validate"
+	},
+	"Item": {
+		"before_save": "erpnextturkish.td_utils.item_before_save"
 	}
 }
 

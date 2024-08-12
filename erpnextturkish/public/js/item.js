@@ -15,7 +15,7 @@ async function get_template_valid_attributes(template_item_code) {
 				return r;
 			}
 		}
-	})
+	});
 }
 
 frappe.ui.form.on("Item", {
@@ -33,7 +33,7 @@ frappe.ui.form.on("Item", {
 				get_template_valid_attributes(frm.doc.name).then( (r) => {
 					//template_data = template_data.message;
 					console.log(r);
-					r.message.attribute_list.sort();
+					//r.message.attribute_list.sort(); Moved to backend
 
 					let dColumnIndex = 2;
 					let dfVariantChart = frappe.meta.docfield_list["TD Variant Size Chart"];

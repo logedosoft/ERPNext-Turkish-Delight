@@ -14,6 +14,39 @@ import dateutil
 
 from bs4 import BeautifulSoup
 
+def item_before_save(doc, method):
+    #We need to show size chart properly in the printouts. So created a html field and we will fill it in this method.
+    #Field custom_size_chart_html and custom_ld_variant_size_chart table https://app.asana.com/0/1199512727558833/1208032071430686/f
+    #HTML Template:
+    if len(doc.custom_ld_variant_size_chart) > 0:
+        strHTML = """<table class="table table-bordered table-condensed"><thead><tr>"""
+        strHTML += """<th style="width: 150px;" class="" data-fieldname="custom_ld_variant_size_chart" data-fieldtype="Table">Bedenler</th>"""
+
+        for size in get_template_valid_attributes(doc.name)['attribute_list']:
+            strHTML += """<th style="width: 80px;" class="" data-fieldname="custom_ld_variant_size_chart" data-fieldtype="Table">""" + size + """</th>"""
+
+        strHTML += """</tr></thead><tbody>"""
+
+        for row in doc.custom_ld_variant_size_chart:
+                strHTML += """<tr>"""
+                strHTML += f"""
+                <td class="" data-fieldname="custom_ld_variant_size_chart" data-fieldtype="Table">
+                    <div class="value">{row.part}</div>
+                </td>"""
+
+                dSizeIndex = 1
+                for size in get_template_valid_attributes(doc.name)['attribute_list']:
+                    flSize = row.get(f"attr{dSizeIndex}")
+                    strHTML += f"""<td class="text-right" data-fieldname="custom_ld_variant_size_chart" data-fieldtype="Table"><div class="value">{flSize}</div></td>"""
+                    dSizeIndex += 1
+
+                strHTML += """</tr>"""
+
+        strHTML += """</tbody></table>"""
+            
+        doc.custom_size_chart_html_editor = strHTML
+        frappe.log_error("ITEM BS 10", doc.custom_size_chart_html_editor)
+
 @frappe.whitelist()
 def get_template_valid_attributes(strTemplateItemCode):
     #Will return item attribute of the given template item.
@@ -34,6 +67,8 @@ def get_template_valid_attributes(strTemplateItemCode):
         for attribute in docItem.attributes:
             if attribute.attribute == strSizeAttributeName:
                 result['attribute_list'].append(attribute.attribute_value)
+
+    result['attribute_list'] = sorted(result['attribute_list'])
 
     return result
 
