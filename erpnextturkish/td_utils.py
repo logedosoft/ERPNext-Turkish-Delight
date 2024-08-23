@@ -65,7 +65,7 @@ def get_template_valid_attributes(strTemplateItemCode):
 	for variant in dctVariants:
 		docItem = frappe.get_doc("Item", variant.name)
 		for attribute in docItem.attributes:
-			if attribute.attribute == strSizeAttributeName:
+			if attribute.attribute == strSizeAttributeName and attribute.attribute_value not in result['attribute_list']:
 				result['attribute_list'].append(attribute.attribute_value)
 
 	result['attribute_list'] = sorted(result['attribute_list'])
