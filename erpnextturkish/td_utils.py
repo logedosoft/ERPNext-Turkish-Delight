@@ -806,7 +806,7 @@ def get_service_xml(strType, strIntegrator):
 @frappe.whitelist()
 def get_incoming_invoices(doc):
 	#Get incoming invoices
-		strResult = ""
+	strResult = ""
 
 	try:
 		body = get_service_xml('inbox-invoice-list-body')
