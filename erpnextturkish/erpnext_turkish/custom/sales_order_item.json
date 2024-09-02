@@ -75,7 +75,7 @@
    "creation": "2024-09-02 22:05:29.679176",
    "default": null,
    "depends_on": null,
-   "description": null,
+   "description": "Template image or variant image if exists.",
    "docstatus": 0,
    "dt": "Sales Order Item",
    "fetch_from": null,
