@@ -20,11 +20,22 @@ def sales_order_before_save(doc, method):
 	
 	for item in doc.items:
 		imgItem, template_item = frappe.db.get_value("Item", item.item_code, ["image", "variant_of"])
-		if imgItem is None:
+		if imgItem is None and template_item is not None:
 			imgItem = frappe.db.get_value("Item", template_item, "image")
 
 		if imgItem is not None:
 			item.custom_ld_template_image = imgItem
+
+		#Get size and colour attribute values https://app.asana.com/0/1199512727558833/1208206221565437/f
+		if template_item is not None:
+			size_attribute = frappe.db.get_value("Item", template_item, "custom_ld_size_attribute")
+			if size_attribute is not None:
+				docItem = frappe.get_doc("Item", item.item_code)
+				for attribute in docItem.attributes:
+					if attribute.attribute == size_attribute:
+						item.custom_ld_variant_attribute_size = attribute.attribute_value
+					else:
+						item.custom_ld_variant_attribute_colour = attribute.attribute_value
 
 def item_before_save(doc, method):
 	#We need to show size chart properly in the printouts. So created a html field and we will fill it in this method.
