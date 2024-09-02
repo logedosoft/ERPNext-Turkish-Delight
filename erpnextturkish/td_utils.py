@@ -14,6 +14,18 @@ import dateutil
 
 from bs4 import BeautifulSoup
 
+def sales_order_before_save(doc, method):
+	#Set template item image when saving sales order. https://app.asana.com/0/1199512727558833/1208206221565431/f
+	#For each row in items grid, check if item has an image. If image exist, use it or try to get the image from the template
+	
+	for item in doc.items:
+		imgItem, template_item = frappe.db.get_value("Item", item.item_code, ["image", "variant_of"])
+		if imgItem is None:
+			imgItem = frappe.db.get_value("Item", template_item, "image")
+
+		if imgItem is not None:
+			item.custom_ld_template_image = imgItem
+
 def item_before_save(doc, method):
 	#We need to show size chart properly in the printouts. So created a html field and we will fill it in this method.
 	#Field custom_size_chart_html and custom_ld_variant_size_chart table https://app.asana.com/0/1199512727558833/1208032071430686/f
@@ -1172,7 +1184,7 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
 
 @frappe.whitelist()
 def login_test(doc):
-    dctResult = {'op_result': False, 'op_message': ''}
+	dctResult = {'op_result': False, 'op_message': ''}
 
 	try:
 		#Ayarlari alalim
@@ -1201,28 +1213,28 @@ def login_test(doc):
 		if docEISettings.detailed_log == True:
 			frappe.log_error("E-Connect Login Response", f"Code={response.status_code}, Response={response.text}")
 
-        bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
-        if response.status_code == 500:
-            dctResult['op_result'] = False
-            strErrorMessage = bsMain.find_all("faultstring")[0].text
-            dctResult['op_message'] = "İşlem Başarısız! Hata Kodu:500. Detay:"
-            dctResult['op_message'] += strErrorMessage
-        elif response.status_code == 200:
-            dctResult['op_result'] = True
-            dctResult['op_message'] = "İşlem Başarılı."
-            strCustomerName = bsMain.find_all("name")[1].text
-            dctResult['op_message'] += _("Firma Adı:{0}").format(strCustomerName)
-        else:
-            dctResult['op_result'] = False
-            dctResult['op_message'] = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
-            dctResult['op_message'] += response.text
+		bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
+		if response.status_code == 500:
+			dctResult['op_result'] = False
+			strErrorMessage = bsMain.find_all("faultstring")[0].text
+			dctResult['op_message'] = "İşlem Başarısız! Hata Kodu:500. Detay:"
+			dctResult['op_message'] += strErrorMessage
+		elif response.status_code == 200:
+			dctResult['op_result'] = True
+			dctResult['op_message'] = "İşlem Başarılı."
+			strCustomerName = bsMain.find_all("name")[1].text
+			dctResult['op_message'] += _("Firma Adı:{0}").format(strCustomerName)
+		else:
+			dctResult['op_result'] = False
+			dctResult['op_message'] = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+			dctResult['op_message'] += response.text
 
-    except Exception as e:
-        dctResult['op_result'] = False
-        dctResult['op_message'] = _("Sunucu iletişiminde beklenmeyen hata oluştu! Detay:{0}").format(e)
-        frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) hatası"))
+	except Exception as e:
+		dctResult['op_result'] = False
+		dctResult['op_message'] = _("Sunucu iletişiminde beklenmeyen hata oluştu! Detay:{0}").format(e)
+		frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) hatası"))
 
-    return dctResult
+	return dctResult
 
 ### DOSYA GUNCELLEME MODULU
 @frappe.whitelist()

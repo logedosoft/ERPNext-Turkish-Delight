@@ -95,6 +95,9 @@ doc_events = {
 	},
 	"Item": {
 		"before_save": "erpnextturkish.td_utils.item_before_save"
+	},
+	"Sales Order": {
+		"before_save": "erpnextturkish.td_utils.sales_order_before_save"
 	}
 }
 
