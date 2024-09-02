@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-13 19:25:27.752461",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sb_gelen_efatura_section",
+  "efatura_detay"
+ ],
+ "fields": [
+  {
+   "fieldname": "efatura_detay",
+   "fieldtype": "Table",
+   "options": "Gelen EFatura Detay"
+  },
+  {
+   "fieldname": "sb_gelen_efatura_section",
+   "fieldtype": "Section Break",
+   "label": "Gelen E-Fatura"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-08-13 19:28:42.199005",
+ "modified_by": "Administrator",
+ "module": "ERPNext Turkish",
+ "name": "Gelen EFatura",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
