@@ -11,8 +11,8 @@ frappe.ui.form.on('EFatura Ayarlar', {
 				doc: frm.doc
 			},
 			callback: function (r) {
-				console.log(objResponse);
-				frappe.msgprint(objResponse.message.result);
+				console.log(r);
+				frappe.msgprint(r.message.op_message);
 			},
 		});
 		/*frappe.call({

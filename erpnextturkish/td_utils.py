@@ -1066,7 +1066,7 @@ def get_invoice_status(docSI = None, strSaleInvoiceName = None):
 
 @frappe.whitelist()
 def login_test(doc):
-    strResult = ""
+    dctResult = {'op_result': False, 'op_message': ''}
 
     try:
         #Ayarlari alalim
@@ -1097,22 +1097,26 @@ def login_test(doc):
 
         bsMain = BeautifulSoup(response.text, "lxml")#response.content.decode('utf8')
         if response.status_code == 500:
+            dctResult['op_result'] = False
             strErrorMessage = bsMain.find_all("faultstring")[0].text
-            strResult = "İşlem Başarısız! Hata Kodu:500. Detay:"
-            strResult += strErrorMessage
+            dctResult['op_message'] = "İşlem Başarısız! Hata Kodu:500. Detay:"
+            dctResult['op_message'] += strErrorMessage
         elif response.status_code == 200:
-            strResult = "İşlem Başarılı."
+            dctResult['op_result'] = True
+            dctResult['op_message'] = "İşlem Başarılı."
             strCustomerName = bsMain.find_all("name")[1].text
-            strResult += _("Firma Adı:{0}").format(strCustomerName)
+            dctResult['op_message'] += _("Firma Adı:{0}").format(strCustomerName)
         else:
-            strResult = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
-            strResult += response.text
+            dctResult['op_result'] = False
+            dctResult['op_message'] = _("İşlem Başarısız! Hata Kodu:{0}. Detay:").format(response.status_code)
+            dctResult['op_message'] += response.text
 
     except Exception as e:
-        strResult = _("Sunucudan gelen mesaj işlenirken hata oluştu! Detay:{0}").format(e)
+        dctResult['op_result'] = False
+        dctResult['op_message'] = _("Sunucu iletişiminde beklenmeyen hata oluştu! Detay:{0}").format(e)
         frappe.log_error(frappe.get_traceback(), _("E-Fatura (LoginTest) hatası"))
 
-    return {'result':strResult, 'response':response.text}
+    return dctResult
 
 ### DOSYA GUNCELLEME MODULU
 @frappe.whitelist()
