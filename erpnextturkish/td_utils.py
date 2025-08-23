@@ -89,7 +89,7 @@ def get_template_valid_attributes(strTemplateItemCode):
 		docItem = frappe.get_doc("Item", variant.name)
 		for attribute in docItem.attributes:
 			if attribute.attribute == strSizeAttributeName and attribute.attribute_value not in result['attribute_list']:
-                dIdx = get_attribute_idx(docItme, strSizeAttributeName)
+				dIdx = get_attribute_idx(docItme, strSizeAttributeName)
 				result['attribute_list'].append((dIdx, attribute.attribute_value))
 
 	frappe.log_error("TD Item V 1", frappe.as_json(result))
