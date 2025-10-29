@@ -92,11 +92,8 @@ def get_template_valid_attributes(strTemplateItemCode):
 				dIdx = get_attribute_idx(docItme, strSizeAttributeName)
 				result['attribute_list'].append((dIdx, attribute.attribute_value))
 
-	frappe.log_error("TD Item V 1", frappe.as_json(result))
-    result['attribute_list'].sort(key=lambda x: x)
-    frappe.log_error("TD Item V 2", frappe.as_json(result))
-    result['attribute_list'] = [attr for attr in result['attribute_list']]
-    frappe.log_error("TD Item V 3", frappe.as_json(result))
+	result['attribute_list'].sort(key=lambda x: x)
+	result['attribute_list'] = [attr for attr in result['attribute_list']]
     #result['attribute_list'] = sorted(result['attribute_list'])
 
 	return result
@@ -109,7 +106,7 @@ def get_attribute_idx(docItem, strSizeAttributeName):
         if attribute.attribute == strSizeAttributeName:
             docItemAttribute = frappe.get_doc("Item Attribute", attribute.attribute)
             for item_attribute in docItemAttribute.item_attribute_values:
-                if attribute.attribute_value = item_attribute.attribute_value:
+                if attribute.attribute_value == item_attribute.attribute_value:
                     dResult = item_attribute.idx
 
     return dResult
@@ -1482,6 +1479,12 @@ def send_invoice_to_finalizer(invoice_name=None):
 🏷️  Receiver ID used: {receiver_id}
 🔍 Profile Check Result:
 {json.dumps(profile_result, indent=2, ensure_ascii=False)}
+
+SOAP BODY
+{soap_body}
+
+SOAP BODY ENCODED
+{soap_body.encode("utf-8")}
 
 📁 ZIP içeriği:
 {zip_content}
