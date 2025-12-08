@@ -70,11 +70,19 @@ frappe.ui.form.on('Sales Invoice', {
                                         args: { invoice_name: frm.doc.name },
                                         callback(r) {
                                             if (!r.exc) {
-                                                frappe.msgprint({
-                                                    title: __('Status Update'),
-                                                    indicator: 'blue',
-                                                    message: r.message.message || 'Status updated.'
-                                                });
+                                                if (r.message.op_result == false) {
+                                                    frappe.msgprint({
+                                                        title: __("Durum Güncelleme Hatası"),
+                                                        indicator: "red",
+                                                        message: r.message.op_message
+                                                    });
+                                                } else {
+                                                    frm.set_value('gib_status', r.message.op_message);
+                                                    frappe.show_alert({
+                                                        message: __("Fatura Durumu:") + "<br>" + r.message.op_message,
+                                                        indicator: "green"
+                                                    });
+                                                }
                                             }
                                         }
                                     });
