@@ -1516,11 +1516,66 @@ HTTP {resp.status_code}
 
 
 @frappe.whitelist()
-def update_invoice_status(invoice_name=None):
-    """Fatura durumu güncelleme"""
-    if not invoice_name:
-        return {"status": "fail", "error": "Invoice name is required"}
-    return {"status": "success", "message": "Status update functionality will be implemented"}
+def update_invoice_status(invoice_name):
+    #Check invoice status and write back to GIB DURUM
+    dctResult = {
+		'op_result': True,
+		'op_message': '',
+	}
+
+    docSI = frappe.get_doc("Sales Invoice", invoice_name)
+    docTDEInvoiceSettings = get_settings_for_company(docSI.company)
+    docIntegrator = frappe.get_doc("TD EInvoice Integrator", docTDEInvoiceSettings.integrator)
+
+    request_url = docIntegrator.test_efatura_url if docIntegrator.td_test else docIntegrator.efatura_url
+
+    headers = {
+		'Content-Type': 'application/soap+xml;charset=UTF-8;action="http://tempuri.org/IEBelge/viewDocumentList"',
+		'SOAPAction': 'http://tempuri.org/IEBelge/viewDocumentList',
+		'Accept-Encoding': 'gzip,deflate'
+	}
+
+    soap_body = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/" xmlns:ns="http://schemas.datacontract.org/2004/07/">
+    <soap:Header/>
+    <soap:Body>
+        <tem:viewDocumentList>
+            <tem:listQuery>
+                <ns:DocumentCount>5</ns:DocumentCount>
+                <ns:DocumentType>EFATURA</ns:DocumentType>
+                <ns:DocumentViewType>GİDEN</ns:DocumentViewType>
+                <ns:EndDate>31.12.2025</ns:EndDate>
+                <ns:ListRead>true</ns:ListRead>
+                <ns:ReceiverID>20797680100</ns:ReceiverID>
+                <ns:ReplyStatus></ns:ReplyStatus>
+                <ns:SenderID></ns:SenderID>
+                <ns:StartDate>10.08.2025</ns:StartDate>
+                <ns:UserID>843</ns:UserID>
+              <ns:UserPassword>8959777ce41d4f473f5a8ba801873d30</ns:UserPassword>
+            </tem:listQuery>
+        </tem:viewDocumentList>
+    </soap:Body>
+</soap:Envelope>"""
+
+    try:
+        frappe.log_error("ViewDocumentList SOAP Body", f"{soap_body}")
+
+        response = requests.post(
+            request_url,
+            data=soap_body.encode('utf-8'),
+            headers=headers,
+            timeout=60
+        )
+        
+        frappe.log_error("ViewDocumentList Response", f"Status:{response.status_code}\nBody:{response.text}")
+
+        soup = BeautifulSoup(response.content, 'xml')
+
+    except Exception as e:
+        dctResult['op_result'] = False
+        dctResult['op_message'] = f"Exception: {str(e)}"
+        frappe.log_error(f"E-Despatch Exception: {str(e)}")
+
+    return dctResult
 
 
 def check_response_success(status_code, response_text):
