@@ -1528,6 +1528,7 @@ def update_invoice_status(invoice_name):
 	docTDEInvoiceSettings = get_settings_for_company(docSI.company)
 	docIntegrator = frappe.get_doc("TD EInvoice Integrator", docTDEInvoiceSettings.integrator)
 	docIntegrator.password = docIntegrator.get_password('password') #docIntegrator.username
+	docCustomer = frappe.get_doc("Customer", docSI.customer)
 
 	docSI.posting_date_str = formatdate(docSI.posting_date, "dd.mm.yyyy")
 
@@ -1549,7 +1550,7 @@ def update_invoice_status(invoice_name):
 				<ns:DocumentViewType>GİDEN</ns:DocumentViewType>
 				<ns:EndDate>{{ docSI.posting_date_str }}</ns:EndDate>
 				<ns:ListRead>true</ns:ListRead>
-				<ns:ReceiverID>{{ docSI.tax_id }}</ns:ReceiverID>
+				<ns:ReceiverID>{{ docCustomer.tax_id }}</ns:ReceiverID>
 				<ns:ReplyStatus></ns:ReplyStatus>
 				<ns:SenderID></ns:SenderID>
 				<ns:StartDate>{{ docSI.posting_date_str }}</ns:StartDate>
@@ -1560,7 +1561,7 @@ def update_invoice_status(invoice_name):
 	</soap:Body>
 </soap:Envelope>"""
 
-	soap_body = frappe.render_template(soap_body, context={'docSI': docSI, 'docIntegrator': docIntegrator })
+	soap_body = frappe.render_template(soap_body, context={'docSI': docSI, 'docIntegrator': docIntegrator, 'docCustomer': docCustomer })
 
 	try:
 		frappe.log_error("ViewDocumentList SOAP Body", f"{soap_body}")
@@ -1601,7 +1602,7 @@ def update_invoice_status(invoice_name):
 
 				# Extract the DocumentList section
 				document_list = soup.find('DocumentList')
-				frappe.log_error("ViewDocumentList TMP 1", frappe.as_json(document_list))
+				#frappe.log_error("ViewDocumentList TMP 1", frappe.as_json(document_list))
 				if document_list:
 					# Find the Document with the matching UUID
 					for document in document_list.find_all('Document'):
@@ -1611,6 +1612,8 @@ def update_invoice_status(invoice_name):
 							if status_detail:
 								# Update the invoice status with the StatusDetail
 								docSI.db_set('gib_status', status_detail.text, notify=True)
+								status_code = document.find('StatusCode')
+								docSI.db_set('custom_gib_status_code', status_code.text, notify=True)
 								dctResult['op_result'] = True
 								dctResult['op_message'] = status_detail.text
 								break
@@ -1632,6 +1635,8 @@ def update_invoice_status(invoice_name):
 
 	return dctResult
 
+def update_invoice_statuses():
+	frappe.log_error("update_invoice_statuses started")
 
 def check_response_success(status_code, response_text):
 	"""Response başarı kontrolü"""

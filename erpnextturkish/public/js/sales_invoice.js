@@ -77,7 +77,9 @@ frappe.ui.form.on('Sales Invoice', {
                                                         message: r.message.op_message
                                                     });
                                                 } else {
-                                                    frm.set_value('gib_status', r.message.op_message);
+                                                    //frm.set_value('gib_status', r.message.op_message);
+                                                    frm.doc.gib_status = r.message.op_message;
+                                                    frm.refresh_field('gib_status');
                                                     frappe.show_alert({
                                                         message: __("Fatura Durumu:") + "<br>" + r.message.op_message,
                                                         indicator: "green"

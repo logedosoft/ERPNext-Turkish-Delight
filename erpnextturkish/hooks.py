@@ -115,7 +115,8 @@ doc_events = {
 scheduler_events = {
     "cron": {
         "0 * * * *": [
-            "erpnextturkish.currency_utils.refresh_currency"
+            "erpnextturkish.currency_utils.refresh_currency",
+			"erpnextturkish.td_utils.update_invoice_statuses"
         ]
     }
 }
