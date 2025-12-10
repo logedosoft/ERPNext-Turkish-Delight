@@ -1653,7 +1653,7 @@ def update_invoice_statuses():
 	filters = {
 		'docstatus': 1,
 		'td_efatura_uuid': ['!=', ''],
-		'posting_date': ['>=', frappe.utils.add_days(frappe.utils.today(), -100)]
+		'posting_date': ['>=', frappe.utils.add_days(frappe.utils.today(), -8)]
 	}
 	
 	or_filters = [
