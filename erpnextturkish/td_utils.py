@@ -1633,6 +1633,13 @@ def update_invoice_status(invoice_name):
 		dctResult['op_message'] = f"Exception: {str(e)}"
 		frappe.log_error(f"ViewDocumentList Exception: {str(e)}")
 
+	#Add a comment if it is failed.
+	if dctResult['op_result'] == False:
+		docSI.add_comment(
+				comment_type='Comment',
+				text=_("Fatura Durum Güncelleme Hatası: {0}").format(dctResult['op_message'])
+			)
+
 	return dctResult
 
 def update_invoice_statuses():

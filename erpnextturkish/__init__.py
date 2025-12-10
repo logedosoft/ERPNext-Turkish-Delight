@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-__version__ = '1.251210.1'
+__version__ = '1.251210.2'
 
 def console(*data):
 	import frappe
