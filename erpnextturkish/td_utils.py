@@ -1513,7 +1513,7 @@ HTTP {resp.status_code}
 		frappe.log_error(str(e), f"Finalizer Send Error - {invoice_name}")
 		return {"status": "fail", "error": str(e)}
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=False)
 def update_invoice_status(invoice_name):
 	import email
 	from email import policy
@@ -1611,9 +1611,9 @@ def update_invoice_status(invoice_name):
 							status_detail = document.find('StatusDetail')
 							if status_detail:
 								# Update the invoice status with the StatusDetail
-								docSI.db_set('gib_status', status_detail.text, notify=True)
+								docSI.db_set('gib_status', status_detail.text, update_modified=False)
 								status_code = document.find('StatusCode')
-								docSI.db_set('custom_gib_status_code', status_code.text, notify=True)
+								docSI.db_set('custom_gib_status_code', status_code.text, update_modified=False)
 								dctResult['op_result'] = True
 								dctResult['op_message'] = status_detail.text
 								break
@@ -1636,7 +1636,54 @@ def update_invoice_status(invoice_name):
 	return dctResult
 
 def update_invoice_statuses():
+	# Update invoice statuses. Get invoice list which doesn't have status codes in skip_codes.
+	# Call update_invoice_status for each invoice, run hourly.
+	
 	frappe.log_error("update_invoice_statuses started")
+
+	skip_codes = [
+		'1300',  # OK
+		# Error codes
+		'1110', '1115', '1120', '1125', '1130', '1135',
+		'1140', '1145', '1150', '1155', '1160', '1165',
+		'1170', '1175', '1180', '1185', '1190', '1195',
+		'1215', '1230'
+	]
+
+	filters = {
+		'docstatus': 1,
+		'td_efatura_uuid': ['!=', ''],
+		'posting_date': ['>=', frappe.utils.add_days(frappe.utils.today(), -100)]
+	}
+	
+	or_filters = [
+		['custom_gib_status_code', 'is', 'not set'],
+		['custom_gib_status_code', '=', ''],
+		['custom_gib_status_code', 'not in', skip_codes]
+	]
+	
+	dctInvoices = frappe.db.get_list(
+		'Sales Invoice',
+		filters=filters,
+		or_filters=or_filters,
+		fields=['name', 'custom_gib_status_code', 'posting_date'],
+		order_by='creation desc',
+		limit=50,
+		as_list=False
+	)
+
+	for invoice in dctInvoices:
+		frappe.enqueue(
+			method='erpnextturkish.td_utils.update_invoice_status',
+			queue='short',
+			timeout=120,
+			invoice_name=invoice.name,
+			job_name="LOGEDO.UpdInvStatus",
+			enqueue_after_commit=True
+		)
+
+	frappe.log_error("update_invoice_statuses finished", "Processed " + str(len(dctInvoices)) + " invoices.\n" + frappe.as_json(dctInvoices))
+
 
 def check_response_success(status_code, response_text):
 	"""Response başarı kontrolü"""
