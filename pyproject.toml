@@ -1,0 +1,21 @@
+[project]
+name = "erpnextturkish"
+dynamic = ["version"]
+authors = [
+    { name = "Logedosoft", email = "info@logedosoft.com" }
+]
+description = "Turkish localization for ERPNext"
+requires-python = ">=3.10"
+readme = "README.md"
+dependencies = [
+    # Add any external PyPI packages here (NOT frappe/erpnext)
+    # Example: "requests~=2.28.0",
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<16.0.0"
+erpnext = ">=15.0.0,<16.0.0"
