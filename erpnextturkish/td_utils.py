@@ -2088,25 +2088,35 @@ def generate_invoice_xml(doc, profile_type, settings):
 		grand_total = round_currency(float(doc.grand_total or 0))
 		toplam_iskonto = round_currency(float(doc.discount_amount or 0))
 
-		def get_vergi_detaylari(item_code, item_amount):
+		def get_vergi_detaylari(item_code, matrah_tutar):
+			"""Generate tax detail XML for an invoice line item.
+			
+			Args:
+				item_code: The item code to look up tax information
+				matrah_tutar: The taxable base amount (gross amount before discount = price_list_rate * qty)
+			
+			Returns:
+				XML string containing tax details including FaturaVergiDetay for all tax entries.
+				Even items with 100% discount (0 tax amount) must have FaturaVergiDetay section.
+			"""
 			vergi_satirlari = item_tax_map.get(item_code, [])
-			aktif_vergiler = [v for v in vergi_satirlari if v["amount"] > 0]
 
-			toplam_vergi = sum(round_currency(v["amount"]) for v in aktif_vergiler)
+			# Always include all tax entries, even with 0 amount (required by e-Fatura integration)
+			toplam_vergi = sum(round_currency(v["amount"]) for v in vergi_satirlari)
 
 			detay_xml = f'<ToplamVergiTutar ParaBirimi="{doc.currency}">{toplam_vergi:.2f}</ToplamVergiTutar>'
-			for vergi in aktif_vergiler:
+			for vergi in vergi_satirlari:
 				vergi_tutari = round_currency(vergi["amount"])
 				detay_xml += f'''
-	  <FaturaVergiDetay>
-		<MatrahTutar ParaBirimi="{doc.currency}">{item_amount:.2f}</MatrahTutar>
+		 <FaturaVergiDetay>
+		<MatrahTutar ParaBirimi="{doc.currency}">{matrah_tutar:.2f}</MatrahTutar>
 		<VergiTutar ParaBirimi="{doc.currency}">{vergi_tutari:.2f}</VergiTutar>
 		<VergiOran>{vergi["rate"]:.2f}</VergiOran>
 		<Kategori>
 		  <VergiAdi>KDV</VergiAdi>
 		  <VergiKodu>0015</VergiKodu>
 		</Kategori>
-	  </FaturaVergiDetay>'''
+		 </FaturaVergiDetay>'''
 			return detay_xml
 
 		def generate_normal_satir(i, item):
@@ -2115,6 +2125,11 @@ def generate_invoice_xml(doc, profile_type, settings):
 			iskonto_orani = float(item.discount_percentage or 0)
 			iskonto_tutari = round_currency(float(item.discount_amount or 0) * item.qty)
 			item_amount = round_currency(float(item.amount or 0))
+			
+			# MatrahTutar: Gross amount before discount (price_list_rate * qty)
+			# This is required by e-Fatura integration - must show the taxable base amount
+			# even for items with 100% discount where tax amount is 0
+			gross_amount = round_currency(flt(item.price_list_rate) * flt(item.qty))
 
 			# LOG SATIRI: Discount ve hesaplama detayları
 			frappe.log_error(
@@ -2130,10 +2145,12 @@ Discount %: {item.discount_percentage}
 Discount Amount: {item.discount_amount}
 ➡️ Kullanılan İskonto Oranı: {iskonto_orani}
 ➡️ Kullanılan İskonto Tutarı: {iskonto_tutari}
+➡️ MatrahTutar (Gross Amount): {gross_amount}
 """
 			)
 
-			vergi_xml = get_vergi_detaylari(item.item_code, item_amount)
+			# Pass gross_amount for MatrahTutar (taxable base before discount)
+			vergi_xml = get_vergi_detaylari(item.item_code, gross_amount)
 
 			#Create the item line
 			effective_price_list_rate = flt(item.price_list_rate) or flt(item.rate)
