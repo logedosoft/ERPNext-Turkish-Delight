@@ -11,7 +11,6 @@ import requests
 import uuid
 from bs4 import BeautifulSoup
 from frappe.desk.form.utils import add_comment
-from erpnextturkish import console
 
 def on_submit_validate(doc, method):
     blnCheckEReceipt = frappe.db.get_single_value("TD Utils", "enable_ereceipt")
