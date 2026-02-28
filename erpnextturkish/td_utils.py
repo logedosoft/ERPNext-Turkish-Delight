@@ -1611,9 +1611,12 @@ def update_invoice_status(invoice_name):
 							status_detail = document.find('StatusDetail')
 							if status_detail:
 								# Update the invoice status with the StatusDetail
-								docSI.db_set('gib_status', status_detail.text, update_modified=False)
+								#docSI.db_set('gib_status', status_detail.text, update_modified=False)
 								status_code = document.find('StatusCode')
-								docSI.db_set('custom_gib_status_code', status_code.text, update_modified=False)
+								#docSI.db_set('custom_gib_status_code', status_code.text, update_modified=False)
+								docSI.gib_status = status_detail.text
+								docSI.custom_gib_status_code = status_code.text
+								docSI.save()
 								dctResult['op_result'] = True
 								dctResult['op_message'] = status_detail.text
 								break
