@@ -1615,6 +1615,9 @@ def download_pdf(invoice_name):
 					})
 					file_doc.save(ignore_permissions=True)
 
+					docSI.custom_td_pdf_added = True
+					docSI.save()
+
 					dctResult['op_result'] = True
 					dctResult['op_message'] = _('PDF indirildi ve eklendi.')
 					dctResult['file_url'] = file_doc.file_url
