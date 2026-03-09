@@ -1607,11 +1607,11 @@ def download_pdf(invoice_name):
 					# Attach PDF to the Sales Invoice
 					file_doc = frappe.get_doc({
 						'doctype': 'File',
-						'file_name': file_name,
+						'file_name': "EFATURA_PDF_" + file_name,
 						'attached_to_doctype': 'Sales Invoice',
 						'attached_to_name': invoice_name,
 						'content': pdf_bytes,
-						'is_private': 1
+						'is_private': 0
 					})
 					file_doc.save(ignore_permissions=True)
 
