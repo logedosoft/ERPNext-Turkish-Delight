@@ -89,6 +89,33 @@ frappe.ui.form.on('Sales Invoice', {
                                         }
                                     });
                                 }, __('E-Invoice'));
+
+                                //Download PDF of invoice
+                                frm.add_custom_button(__('Download PDF'), () => {
+                                    frappe.call({
+                                        method: 'erpnextturkish.td_utils.download_pdf',
+                                        args: { invoice_name: frm.doc.name },
+                                        callback(r) {
+                                            if (!r.exc) {
+                                                if (r.message.op_result == false) {
+                                                    frappe.msgprint({
+                                                        title: __("PDF İndirme Hatası"),
+                                                        indicator: "red",
+                                                        message: r.message.op_message
+                                                    });
+                                                } else {
+                                                    //frm.set_value('gib_status', r.message.op_message);
+                                                    frm.doc.gib_status = r.message.op_message;
+                                                    frm.refresh_field('gib_status');
+                                                    frappe.show_alert({
+                                                        message: __("PDF İndirme durumu:") + "<br>" + r.message.op_message,
+                                                        indicator: "green"
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    });
+                                }, __('E-Invoice'));
                             }
                         });
                 }

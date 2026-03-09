@@ -1514,9 +1514,131 @@ HTTP {resp.status_code}
 		return {"status": "fail", "error": str(e)}
 
 @frappe.whitelist(allow_guest=False)
+def download_pdf(invoice_name):
+	import email #multipart response
+	from email import policy #multipart response
+
+	# Download and attach PDF of the invoice via getPdfDocument method
+	dctResult = frappe._dict({
+		'op_result': False,
+		'op_message': '',
+	})
+
+	docSI = frappe.get_doc("Sales Invoice", invoice_name)
+	if not docSI.get("custom_td_efatura_id"):
+		dctResult.op_result = False
+		dctResult.op_message = _("E-Fatura ID olmadığı için işlem yapılmadı!")
+	else:
+		docTDEInvoiceSettings = get_settings_for_company(docSI.company)
+		docIntegrator = frappe.get_doc("TD EInvoice Integrator", docTDEInvoiceSettings.integrator)
+		docIntegrator.password = docIntegrator.get_password('password')
+
+		request_url = docIntegrator.test_efatura_url if docIntegrator.td_test else docIntegrator.efatura_url
+
+		headers = {
+			'Content-Type': 'application/soap+xml;charset=UTF-8;action="http://tempuri.org/IEBelge/getPdfDocument"',
+			'SOAPAction': 'http://tempuri.org/IEBelge/getPdfDocument',
+			'Accept-Encoding': 'gzip,deflate'
+		}
+
+		soap_body = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/" xmlns:ns="http://schemas.datacontract.org/2004/07/">
+		<soap:Header/>
+		<soap:Body>
+			<tem:getPdfDocument>
+				<tem:document>
+					<ns:DocumentID>{{ docSI.custom_td_efatura_id }}</ns:DocumentID>
+					<ns:DocumentVariable></ns:DocumentVariable>
+					<ns:IsRead>false</ns:IsRead>
+					<ns:ReceiverID></ns:ReceiverID>
+					<ns:ReturnCode></ns:ReturnCode>
+					<ns:ReturnText></ns:ReturnText>
+					<ns:SenderID></ns:SenderID>
+					<ns:UUID>{{ docSI.td_efatura_uuid }}</ns:UUID>
+					<ns:UserID>{{ docIntegrator.username }}</ns:UserID>
+					<ns:UserPassword>{{ docIntegrator.password }}</ns:UserPassword>
+					<ns:binaryData></ns:binaryData>
+					<ns:fileName></ns:fileName>
+				</tem:document>
+			</tem:getPdfDocument>
+		</soap:Body>
+	</soap:Envelope>"""
+
+		soap_body = frappe.render_template(soap_body, context={'docSI': docSI, 'docIntegrator': docIntegrator})
+
+		try:
+			frappe.log_error("getPdfDocument SOAP Body", f"{soap_body}")
+
+			response = requests.post(
+				request_url,
+				data=soap_body.encode('utf-8'),
+				headers=headers,
+				timeout=60
+			)
+
+			frappe.log_error("getPdfDocument Response", f"Status:{response.status_code}\nBody:{response.text[:500]}")
+
+			if response.status_code == 200:
+				# Parse multipart response
+				content_type = response.headers.get('Content-Type', '')
+				header = f"Content-Type: {content_type}\r\n\r\n".encode('utf-8')
+				full_message = header + response.content
+				msg = email.message_from_bytes(full_message, policy=policy.default)
+
+				pdf_bytes = None
+				return_text = None
+
+				# First part: SOAP envelope — extract ReturnText to confirm success
+				# Second part: octet-stream — the actual PDF bytes
+				if msg.is_multipart():
+					parts = list(msg.iter_parts())
+					for part in parts:
+						ct = part.get_content_type()
+						if 'application/xop+xml' in ct or 'application/soap+xml' in ct:
+							soap_xml = part.get_payload(decode=True).decode('utf-8')
+							soup = BeautifulSoup(soap_xml, 'xml')
+							rt = soup.find('ReturnText')
+							if rt:
+								return_text = rt.text
+						elif 'application/octet-stream' in ct:
+							pdf_bytes = part.get_payload(decode=True)
+
+				if pdf_bytes and pdf_bytes.startswith(b'%PDF'):
+					file_name = f"{invoice_name}.pdf"
+					# Attach PDF to the Sales Invoice
+					file_doc = frappe.get_doc({
+						'doctype': 'File',
+						'file_name': file_name,
+						'attached_to_doctype': 'Sales Invoice',
+						'attached_to_name': invoice_name,
+						'content': pdf_bytes,
+						'is_private': 1
+					})
+					file_doc.save(ignore_permissions=True)
+
+					dctResult['op_result'] = True
+					dctResult['op_message'] = _('PDF indirildi ve eklendi.')
+					dctResult['file_url'] = file_doc.file_url
+				else:
+					dctResult['op_message'] = return_text or _("PDF verisi alınamadı.")
+			else:
+				dctResult['op_message'] = f"HTTP Error {response.status_code}: {response.text}"
+
+		except Exception as e:
+			dctResult['op_result'] = False
+			dctResult['op_message'] = f"Exception: {str(e)}"
+			frappe.log_error("getPdfDocument Exception", frappe.get_traceback())
+
+	docSI.add_comment(
+		comment_type='Comment',
+		text=_("PDF İndirme İşlem Sonucu: {0} - {1}").format(dctResult.op_result, dctResult.op_message)
+	)
+
+	return dctResult
+
+@frappe.whitelist(allow_guest=False)
 def update_invoice_status(invoice_name):
-	import email
-	from email import policy
+	import email #multipart response
+	from email import policy #multipart response
 
 	#Check invoice status and write back to GIB DURUM
 	dctResult = {
@@ -1555,7 +1677,7 @@ def update_invoice_status(invoice_name):
 				<ns:SenderID></ns:SenderID>
 				<ns:StartDate>{{ docSI.posting_date_str }}</ns:StartDate>
 				<ns:UserID>{{ docIntegrator.username }}</ns:UserID>
-			  <ns:UserPassword>{{ docIntegrator.password }} </ns:UserPassword>
+			  <ns:UserPassword>{{ docIntegrator.password }}</ns:UserPassword>
 			</tem:listQuery>
 		</tem:viewDocumentList>
 	</soap:Body>
@@ -1614,8 +1736,10 @@ def update_invoice_status(invoice_name):
 								#docSI.db_set('gib_status', status_detail.text, update_modified=False)
 								status_code = document.find('StatusCode')
 								#docSI.db_set('custom_gib_status_code', status_code.text, update_modified=False)
+								invoice_id = document.find('InvoiceID')
 								docSI.gib_status = status_detail.text
 								docSI.custom_gib_status_code = status_code.text
+								docSI.custom_td_efatura_id = invoice_id.text
 								docSI.save()
 								dctResult['op_result'] = True
 								dctResult['op_message'] = status_detail.text
