@@ -2199,6 +2199,31 @@ def generate_invoice_xml(doc, profile_type, settings):
 				except Exception as e:
 					frappe.log_error(message=f"Error parsing tax details: {e}", title="Tax parse error")
 
+		"""# Parse item.item_tax_rate for each line item to prevent duplicate zero-value FaturaVergiDetay blocks
+		for item in doc.items:
+			if item.item_tax_rate:
+				try:
+					parsed_tax_rate = json.loads(item.item_tax_rate)
+					if isinstance(parsed_tax_rate, dict):
+						for tax_account_head, rate in parsed_tax_rate.items():
+							rate = float(rate or 0)
+							tax_amount = (item.net_amount * rate) / 100 if rate > 0 else 0
+							
+							# Check if this tax entry already exists for this item
+							existing = any(
+								te.get("tax_name") == tax_account_head
+								for te in item_tax_map.get(item.item_code, [])
+							)
+							
+							if not existing:
+								item_tax_map.setdefault(item.item_code, []).append({
+									"rate": rate,
+									"amount": tax_amount,
+									"tax_name": tax_account_head
+								})
+				except Exception as e:
+					frappe.log_error(message=f"Error parsing item_tax_rate for {item.item_code}: {e}", title="Item tax rate parse error")
+"""
 		if all(not v for v in item_tax_map.values()) and doc.taxes:
 			default_tax_rate = float(doc.taxes[0].rate or 0)
 			for item in doc.items:
